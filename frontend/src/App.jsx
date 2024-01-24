@@ -1,5 +1,12 @@
-function App() {
-    return <div>Hello World!</div>;
-}
+import HomePage from "./components/HomePage.jsx";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 
-export default App
+export default function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<HomePage/>}/>
+            </Routes>
+        </BrowserRouter>
+    )
+};
