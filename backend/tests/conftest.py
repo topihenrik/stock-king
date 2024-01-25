@@ -1,9 +1,5 @@
-import sys
-
-sys.path.append("..")
-
 import pytest
-from backend.app import app
+from app import app
 
 @pytest.fixture()
 def server():

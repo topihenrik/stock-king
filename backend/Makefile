@@ -7,3 +7,6 @@ env--install:
 
 server:
 	flask run
+
+test:
+	python -m "pytest"
