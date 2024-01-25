@@ -1,21 +1,25 @@
+import sys
+
+sys.path.append("..")
+
 import pytest
-import app
+from backend.app import app
 
 @pytest.fixture()
-def app():
-    app = app.app
-    app.config.update({
+def server():
+    server = app
+    server.config.update({
         "TESTING": True
     })
 
-    yield app
+    yield server
 
 @pytest.fixture()
-def client(app):
-    return app.test_client()
+def client(server):
+    return server.test_client()
 
 
 @pytest.fixture()
-def runner(app):
-    return app.test_cli_runner()
+def runner(server):
+    return server.test_cli_runner()
 
