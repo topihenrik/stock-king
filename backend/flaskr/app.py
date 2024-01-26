@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 from flaskr import utils
+import os
 
 app = Flask(__name__, static_url_path='', static_folder='static', template_folder='static')
 CORS(app, resources={r'/*' : {'origins': ['*']}})
@@ -19,4 +20,6 @@ def test_function():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    if os.environ.get('ENV') != None and os.environ.get('ENV') == 'prod':
+      return render_template('index.html')
+    return ''
