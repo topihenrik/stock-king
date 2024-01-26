@@ -1,0 +1,66 @@
+name: CI/CD
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+jobs:
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Install packages
+        working-directory: frontend
+        run: yarn
+      - name: Test Frontend
+        working-directory: frontend
+        run: yarn test
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.8'
+      - name: Install Packages
+        working-directory: backend
+        run: pip install -r requirements.txt
+      - name: Test Backend
+        working-directory: backend
+        run: python -m pytest
+  deploy:
+    name: Deploy Application
+    needs: [frontend-tests, backend-tests]
+    if: ${{ (github.event_name == 'push') && (!contains(toJson(github.event.commits.*.message), '#skip')) }}
+    runs-on: ubuntu-latest
+    concurrency: deploy-group
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  tag_release:
+    permissions: write-all
+    name: Tag Release
+    needs: [deploy]
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: '0'
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.55.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+          WITH_V: true

@@ -1,19 +1,16 @@
 # SETUP FRONTEND
 FROM node:20 as frontend-build
-WORKDIR /app
-COPY . .
-RUN apt-get update
-
-WORKDIR frontend
+WORKDIR /frontend
+COPY /frontend /
 RUN yarn
 RUN yarn build
-WORKDIR ..
-RUN cp -R ./frontend/dist ./backend/static
 
-# SETUP BACKEND
-FROM python:3.8 as backend-build
-WORKDIR /app
-COPY --from=frontend-build /app/backend /app
-COPY --from=frontend-build /app/frontend/dist /app/static
+# PRODUCTION SERVER
+FROM python:3.8 as production-server
+WORKDIR /server
+COPY /backend/requirements.txt /server
+COPY /backend/flaskr /server/flaskr
+COPY --from=frontend-build /dist /server/flaskr/static
 RUN pip install -r requirements.txt
-CMD ["python3", "-m", "gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
+
+CMD ["python3", "-m", "gunicorn", "--chdir", "/server/flaskr", "--bind", "0.0.0.0:8080", "app:app"]

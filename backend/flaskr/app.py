@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
-import utils
+from flaskr import utils
 
 app = Flask(__name__, static_url_path='', static_folder='static', template_folder='static')
 CORS(app, resources={r'/*' : {'origins': ['*']}})

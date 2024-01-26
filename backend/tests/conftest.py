@@ -1,9 +1,9 @@
 import pytest
-from app import app
+from flaskr import app
 
 @pytest.fixture()
 def server():
-    server = app
+    server = app.app
     server.config.update({
         "TESTING": True
     })
