@@ -35,6 +35,19 @@ jobs:
       - name: Test Backend
         working-directory: backend
         run: python -m pytest
+  discord_notify:
+    name: Notify Discord
+    runs-on: ubuntu-latest
+    needs: [ frontend-tests, backend-tests ]
+    if: ${{(github.event_name == 'push')}}
+    steps:
+      - uses: sarisia/actions-status-discord@v1.13.0
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          title: "PR merged to main"
+          color: 0x0000ff
+          username: GitHub Actions
   deploy:
     name: Deploy Application
     needs: [frontend-tests, backend-tests]
