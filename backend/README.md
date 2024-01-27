@@ -1,19 +1,52 @@
-# backend
+# Backend
 
-To setup the virtual environment and install required packages, run the following
+## Environment requirements
+
+    python 3.8
+
+## Windows
+
+Setup virtual environment
+
+    python -m venv env
+
+Activate virtual environment
+
+    env/Scripts/Activate.ps1
+
+Install packages
+
+    pip install -r requirements.txt
+
+## Linux
+
+Setup virtual environment
 
     python3 -m venv env
 
-or if you're running windows, the command is usually only `python`.
+Activate virtual environment
 
-Activate the virtual environment using
+    . env/bin/activate
 
-    /env/bin/activate
-
-Or if you're running windows:
-
-    /env/Scripts/Activate
-
-Then install the required packages using
+Install packages
 
     pip install -r requirements.txt
+
+
+## Start dev server
+
+Inside ``flaskr/`` folder
+
+    flask run
+
+## Run tests
+
+Inside ``backend`` folder
+
+Linux
+
+    python3 -m pytest
+
+Windows
+
+    python -m pytest
