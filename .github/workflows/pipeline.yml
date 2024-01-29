@@ -18,7 +18,7 @@ jobs:
       - name: Install packages
         working-directory: frontend
         run: yarn
-      - name: Test Frontend
+      - name: Test frontend
         working-directory: frontend
         run: yarn test
   backend-tests:
@@ -29,10 +29,10 @@ jobs:
       - uses: actions/setup-python@v3
         with:
           python-version: '3.8'
-      - name: Install Packages
+      - name: Install packages
         working-directory: backend
         run: pip install -r requirements.txt
-      - name: Test Backend
+      - name: Test backend
         working-directory: backend
         run: python -m pytest
   discord_notify:

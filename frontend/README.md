@@ -1,22 +1,21 @@
 # Frontend
 
-### Environment Requirements
+## Environment requirements
 ```
-Node.js 20
+Node.js 18
 ```
-### Development Scripts
-Install packages
+## Install packages
 ```
 yarn install
 ```
-Start development server
+## Start development server
 ```
 yarn dev
 ```
-Run tests
+## Run tests
 ```
 yarn test
 ```
 
-### Folder structure
+## Folder structure
 The test folder structure will mirror the src folder structure. For example if the component file ``<HomePage/>`` is located in ``src/components/HomePage.jsx``then the corresponding test file will be in the ``tests/components/HomePage.test.jsx``
