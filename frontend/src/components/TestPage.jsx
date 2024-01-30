@@ -1,4 +1,4 @@
-import config from "../config.js";
+import {baseUri} from "../config.js";
 import {useQuery} from "@tanstack/react-query";
 
 
@@ -14,11 +14,11 @@ function HomeWrapper({children}) {
     )
 }
 
-export default function HomePage() {
+export default function TestPage() {
     const { isPending, error, data } = useQuery({
         queryKey: ['lorem_ipsum'],
         queryFn: () =>
-            fetch(`${config.baseUri}/lorem_ipsum`).then((res) =>
+            fetch(`${baseUri}/lorem_ipsum`).then((res) =>
                 res.json(),
             ),
     });
