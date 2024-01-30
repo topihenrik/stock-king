@@ -1,4 +1,4 @@
-import HomePage from "./components/HomePage.jsx";
+import TestPage from "./components/TestPage.jsx";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {QueryClientProvider} from "@tanstack/react-query";
 import {ThemeProvider} from "@mui/material";
@@ -13,7 +13,7 @@ export default function App() {
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/" element={<HomePage/>}/>
+                        <Route path="/test" element={<TestPage/>}/> {/*FEEL FREE TO REMOVE THIS ROUTE*/}
                         <Route path="/gameover" element={<GameOverPage/>}/>
                     </Routes>
                 </BrowserRouter>

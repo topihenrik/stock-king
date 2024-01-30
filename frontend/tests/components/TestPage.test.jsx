@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import HomePage from "../../src/components/HomePage.jsx";
+import TestPage from "../../src/components/TestPage.jsx";
 import {renderWithProvider} from "../test-utils.jsx";
 
 describe('Basic tests', () => {
@@ -8,7 +8,7 @@ describe('Basic tests', () => {
     });
 
     it('Should have Hello World text', () => {
-        const {getByText} = renderWithProvider(<HomePage/>);
+        const {getByText} = renderWithProvider(<TestPage/>);
         expect(getByText('Hello World!')).toBeTruthy();
     })
 })

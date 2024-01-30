@@ -14,7 +14,7 @@ function HomeWrapper({children}) {
     )
 }
 
-export default function HomePage() {
+export default function TestPage() {
     const { isPending, error, data } = useQuery({
         queryKey: ['lorem_ipsum'],
         queryFn: () =>
