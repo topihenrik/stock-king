@@ -1,4 +1,4 @@
-import config from "../config.js";
+import {baseUri} from "../config.js";
 import {useQuery} from "@tanstack/react-query";
 
 
@@ -18,7 +18,7 @@ export default function HomePage() {
     const { isPending, error, data } = useQuery({
         queryKey: ['lorem_ipsum'],
         queryFn: () =>
-            fetch(`${config.baseUri}/lorem_ipsum`).then((res) =>
+            fetch(`${baseUri}/lorem_ipsum`).then((res) =>
                 res.json(),
             ),
     });
