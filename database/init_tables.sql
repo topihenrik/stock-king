@@ -1,0 +1,19 @@
+DROP TABLE IF EXISTS Developer CASCADE;
+CREATE TABLE ExchangeRates(
+    erid INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    to_currency TEXT NOT NULL,
+    from_currency TEXT NOT NULL,
+    ratio FLOAT NOT NULL,
+    date DATE NOT NULL
+);
+
+DROP TABLE IF EXISTS Publisher CASCADE;
+CREATE TABLE Company(
+    cid INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    ticker TEXT NOT NULL,
+    name TEXT NOT NULL,
+    market_cap INT NOT NULL,
+    currency TEXT NOT NULL,
+    date DATE NOT NULL,
+    sector TEXT NOT NULL
+);
