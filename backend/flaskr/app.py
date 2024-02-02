@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, send_from_directory
 from flask_cors import CORS
 from flaskr import utils
 import yfinance as yahoo
@@ -36,8 +36,9 @@ def lorem_ipsum():
 def test_function():
     return True
 
-@app.route('/')
-def index():
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>', methods=['GET'])
+def catch_all(path):
     if os.environ.get('ENV') != None and os.environ.get('ENV') == 'prod':
       return render_template('index.html')
     return ''
