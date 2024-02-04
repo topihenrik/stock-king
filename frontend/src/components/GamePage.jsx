@@ -9,7 +9,7 @@ export default function GamePage({ highScore = 0 }) {
     let [score, setScore] = useState(0);
     let [companies, setCompanies] = useState([]);
 
-    const ScrollPanel = ({ id, companyName, marketCap, color, imageSrc }) => {
+    const Panel = ({ id, companyName, marketCap, color, imageSrc }) => {
         // Function that handles game logic when a panel is clicked
         const handleClick = () => {
             let clickedPanel = document.getElementById(id);
@@ -35,7 +35,7 @@ export default function GamePage({ highScore = 0 }) {
         };
 
         return (
-            <ButtonBase id={id} className="scroll-panel" onClick={handleClick} sx={{
+            <ButtonBase id={id} data-testid="panel" className="panel" onClick={handleClick} sx={{
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
@@ -80,7 +80,7 @@ export default function GamePage({ highScore = 0 }) {
         <div>
             <Box className="scroller" sx={{ display: "flex", flexDirection: "row", overflowX: "hidden" }}>
                 {companies.map(company => {
-                    return <ScrollPanel key={company.id} id={company.id} companyName={company.name} marketCap={company.marketCap} color={company.color} imageSrc={company.imageSrc}></ScrollPanel>
+                    return <Panel key={company.id} id={company.id} companyName={company.name} marketCap={company.marketCap} color={company.color} imageSrc={company.imageSrc}></Panel>
                 })}
                 <Typography data-testid="text-highscore" sx={{ position: "absolute", top: 16, left: 16 }}>
                     High Score: {highScore}
