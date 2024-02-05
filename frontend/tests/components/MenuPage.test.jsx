@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { screen } from '@testing-library/dom';
 import { render, fireEvent } from "@testing-library/react";
-import { BrowserRouter, Router } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import MenuPage from "../../src/components/MenuPage.jsx";
 
 describe('MenuPage', () => {
@@ -26,5 +25,5 @@ describe('MenuPage', () => {
         startGameButton.click();
         await new Promise((resolve) => setTimeout(resolve, 0));
         expect(window.location.pathname).toBe('/game');
-      });
+    });
 })
