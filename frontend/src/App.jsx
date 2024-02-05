@@ -15,7 +15,7 @@ export default function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/test" element={<TestPage/>}/> {/*FEEL FREE TO REMOVE THIS ROUTE*/}
-                        <Route path="/menu" element={<MenuPage/>}/>
+                        <Route path="/" element={<MenuPage/>}/>
                         <Route path="/game" element={<GamePage/>}/>
                         <Route path="/gameover" element={<GameOverPage/>}/>
                     </Routes>
