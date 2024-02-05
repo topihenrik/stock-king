@@ -6,6 +6,7 @@ import "./style.css"
 import GameOverPage from "./components/GameOverPage.jsx";
 import { theme, queryClient } from './config.js'
 import MenuPage from "./components/MenuPage.jsx"
+import GamePage from "./components/GamePage.jsx";
 
 export default function App() {
     return (
@@ -15,6 +16,7 @@ export default function App() {
                     <Routes>
                         <Route path="/test" element={<TestPage/>}/> {/*FEEL FREE TO REMOVE THIS ROUTE*/}
                         <Route path="/menu" element={<MenuPage/>}/>
+                        <Route path="/game" element={<GamePage/>}/>
                         <Route path="/gameover" element={<GameOverPage/>}/>
                     </Routes>
                 </BrowserRouter>

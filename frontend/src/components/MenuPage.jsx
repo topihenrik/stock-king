@@ -1,9 +1,16 @@
-import React from 'react'
-import {Typography, Menu, MenuItem, Button, Box} from '@mui/material';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {Menu, MenuItem, Button, Box} from '@mui/material';
+import {ArrowDropDown} from '@mui/icons-material'
 
 export default function MenuPage() {
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [selectedCategory, setSelectedCategory] = React.useState('');
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const navigate = useNavigate();
+
+    const startGame = () => {
+        navigate("/game");
+    }
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -19,12 +26,37 @@ export default function MenuPage() {
       };
 
     return (
-        <Box sx={{position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: 'center', gap: "64px", height: '100vh', paddingBottom: '25%', boxSizing: 'border-box'}}>
-            <Typography data-testid="text-score" variant="h5" paddingBottom="32px">Place logo here</Typography>
+        <Box sx={{
+            position: "relative", 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: "center", 
+            justifyContent: 'center', 
+            gap: "64px", 
+            height: '100vh', 
+            paddingBottom: '25%', 
+            paddingTop: '10%', 
+            boxSizing: 'border-box',
+        }}>
+
             <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", gap: "16px"}}>
-                <Button variant="contained">Start game</Button>
-                <Button variant="contained" onClick={handleClick}>{selectedCategory || "Select category"}</Button>
-                <Menu data-testid="choices-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+            <Box component="img" src='../../logo.png' sx={{ width: "100%", maxWidth: "200px", height: "auto" }} />
+                <Button variant="contained" onClick={startGame}>Start game</Button>
+                <Button variant="contained" onClick={handleClick} endIcon={<ArrowDropDown />}>{selectedCategory || "Choose category"}</Button>
+                <Menu
+                    data-testid="choices-menu"
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
+                >
                     <MenuItem onClick={() => handleCategorySelect('Category 1')} value="category1">Category 1</MenuItem>
                     <MenuItem onClick={() => handleCategorySelect('Category 2')} value="category2">Category 2</MenuItem>
                     <MenuItem onClick={() => handleCategorySelect('Category 3')} value="category3">Category 3</MenuItem>
