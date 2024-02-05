@@ -5,9 +5,8 @@ import {ThemeProvider} from "@mui/material";
 import "./style.css"
 import GameOverPage from "./components/GameOverPage.jsx";
 import GamePage from "./components/GamePage.jsx";
-import { theme, queryClient } from './config.js'
 import MenuPage from "./components/MenuPage.jsx"
-import GamePage from "./components/GamePage.jsx";
+import { theme, queryClient } from './config.js'
 
 export default function App() {
     return (
