@@ -14,14 +14,25 @@ CORS(app, resources={r'/*' : {'origins': ['*']}})
 
 #---------------------------Mock data gets fetched here on server start until databases are implemented-------------------------------------#
 stockData = {}
+exchangerateData = {}
 tickers = yahoo.Tickers('GOOGL AMD AAPL')
+exchangerates = yahoo.Tickers('EUR=X JPY=X GBP=X CAD=X AUD=X SEK=X KRW=X')
 
 for ticker in tickers.tickers.values():
     try:
         stockData.update({ticker.info["symbol"]:ticker.info["marketCap"]})
     except KeyError:
-        print("Failed to get market cap information on {}",ticker.ticker["symbol"])
+        print("Failed to get market cap information on {}",ticker.ticker)
         continue
+
+for ticker in exchangerates.tickers.values():
+    try:
+        exchangerateData.update({ticker.info["longName"]:ticker.info["bid"]})
+    except KeyError:
+        print("Failed to get exchange rate information on {}",ticker.ticker)
+        continue
+
+
 #-------------------------------------------------------------------------------------------------------------------------------------------#
 
 
@@ -38,10 +49,13 @@ def test_function():
     return True
 
 # Simple endpoint to receive the market cap of a random company from the server
-@app.route('/api/randomCompany')
-def getMarketCapFromRandomCompany():
-    companyData = random.choice(list(stockData.values()))
-    return str(companyData)
+@app.route('/api/marketcap')
+def getAllMarketCaps():
+    return jsonify(stockData)
+
+@app.route('/api/exchangerate')
+def getAllExchangerates():
+    return jsonify(exchangerateData)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>', methods=['GET'])
