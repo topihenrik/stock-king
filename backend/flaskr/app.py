@@ -23,7 +23,8 @@ for ticker in tickers.tickers.values():
         print("Failed to get market cap information on {}",ticker.ticker["symbol"])
         continue
 #-------------------------------------------------------------------------------------------------------------------------------------------#
-    
+
+
 @app.route("/api")
 def hello_world():
     return f"<p>{utils.hello_world()}</p>"

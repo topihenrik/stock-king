@@ -6,7 +6,8 @@ env--install:
 	env/bin/pip install -r requirements.txt
 
 server:
-	flask run
+	export FLASK_APP=flaskr/app.py; \
+	flask run --debug
 
 test:
 	python -m "pytest"
