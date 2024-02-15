@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS ExchangeRates CASCADE;
 CREATE TABLE ExchangeRates(
-    to_currency TEXT NOT NULL,
     from_currency TEXT NOT NULL,
+    to_currency TEXT NOT NULL,
     ratio FLOAT NOT NULL,
     date DATE NOT NULL,
     PRIMARY KEY (to_currency, from_currency)
