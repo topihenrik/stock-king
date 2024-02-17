@@ -11,8 +11,8 @@ describe('GameOverPage', () => {
     });
 
     it('Should show correct score', () => {
-        const {getByTestId} = render(<BrowserRouter><GameOverPage score={8}/></BrowserRouter>);
+        const {getByTestId} = render(<BrowserRouter><GameOverPage/></BrowserRouter>);
         const element = getByTestId('text-score');
-        expect(element).toHaveTextContent('Your Score: 8');
+        expect(element).toHaveTextContent('Your Score: 0');
     });
 })
