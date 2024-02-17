@@ -96,8 +96,8 @@ def test_upsert_exchangerates_new_entry(utils, mock_exchangerates_initial):
 
     expected_data = [
         (
-            "USD",
             "EUR",
+            "USD",
             1 / mock_exchangerates_initial[0]["EUR"],
         )
     ]
@@ -124,8 +124,8 @@ def test_upsert_exchangerates_updated_market_cap(utils, mock_exchangerates_updat
 
     expected_data = [
         (
-            "USD",
             "EUR",
+            "USD",
             1,
         )
     ]

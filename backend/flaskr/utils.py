@@ -7,9 +7,7 @@ import yfinance as yahoo
 from forex_python.converter import CurrencyRates
 from dotenv import load_dotenv
 
-# os.environ.get("ENV")
-# ENV: dev test prod
-env = os.getenv("ENV", "dev")
+env = os.getenv("ENV")
 load_dotenv(f".env.{env}")
 
 

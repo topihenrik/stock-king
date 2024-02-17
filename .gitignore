@@ -4,6 +4,7 @@ env/
 __pycache__
 .pytest_cache
 yarn.lock
+.env
 .env.dev
 .env.test
 .env.prod
