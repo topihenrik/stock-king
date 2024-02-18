@@ -1,8 +1,10 @@
 import {Box, Button, Typography} from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useGameStore } from "../game-store";
 
-export default function GameOverPage({ highScore = 0, score = 0 }) {
+export default function GameOverPage({ highScore = 0 }) {
     const navigate = useNavigate();
+    const score = useGameStore((state) => state.score);
 
     const handleMainMenu = (event) => {
         navigate("/");

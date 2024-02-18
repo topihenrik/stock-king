@@ -1,13 +1,21 @@
 import { Box, ButtonBase, Paper, Typography } from "@mui/material";
 import { baseUri } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGameStore } from "../game-store.jsx";
 
 export default function GamePage({ highScore = 0 }) {
     const navigate = useNavigate();
-    let [score, setScore] = useState(0);
+    const score = useGameStore((state) => state.score);
+    const incrementScore = useGameStore((state) => state.incrementScore);
+    const resetScore = useGameStore((state) => state.resetScore);
     let [companies, setCompanies] = useState([]);
+
+    useEffect(() => {
+        // Reset score to 0 when the component mounts
+        resetScore();
+    }, []);
 
     const Panel = ({ id, companyName, marketCap, color, imageSrc }) => {
         // Function that handles game logic when a panel is clicked
@@ -17,7 +25,7 @@ export default function GamePage({ highScore = 0 }) {
             if (companies[0].id === clickedPanel.id) {
                 // Left panel was clicked (corresponds to company with index 0 in 'companies')
                 if (companies[0].marketCap >= companies[1].marketCap) {
-                    setScore(score += 1);
+                    incrementScore();
                     companies.splice(0, 1)
                 } else {
                     navigate("/gameover");
@@ -26,7 +34,7 @@ export default function GamePage({ highScore = 0 }) {
             } else if (companies[1].id === clickedPanel.id) {
                 // Right panel was clicked (corresponds to company with index 1 in 'companies')
                 if (companies[1].marketCap >= companies[0].marketCap) {
-                    setScore(score += 1);
+                    incrementScore();
                     companies.splice(0, 1)
                 } else {
                     navigate("/gameover");
