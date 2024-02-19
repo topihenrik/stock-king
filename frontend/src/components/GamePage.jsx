@@ -5,11 +5,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGameStore } from "../game-store.jsx";
 
-export default function GamePage({ highScore = 0 }) {
+export default function GamePage() {
     const navigate = useNavigate();
     const score = useGameStore((state) => state.score);
     const incrementScore = useGameStore((state) => state.incrementScore);
     const resetScore = useGameStore((state) => state.resetScore);
+    const highScore = useGameStore((state) => state.highScore);
+    const updateHighScore = useGameStore((state) => state.updateHighScore);
     let [companies, setCompanies] = useState([]);
 
     useEffect(() => {
@@ -26,6 +28,7 @@ export default function GamePage({ highScore = 0 }) {
                 // Left panel was clicked (corresponds to company with index 0 in 'companies')
                 if (companies[0].marketCap >= companies[1].marketCap) {
                     incrementScore();
+                    updateHighScore();
                     companies.splice(0, 1)
                 } else {
                     navigate("/gameover");
@@ -35,6 +38,7 @@ export default function GamePage({ highScore = 0 }) {
                 // Right panel was clicked (corresponds to company with index 1 in 'companies')
                 if (companies[1].marketCap >= companies[0].marketCap) {
                     incrementScore();
+                    updateHighScore();
                     companies.splice(0, 1)
                 } else {
                     navigate("/gameover");
