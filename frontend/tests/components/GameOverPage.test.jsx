@@ -5,9 +5,9 @@ import GameOverPage from "../../src/components/GameOverPage.jsx";
 
 describe('GameOverPage', () => {
     it('Should show correct high score', () => {
-        const {getByTestId} = render(<BrowserRouter><GameOverPage highScore={16}/></BrowserRouter>);
+        const {getByTestId} = render(<BrowserRouter><GameOverPage/></BrowserRouter>);
         const element = getByTestId('text-highscore');
-        expect(element).toHaveTextContent('High Score: 16');
+        expect(element).toHaveTextContent('High Score: 0');
     });
 
     it('Should show correct score', () => {

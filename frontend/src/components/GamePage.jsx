@@ -65,7 +65,7 @@ export default function GamePage() {
                 </Typography>
                 <Box component="img" src={imageSrc} sx={{ width: "400px", height: "400px", borderRadius: "16px" }}></Box>
                 <Typography variant="h4" sx={{ padding: "32px 0px 6px 0px" }}>Market Cap</Typography>
-                <Typography variant="h2">{marketCap}</Typography>
+                <Typography variant="h2" data-testid="market-cap">{marketCap}</Typography>
             </ButtonBase>
         )
     }
