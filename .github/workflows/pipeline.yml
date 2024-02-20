@@ -17,21 +17,54 @@ jobs:
           node-version: "18"
       - name: Install packages
         working-directory: frontend
-        run: yarn
+        run: yarn install
       - name: Test frontend
         working-directory: frontend
         run: yarn test
   backend-tests:
     name: Backend Tests
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: runner
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: StocKingTest
+          POSTGRES_HOST_AUTH_METHOD: "trust"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - uses: actions/setup-node@v4
         with:
           python-version: '3.8'
+      - name: Initialize testing database
+        working-directory: database
+        run: |
+          yarn install
+          node init-test-db.js
+      - name: Set environment variables
+        working-directory: backend
+        run: |
+          touch .env.test
+          echo DB_USER="runner" >> .env.test
+          echo DB_PASSWORD="postgres" >> .env.test
+          echo DB_HOST="localhost" >> .env.test
+          echo DB_PORT="5432" >> .env.test
+          echo DB_DATABASE="StocKingTest" >> .env.test
       - name: Install packages
         working-directory: backend
-        run: pip install -r requirements.txt
+        run: |
+          python3 --version
+          pip install setuptools
+          pip install -r requirements.txt
       - name: Test backend
         working-directory: backend
         run: python -m pytest
