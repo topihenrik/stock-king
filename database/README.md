@@ -1,6 +1,11 @@
-# database
+# Database
 
-To initialize a development version of the database in a linux environment, run the following commands:
+## Setup development database (Linux)
 
     sudo su postgres
     ./initdb.sh
+
+## Setup testing database (Linux)
+
+    sudo su postgres
+    ./init-test-db.sh

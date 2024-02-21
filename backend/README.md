@@ -4,6 +4,32 @@
 
     python 3.8
 
+Setup the databases based on the instructions in the `README.md` file located in the `/database` folder.
+
+## Environment variables
+
+`.env`
+```
+ENV=dev
+```
+
+`.env.dev`
+```
+DB_USER="stocking"
+DB_PASSWORD=""
+DB_HOST="localhost"
+DB_PORT="5432"
+DB_DATABASE="StocKing"
+```
+
+`.env.test`
+```
+DB_USER="stockingtest"
+DB_PASSWORD=""
+DB_HOST="localhost"
+DB_PORT="5432"
+DB_DATABASE="StocKingTest"
+```
 ## Windows
 
 Setup virtual environment
