@@ -175,3 +175,12 @@ def upsert_exchange_rates(data):
                 # Execute the query
                 cursor.execute(query, (currency, "USD", rate, current_date))
             conn.commit()
+
+def getCompanies(excludedTickers):
+    query = "SELECT * FROM Company WHERE Ticker != ANY(%s) LIMIT 10;"
+    with connect_to_db() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query,excludedTickers)
+            companies = cursor.fetchall()
+            cursor.close()
+            return companies
