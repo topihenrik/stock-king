@@ -31,9 +31,8 @@ def test_function():
 @app.post("/api/getcompanies")
 def getCompanies():
     requestBody = request.form
-    excludedTickers = requestBody.getlist("excluded_tickers")
+    excludedTickers = requestBody.get("excluded_tickers").split(",")
     companies = utils.getCompanies(excludedTickers)
-    #TODO: get exchange rates, apply calculations to market caps.
     return companies
 
 @app.route("/", defaults={"path": ""})

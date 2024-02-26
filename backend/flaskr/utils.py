@@ -32,11 +32,11 @@ def connect_to_db():
     """
     try:
         connection = psycopg2.connect(
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            database=os.getenv("DB_DATABASE"),
+            user=os.getenv("DB_USER").replace('"',''),
+            password=os.getenv("DB_PASSWORD").replace('"',''),
+            host=os.getenv("DB_HOST").replace('"',''),
+            port=int(os.getenv("DB_PORT").replace('"','')),
+            database=os.getenv("DB_DATABASE").replace('"',''),
         )
 
         print("Connected to Database")
@@ -177,10 +177,10 @@ def upsert_exchange_rates(data):
             conn.commit()
 
 def getCompanies(excludedTickers):
-    query = "SELECT * FROM Company WHERE Ticker != ANY(%s) LIMIT 10;"
+    query = "SELECT * FROM company WHERE NOT ticker = ANY(%s) LIMIT 10;"
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
-            cursor.execute(query,excludedTickers)
+            cursor.execute(query, (excludedTickers,))
             companies = cursor.fetchall()
             cursor.close()
             return companies
