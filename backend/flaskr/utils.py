@@ -4,6 +4,10 @@ from psycopg2 import Error, sql
 from datetime import date
 import yfinance as yahoo
 from forex_python.converter import CurrencyRates
+from dotenv import load_dotenv
+
+env = os.getenv("ENV")
+load_dotenv(f".env.{env}")
 
 
 def lorem_ipsum():
