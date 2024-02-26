@@ -28,11 +28,13 @@ def lorem_ipsum():
 def test_function():
     return True
 
-@app.post("/api/getcompanies")
+@app.post("/api/get_companies")
 def getCompanies():
     requestBody = request.form
-    excludedTickers = requestBody.get("excluded_tickers").split(",")
-    companies = utils.getCompanies(excludedTickers)
+    excludedTickers = requestBody.get("excluded_tickers").upper().split(",")
+    currency = requestBody.get('currency')
+    companies = utils.get_more_companies(excludedTickers,10)
+    companies = utils.convertCompanyDataToCurrency(companies,currency)
     return companies
 
 @app.route("/", defaults={"path": ""})

@@ -176,11 +176,85 @@ def upsert_exchange_rates(data):
                 cursor.execute(query, (currency, "USD", rate, current_date))
             conn.commit()
 
-def getCompanies(excludedTickers):
-    query = "SELECT * FROM company WHERE NOT ticker = ANY(%s) LIMIT 10;"
+def get_more_companies(excludedTickers, num_companies):
+    """
+    Takes a comma-separated string of tickers (Eg. "AAPL,MSFT,KNE") and an integer of how many companies to return
+    Connects to database and returns a dictionary containing all company data from 10 companies that don't have one of the excluded tickers 
+    """
+    query = "SELECT * FROM company WHERE NOT ticker = ANY(%s) LIMIT %s;"
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
-            cursor.execute(query, (excludedTickers,))
-            companies = cursor.fetchall()
+            cursor.execute(query, (excludedTickers,num_companies,))
+            db_result = cursor.fetchall()
             cursor.close()
-            return companies
+    return company_db_result_to_dict(db_result)
+
+def company_db_result_to_dict(list_of_companies):
+    """
+    Takes a psycopg2 database result of company data (list of tuples) and turns it into a dictionary for easier use
+    """
+    list_of_dicts = []
+    for company in list_of_companies:
+        dictionary = {}
+        dictionary["cid"] = company[0]
+        dictionary["ticker"] = company[1]
+        dictionary["name"] = company[2]
+        dictionary["market_cap"] = company[3]
+        dictionary["currency"] = company[4]
+        dictionary["date"] = company[5]
+        dictionary["sector"] = company[6]
+        list_of_dicts.append(dictionary)
+    return list_of_dicts
+
+def get_exchange_rates_from_database():
+    """
+    Connects to database and returns a list of tuples representing the exchange rates in the database. 
+    """
+    query = "SELECT * FROM exchangerates;"
+    with connect_to_db() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            exchange_rates = cursor.fetchall()
+            cursor.close()
+    return exchange_rate_db_result_to_dict(exchange_rates)
+
+def exchange_rate_db_result_to_dict(list_of_exchange_rates):
+    """
+    Takes a psycopg2 database result of exchange rate data (list of tuples) and turns it into a dictionary for easier use
+    """
+    list_of_dicts = []
+    for exchange_rate in list_of_exchange_rates:
+        dictionary = {}
+        dictionary["from_currency"] = exchange_rate[0]
+        dictionary["to_currency"] = exchange_rate[1]
+        dictionary["ratio"] = exchange_rate[2]
+        dictionary["date"] = exchange_rate[3]
+        list_of_dicts.append(dictionary)
+    return list_of_dicts
+        
+def convertCompanyDataToCurrency(companies,game_currency):
+    """
+    Takes a dictionary containing all game data on companies and a string representation of desired currency eg. 'EUR' or 'USD'
+    Gets exchange rate data from database and replaces the market cap into the desired currency
+    Returns a list of tuples containing all game data on companies with updated market cap and currency information
+    """
+    exchange_rates = get_exchange_rates_from_database()
+    for company in companies:
+        reporting_currency = company.get('currency')
+        if(reporting_currency != game_currency):
+            for exchange_rate in exchange_rates:
+                """
+                If from_currency is the same currency as the company's reporting currency, multiply their market cap by the ratio 
+                """
+                if(exchange_rate.get('from_currency') == reporting_currency and exchange_rate.get('to_currency') == game_currency):
+                    converted_market_cap = round(company.get("market_cap")*(exchange_rate.get("ratio")))
+                    company.update({"market_cap":converted_market_cap})
+                    break
+                """
+                If to_currency is the same currency as the company's reporting currency, divide their market cap by the ratio 
+                """
+                if(exchange_rate.get('to_currency') == reporting_currency and exchange_rate.get('from_currency') == game_currency):
+                    converted_market_cap = round(company.get("market_cap")/(exchange_rate.get("ratio")))
+                    company.update({"market_cap":converted_market_cap})
+                    break
+    return companies
