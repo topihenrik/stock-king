@@ -232,14 +232,14 @@ def get_companies_from_database(
             company_data = cursor.fetchall()
 
             # TODO: Another query here to fetch the exchange rates and then update those to the final
-            # list of companies
 
+            # List of companies
             company_array = [
                 {
                     "ticker": company[1],
                     "name": company[2],
                     "market_cap": company[3],
-                    "currency": company[4],  # make currency convertion here
+                    "currency": company[4],  # TODO: make currency convertion here
                     "date": company[5],
                     "sector": company[6],
                     "website": company[7],

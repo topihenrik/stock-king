@@ -1,4 +1,11 @@
-from flask import Flask, render_template, jsonify, send_from_directory
+from flask import (
+    Flask,
+    render_template,
+    jsonify,
+    send_from_directory,
+    request,
+    Response,
+)
 from flask_cors import CORS
 from flaskr import utils
 from flaskr import tickers
@@ -29,13 +36,6 @@ def test_function():
     return True
 
 
-# Simple endpoint to receive the market cap of a random company from the server
-# @app.route('/api/randomCompany')
-# def getMarketCapFromRandomCompany():
-#     companyData = random.choice(list(stock_data.values()))
-#     return str(companyData)
-
-
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>", methods=["GET"])
 def catch_all(path):
@@ -45,6 +45,20 @@ def catch_all(path):
         else:
             return send_from_directory(app.static_folder, "index.html")
     return ""
+
+
+@app.get("/api/get_companies")
+def get_companies():
+    if not request.is_json:
+        return Response(
+            "Bad mimetype, request body should be application/json", status=415
+        )
+
+    data = request.get_json()
+
+    companies = utils.get_companies_from_database(
+        data.count, data.excluded_companies, data.wanted_categories
+    )
 
 
 # TODO:This needs to be run daily to update stock data into database. Maybe it can be scheduled in fly.io via cron?
