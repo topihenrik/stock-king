@@ -1,10 +1,15 @@
 import os
-os.environ["ENV"] = "test"
 import pytest
 from flaskr import app
 from flaskr import utils as uts
 from datetime import date
 from dotenv import load_dotenv
+
+os.environ["ENV"] = "test"
+
+env = os.getenv("ENV")
+load_dotenv(f".env.{env}")
+
 
 @pytest.fixture()
 def server():
@@ -42,6 +47,7 @@ def mock_tickers_initial():
             "currency": "USD",
             "date": date(2024, 2, 15),
             "sector": "Technology",
+            "website": "https://www.apple.com/",
         }
     ]
 
@@ -58,6 +64,7 @@ def mock_tickers_updated():
             "currency": "USD",
             "date": date(2024, 2, 16),
             "sector": "Technology",
+            "website": "https://www.appleapple.com/",
         }
     ]
 

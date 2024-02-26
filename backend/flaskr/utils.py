@@ -1,14 +1,9 @@
 import os
 import psycopg2
 from psycopg2 import Error, sql
-import pandas as pd
 from datetime import date
 import yfinance as yahoo
 from forex_python.converter import CurrencyRates
-from dotenv import load_dotenv
-
-env = os.getenv("ENV")
-load_dotenv(f".env.{env}")
 
 
 def lorem_ipsum():
@@ -64,6 +59,7 @@ def process_stock_data(tickers):
                     "currency": ticker.info["financialCurrency"],
                     "date": current_date,
                     "sector": ticker.info["sector"],
+                    "website": ticker.info["website"],
                 }
             )
         except KeyError:
@@ -95,12 +91,13 @@ def upsert_stock_data(data):
                 # Construct SQL query
                 query = sql.SQL(
                     """
-                    INSERT INTO Company (ticker, name, market_cap, currency, date, sector)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO Company (ticker, name, market_cap, currency, date, sector, website)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (ticker) DO UPDATE
                     SET market_cap = EXCLUDED.market_cap,
                         date = EXCLUDED.date,
-                        currency = EXCLUDED.currency;
+                        currency = EXCLUDED.currency,
+                        website = EXCLUDED.website;
                 """
                 )
                 # Execute the query
@@ -113,6 +110,7 @@ def upsert_stock_data(data):
                         row["currency"],
                         row["date"],
                         row["sector"],
+                        row["website"],
                     ),
                 )
 
