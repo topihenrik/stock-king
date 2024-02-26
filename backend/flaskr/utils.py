@@ -177,3 +177,79 @@ def upsert_exchange_rates(data):
                 # Execute the query
                 cursor.execute(query, (currency, "USD", rate, current_date))
             conn.commit()
+
+
+def get_companies_from_database(
+    count=10, exclude_companies=[], wanted_categories=[], wanted_currency="USD"
+):
+    """
+    Function for getting companies from database
+
+    Params:
+            count:              How many companies are needed
+                                (int)
+            exclude_companies:  Companies that needs to be excluded from search
+                                (array of tickers)
+            wanted_categories:   Companies that needs to appear in search.
+                                If only these companies are needed, set the count to be exactly the amount of items in this array.
+                                (array of tickers)
+            wanted_currency:    Currency that market_cap value needs to be in
+                                (str)
+    Returns:
+            Array of dictionaries of company data
+    """
+    with connect_to_db() as conn:
+        with conn.cursor() as cursor:
+
+            # Construct SQL query
+            query_string = f"SELECT * FROM Company"
+
+            if len(exclude_companies) != 0:
+                query_string += f" WHERE ticker NOT IN ("
+                for ticker in exclude_companies:
+                    query_string += ticker
+                query_string += ")"
+
+            if len(exclude_companies) != 0 and len(wanted_categories) != 0:
+                query_string += f" AND sector IN ("
+                for sector in wanted_categories:
+                    query_string += sector
+                query_string += ")"
+
+            if len(exclude_companies) == 0 and len(wanted_categories) != 0:
+                query_string += f" WHERE sector IN ("
+                for sector in wanted_categories:
+                    query_string += sector
+                query_string += ")"
+
+            query_string += f" ORDER BY RANDOM() LIMIT {count};"
+
+            query = sql.SQL(query_string)
+
+            # Execute the query
+            cursor.execute(query)
+
+            company_data = cursor.fetchall()
+
+            # TODO: Another query here to fetch the exchange rates and then update those to the final
+            # list of companies
+
+            company_array = [
+                {
+                    "ticker": company[1],
+                    "name": company[2],
+                    "market_cap": company[3],
+                    "currency": company[4],  # make currency convertion here
+                    "date": company[5],
+                    "sector": company[6],
+                    "website": company[7],
+                }
+                for company in company_data
+            ]
+
+    breakpoint()
+    return company_array
+
+
+upsert_stock_data(get_stock_data("AAPL AMD GOOGL"))
+get_companies_from_database()
