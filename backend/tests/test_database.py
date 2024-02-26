@@ -27,7 +27,8 @@ def test_upsert_stock_data_new_entry(utils, mock_tickers_initial):
             result_count = cursor.fetchone()
 
     cleaned_result = [
-        (item[1], item[2], item[3], item[4], item[5], item[6]) for item in result_data
+        (item[1], item[2], item[3], item[4], item[5], item[6], item[7])
+        for item in result_data
     ]
 
     expected_data = [
@@ -38,6 +39,7 @@ def test_upsert_stock_data_new_entry(utils, mock_tickers_initial):
             "USD",
             datetime.date(2024, 2, 15),
             "Technology",
+            "https://www.apple.com/",
         )
     ]
     expected_count = (1,)
@@ -61,7 +63,8 @@ def test_upsert_stock_data_updated_market_cap(utils, mock_tickers_updated):
             result_count = cursor.fetchone()
 
     cleaned_result = [
-        (item[1], item[2], item[3], item[4], item[5], item[6]) for item in result_data
+        (item[1], item[2], item[3], item[4], item[5], item[6], item[7])
+        for item in result_data
     ]
 
     expected_data = [
@@ -72,6 +75,7 @@ def test_upsert_stock_data_updated_market_cap(utils, mock_tickers_updated):
             "USD",
             datetime.date(2024, 2, 16),
             "Technology",
+            "https://www.appleapple.com/",
         )
     ]
     expected_count = (1,)

@@ -15,5 +15,6 @@ CREATE TABLE Company(
     market_cap BIGINT NOT NULL,
     currency TEXT NOT NULL,
     date DATE NOT NULL,
-    sector TEXT NOT NULL
+    sector TEXT NOT NULL,
+    website TEXT
 );
