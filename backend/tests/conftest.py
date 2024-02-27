@@ -42,8 +42,107 @@ def mock_tickers_initial():
             "currency": "USD",
             "date": date(2024, 2, 15),
             "sector": "Technology",
+            "website": "https://www.apple.com/"
         }
     ]
+
+    return tickers_data
+
+@pytest.fixture()
+def mock_test_database_tickers():
+    tickers_data = [
+        {
+            "ticker": "AAPL",
+            "name": "Apple Inc.",
+            "market_cap": 123,
+            "currency": "USD",
+            "date": date(2024, 2, 15),
+            "sector": "Technology",
+            "website": "https://www.apple.com/"
+        },
+        {
+            "ticker": "GOOGL",
+            "name": "Alphabet Inc.",
+            "market_cap": 456,
+            "currency": "USD",
+            "date": date(2024, 2, 15),
+            "sector": "Technology",
+            "website": "https://abc.xyz/"
+        },
+        {
+            "ticker": "MSFT",
+            "name": "Microsoft Corporation",
+            "market_cap": 789,
+            "currency": "USD",
+            "date": date(2024, 2, 15),
+            "sector": "Technology",
+            "website": "https://www.microsoft.com/"
+        },
+        {
+            "ticker": "AMZN",
+            "name": "Amazon.com Inc.",
+            "market_cap": 1011,
+            "currency": "USD",
+            "date": date(2024, 2, 15),
+            "sector": "Retail",
+            "website": "https://www.amazon.com/"
+        },
+        {
+            "ticker": "TSLA",
+            "name": "Tesla Inc.",
+            "market_cap": 567,
+            "currency": "USD",
+            "date": date(2024, 2, 15),
+            "sector": "Automotive",
+            "website": "https://www.tesla.com/"
+        },
+        {
+            "ticker": "FB",
+            "name": "Meta Platforms, Inc.",
+            "market_cap": 234,
+            "currency": "USD",
+            "date": date(2024, 2, 15),
+            "sector": "Technology",
+            "website": "https://www.meta.com/"
+        },
+        {
+            "ticker": "JPM",
+            "name": "JPMorgan Chase & Co.",
+            "market_cap": 345,
+            "currency": "EUR",
+            "date": date(2024, 2, 15),
+            "sector": "Finance",
+            "website": "https://www.jpmorganchase.com/"
+        },
+        {
+            "ticker": "V",
+            "name": "Visa Inc.",
+            "market_cap": 678,
+            "currency": "EUR",
+            "date": date(2024, 2, 15),
+            "sector": "Finance",
+            "website": "https://www.visa.com/"
+        },
+        {
+            "ticker": "DIS",
+            "name": "The Walt Disney Company",
+            "market_cap": 890,
+            "currency": "EUR",
+            "date": date(2024, 2, 15),
+            "sector": "Entertainment",
+            "website": "https://www.disney.com/"
+        },
+        {
+            "ticker": "IBM",
+            "name": "International Business Machines Corporation",
+            "market_cap": 1234,
+            "currency": "EUR",
+            "date": date(2024, 2, 15),
+            "sector": "Technology",
+            "website": "https://www.ibm.com/"
+        }
+        ]
+
 
     return tickers_data
 
@@ -58,6 +157,7 @@ def mock_tickers_updated():
             "currency": "USD",
             "date": date(2024, 2, 16),
             "sector": "Technology",
+            "website": "https://www.appleapple.com/"
         }
     ]
 

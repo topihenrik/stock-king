@@ -28,14 +28,44 @@ def lorem_ipsum():
 def test_function():
     return True
 
+
 @app.post("/api/get_companies")
-def getCompanies():
-    requestBody = request.form
-    excludedTickers = requestBody.get("excluded_tickers").upper().split(",")
-    currency = requestBody.get('currency')
-    companies = utils.get_more_companies(excludedTickers,10)
-    companies = utils.convertCompanyDataToCurrency(companies,currency)
+def get_companies():
+    """
+    Endpoint for getting company data.
+    None of the params are required when making a request since we have default values for params.
+    
+    Request params in json format:
+        excluded_tickers:   Array of tickers (string) that need to be excluded from the result.
+                            Default: []
+                            Example: ["APPL", "GOOGL"]
+                            
+        wanted_categories:  Array of the only categories/sectors (string) that need be in the result.
+                            Default: []
+                            Example: ["machinery", "technology"]
+                            
+        currency:           Currency code as string.
+                            Default: "USD"
+                            Example: "EUR"
+        
+        count:              How many companies need to be in the result (int).
+                            Default: 10
+                            Example: 1
+    """
+    
+    # Get params from request body
+    requestBody = request.get_json()
+    exclude_tickers = requestBody.get("excluded_tickers") if requestBody.get("excluded_tickers") else []
+    wanted_categories = requestBody.get("wanted_categories") if requestBody.get("wanted_categories") else []
+    count = int(requestBody.get("count") or 10)
+    currency = requestBody.get('currency') if requestBody.get("currency") else "USD"
+    
+    # Get company data from database
+    companies = utils.get_companies_from_database(exclude_tickers, wanted_categories, count)
+    companies = utils.convert_marketcaps_currencies(companies, currency)
+    
     return companies
+
 
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>", methods=["GET"])
