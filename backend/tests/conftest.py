@@ -1,10 +1,15 @@
 import os
-os.environ["ENV"] = "test"
 import pytest
 from flaskr import app
 from flaskr import utils as uts
 from datetime import date
 from dotenv import load_dotenv
+
+os.environ["ENV"] = "test"
+
+env = os.getenv("ENV")
+load_dotenv(f".env.{env}")
+
 
 @pytest.fixture()
 def server():
