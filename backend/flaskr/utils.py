@@ -32,11 +32,11 @@ def connect_to_db():
     """
     try:
         connection = psycopg2.connect(
-            user=os.getenv("DB_USER").replace('"',''),
-            password=os.getenv("DB_PASSWORD").replace('"',''),
-            host=os.getenv("DB_HOST").replace('"',''),
-            port=int(os.getenv("DB_PORT").replace('"','')),
-            database=os.getenv("DB_DATABASE").replace('"',''),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            port=os.getenv("DB_PORT"),
+            database=os.getenv("DB_DATABASE"),
         )
 
         print("Connected to Database")
