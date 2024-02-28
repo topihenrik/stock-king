@@ -34,36 +34,62 @@ def get_companies():
     """
     Endpoint for getting company data.
     None of the params are required when making a request since we have default values for params.
-    
+
     Request params in json format:
         excluded_tickers:   Array of tickers (string) that need to be excluded from the result.
                             Default: []
                             Example: ["APPL", "GOOGL"]
-                            
+
         wanted_categories:  Array of the only categories/sectors (string) that need be in the result.
                             Default: []
                             Example: ["machinery", "technology"]
-                            
+
         currency:           Currency code as string.
                             Default: "USD"
                             Example: "EUR"
-        
+
         count:              How many companies need to be in the result (int).
                             Default: 10
                             Example: 1
+
+    Returns:
+        Array of dictionaries of company data.
+        Example:
+        [
+            {
+                "ticker" : AAPL
+                "name" : Apple
+                "market_cap" : 123123123
+                "currency" : "USD"
+                "date" : "Mon, 26 Feb 2024 00:00:00 GMT"
+                "sector" : "technology"
+                "website" : "https://www.apple.com"
+                "img_url" : "https://logo.clearbit.com/https://www.apple.com"
+            }
+        ]
     """
-    
+
     # Get params from request body
     requestBody = request.get_json()
-    exclude_tickers = requestBody.get("excluded_tickers") if requestBody.get("excluded_tickers") else []
-    wanted_categories = requestBody.get("wanted_categories") if requestBody.get("wanted_categories") else []
+    exclude_tickers = (
+        requestBody.get("excluded_tickers")
+        if requestBody.get("excluded_tickers")
+        else []
+    )
+    wanted_categories = (
+        requestBody.get("wanted_categories")
+        if requestBody.get("wanted_categories")
+        else []
+    )
     count = int(requestBody.get("count") or 10)
-    currency = requestBody.get('currency') if requestBody.get("currency") else "USD"
-    
+    currency = requestBody.get("currency") if requestBody.get("currency") else "USD"
+
     # Get company data from database
-    companies = utils.get_companies_from_database(exclude_tickers, wanted_categories, count)
+    companies = utils.get_companies_from_database(
+        exclude_tickers, wanted_categories, count
+    )
     companies = utils.convert_marketcaps_currencies(companies, currency)
-    
+
     return companies
 
 
