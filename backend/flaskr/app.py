@@ -14,9 +14,10 @@ app = Flask(__name__, static_folder="static", template_folder="static")
 CORS(app, resources={r"/*": {"origins": ["*"]}})
 
 
-@app.route("/api")
-def hello_world():
-    return f"<p>{utils.hello_world()}</p>"
+# Update stock data
+# NOTICE: Company data update will be updated with more sophisticated method in the future
+if (os.getenv('ENV') != "test"):
+    utils.initial_data_update()
 
 
 @app.route("/api/lorem_ipsum")

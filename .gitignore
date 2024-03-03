@@ -5,6 +5,6 @@ __pycache__
 .pytest_cache
 yarn.lock
 .env
-.env.dev
+backend/flaskr/.env.dev
 .env.test
 .env.prod

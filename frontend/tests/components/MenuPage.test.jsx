@@ -1,29 +1,44 @@
 import { describe, it, expect } from "vitest";
-import { render, fireEvent } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import {act} from "@testing-library/react";
+import {setupWithProviders} from "../test-utils.jsx";
 import MenuPage from "../../src/components/MenuPage.jsx";
 
 describe('MenuPage', () => {
-    it('Should show correct text on dropdown menu', () => {
-        const {getByTestId} = render(<BrowserRouter><MenuPage/></BrowserRouter>);
-        const element = getByTestId('category-btn');
-        expect(element).toHaveTextContent('Choose category');
-    });
+    it('Should show correct text on dropdown menu', async () => {
+        const {getByTestId} = setupWithProviders(<MenuPage/>);
 
-    it('Should update text after selecting category from dropdown menu', () => {
-        const { getByTestId } = render(<BrowserRouter><MenuPage /></BrowserRouter>);
         const dropdownButton = getByTestId('category-btn');
-        fireEvent.click(dropdownButton);
-        fireEvent.click(getByTestId('category1'));
-        const updatedText = getByTestId('category-btn').textContent;
-        expect(updatedText).toContain('Category 1');
+
+        expect(dropdownButton).toHaveTextContent('Choose category');
     });
 
-    test('Should go to game view after pressing start game button', async () => {
-        const { getByTestId } = render(<BrowserRouter><MenuPage /></BrowserRouter>);
-        const startGameButton = getByTestId('start-btn');
-        startGameButton.click();
-        await new Promise((resolve) => setTimeout(resolve, 0));
+    it('Should update text after selecting category from dropdown menu', async () => {
+        const { findByTestId, user } = setupWithProviders(<MenuPage/>);
+
+        const dropdownButton = await findByTestId('category-btn');
+
+        await act(async () => {
+            await user.click(dropdownButton);
+        })
+
+        const category1 = await findByTestId('category1');
+
+        await act(async () => {
+            await user.click(category1);
+        });
+
+        expect(dropdownButton).toHaveTextContent('Category 1');
+    });
+
+    it('Should go to game view after pressing start game button', async () => {
+        const { findByTestId, user } = setupWithProviders(<MenuPage/>);
+
+        const startGameButton = await findByTestId('start-btn');
+
+        await act(async () => {
+            await user.click(startGameButton)
+        });
+
         expect(window.location.pathname).toBe('/game');
     });
 })

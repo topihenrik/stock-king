@@ -5,7 +5,10 @@ from datetime import date
 import yfinance as yahoo
 from forex_python.converter import CurrencyRates
 from dotenv import load_dotenv
+from random import sample
+from flaskr import tickers
 
+TICKERS = tickers.TICKERS
 
 def lorem_ipsum():
     data = {
@@ -13,6 +16,15 @@ def lorem_ipsum():
     }
     return data
 
+def initial_data_update():
+    random_tickers = sample(TICKERS, 30)
+    string_tickers = ' '.join(random_tickers)
+    upsert_stock_data(get_stock_data(string_tickers))
+
+def clear_companies():
+    with connect_to_db() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("TRUNCATE Company;")
 
 def connect_to_db():
     """

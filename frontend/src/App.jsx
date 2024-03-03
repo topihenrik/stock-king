@@ -14,7 +14,6 @@ export default function App() {
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/test" element={<TestPage/>}/> {/*FEEL FREE TO REMOVE THIS ROUTE*/}
                         <Route path="/" element={<MenuPage/>}/>
                         <Route path="/game" element={<GamePage/>}/>
                         <Route path="/gameover" element={<GameOverPage/>}/>
