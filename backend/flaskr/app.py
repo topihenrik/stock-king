@@ -16,10 +16,6 @@ CORS(app, resources={r"/*": {"origins": ["*"]}})
 if (os.getenv('ENV') != "test"):
     utils.initial_data_update()
 
-@app.route("/api/lorem_ipsum")
-def lorem_ipsum():
-    return jsonify(utils.lorem_ipsum())
-
 @app.post("/api/test")
 def test_function():
     return True
