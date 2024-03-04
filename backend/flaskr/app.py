@@ -3,31 +3,22 @@ from flask_cors import CORS
 from flaskr import utils
 from flaskr import tickers
 import yfinance as yahoo
-
 import random
 import os
-
 
 TICKERS = tickers.TICKERS
 
 app = Flask(__name__, static_folder="static", template_folder="static")
 CORS(app, resources={r"/*": {"origins": ["*"]}})
 
-
-@app.route("/api")
-def hello_world():
-    return f"<p>{utils.hello_world()}</p>"
-
-
-@app.route("/api/lorem_ipsum")
-def lorem_ipsum():
-    return jsonify(utils.lorem_ipsum())
-
+# Update stock data
+# NOTICE: Company data should be updated with more sophisticated method in the future
+if (os.getenv('ENV') != "test"):
+    utils.initial_data_update()
 
 @app.post("/api/test")
 def test_function():
     return True
-
 
 @app.post("/api/get_companies")
 def get_companies():
@@ -92,7 +83,6 @@ def get_companies():
 
     return companies
 
-
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>", methods=["GET"])
 def catch_all(path):
@@ -102,7 +92,6 @@ def catch_all(path):
         else:
             return send_from_directory(app.static_folder, "index.html")
     return ""
-
 
 # TODO:This needs to be run daily to update stock data into database. Maybe it can be scheduled in fly.io via cron?
 # Expensive method. Gets data from Yahoo Finance for all companies defined in TICKERS constant, then makes an update to database. Processes about 5 companies per second, so cannot be used in real-time.
@@ -116,7 +105,6 @@ def updateStockDataToDB():
         except KeyError:
             continue
     return
-
 
 # This needs to be called before the game can start. We might want to split it into multiple smaller calls to database to make it scalable since asking for all data from database everytime anyone opens the game seems dumb.
 def loadStockDataFromDB():

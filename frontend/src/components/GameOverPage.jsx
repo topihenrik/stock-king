@@ -1,6 +1,6 @@
 import {Box, Button, Typography} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useGameStore } from "../game-store";
+import { useGameStore } from "../stores/game-store.jsx";
 
 export default function GameOverPage() {
     const navigate = useNavigate();

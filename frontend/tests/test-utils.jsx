@@ -1,19 +1,17 @@
 import {render} from "@testing-library/react";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {BrowserRouter} from "react-router-dom";
+import userEvent from "@testing-library/user-event";
 
-export const renderWithProvider = (node) => {
-    const queryClient = new QueryClient({
-        defaultOptions: {
-            queries: {
-                retry: false,
-            },
-        },
-    });
+export const setupWithProviders = (node) => {
+    const queryClient = new QueryClient();
     const wrapper = ({ children }) => (
-        <QueryClientProvider client={queryClient}>
-            {children}
-        </QueryClientProvider>
+        <BrowserRouter>
+            <QueryClientProvider client={queryClient}>
+                {children}
+            </QueryClientProvider>
+        </BrowserRouter>
     );
 
-    return render(node, {wrapper});
+    return { user: userEvent.setup(), ...render(node, {wrapper})};
 };

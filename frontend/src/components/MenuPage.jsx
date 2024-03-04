@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu, MenuItem, Button, Box } from '@mui/material';
-import { ArrowDropDown } from '@mui/icons-material'
+import { ArrowDropDown } from '@mui/icons-material';
+import Logo from '../../public/logo.png';
 
 export default function MenuPage() {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -38,9 +39,8 @@ export default function MenuPage() {
             paddingTop: '10%', 
             boxSizing: 'border-box',
         }}>
-
             <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", gap: "16px"}}>
-            <Box component="img" src='../../logo.png' sx={{ width: "100%", maxWidth: "200px", height: "auto" }} />
+            <Box component="img" src={Logo} sx={{ width: "100%", maxWidth: "200px", height: "auto" }} />
                 <Button variant="contained" data-testid="start-btn" onClick={startGame}>Start game</Button>
                 <Button variant="contained" data-testid="category-btn" onClick={handleClick} endIcon={<ArrowDropDown />}>{selectedCategory || "Choose category"}</Button>
                 <Menu
@@ -61,7 +61,6 @@ export default function MenuPage() {
                     <MenuItem onClick={() => handleCategorySelect('Category 3')} >Category 3</MenuItem>
                 </Menu>
             </Box>
-
         </Box>
     );
 }

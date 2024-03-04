@@ -8,16 +8,3 @@ html, body {
 body, button {
     font-family: "Inter";
 }
-
-.home-container {
-    display: flex;
-    flex-direction: column;
-    width: 256px;
-    margin: 20vh auto auto;
-    justify-content: center;
-    align-items: center;
-}
-
-.lorem-ipsum {
-    text-align: center;
-}
