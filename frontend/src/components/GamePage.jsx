@@ -94,7 +94,7 @@ export default function GamePage() {
                         excluded_tickers: [],
                         wanted_categories: [],
                         currency: "USD",
-                        count: 10
+                        count: 20
                     })
                 }
             ).then((res) =>
