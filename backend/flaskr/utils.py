@@ -69,14 +69,14 @@ def process_stock_data(tickers):
                     "ticker": ticker.info["symbol"],
                     "name": ticker.info["shortName"],
                     "market_cap": ticker.info["marketCap"],
-                    "currency": ticker.info["financialCurrency"],
+                    "currency": ticker.info["currency"],
                     "date": current_date,
                     "sector": ticker.info["sector"],
                     "website": ticker.info["website"],
                 }
             )
-        except KeyError:
-            print("Failed to get market cap information on", ticker.info["symbol"])
+        except:
+            print(f"Failed to get company data on {ticker.ticker}")
             continue
 
     return stock_data
