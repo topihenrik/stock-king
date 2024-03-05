@@ -4,21 +4,24 @@ from psycopg2 import Error, sql
 from datetime import date
 import yfinance as yahoo
 from forex_python.converter import CurrencyRates
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from random import sample
 from flaskr import tickers
 
 TICKERS = tickers.TICKERS
 
+
 def initial_data_update():
     random_tickers = sample(TICKERS, 30)
-    string_tickers = ' '.join(random_tickers)
+    string_tickers = " ".join(random_tickers)
     upsert_stock_data(get_stock_data(string_tickers))
+
 
 def clear_companies():
     with connect_to_db() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute("TRUNCATE Company;")
+        with conn.cursor() as cursor:
+            cursor.execute("TRUNCATE Company;")
+
 
 def connect_to_db():
     """
@@ -32,6 +35,7 @@ def connect_to_db():
     cursor.fetchall()\n
     cursor.close()
     """
+    load_dotenv(find_dotenv())
     env = os.getenv("ENV")
     load_dotenv(f".env.{env}")
     try:
@@ -72,7 +76,7 @@ def process_stock_data(tickers):
                 }
             )
         except KeyError:
-            print("Failed to get market cap information on {}", ticker.ticker["symbol"])
+            print("Failed to get market cap information on", ticker.info["symbol"])
             continue
 
     return stock_data

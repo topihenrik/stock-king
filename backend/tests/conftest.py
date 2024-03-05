@@ -1,13 +1,14 @@
 import os
+
 os.environ["ENV"] = "test"
 import pytest
 from flaskr import app
 from flaskr import utils as uts
 from datetime import date
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 env = os.getenv("ENV")
-load_dotenv(f".env.{env}")
+load_dotenv(find_dotenv(f".env.{env}"))
 
 
 @pytest.fixture()
@@ -46,11 +47,12 @@ def mock_tickers_initial():
             "currency": "USD",
             "date": date(2024, 2, 15),
             "sector": "Technology",
-            "website": "https://www.apple.com/"
+            "website": "https://www.apple.com/",
         }
     ]
 
     return tickers_data
+
 
 @pytest.fixture()
 def mock_test_database_tickers():
@@ -62,7 +64,7 @@ def mock_test_database_tickers():
             "currency": "USD",
             "date": date(2024, 2, 15),
             "sector": "Technology",
-            "website": "https://www.apple.com/"
+            "website": "https://www.apple.com/",
         },
         {
             "ticker": "GOOGL",
@@ -71,7 +73,7 @@ def mock_test_database_tickers():
             "currency": "USD",
             "date": date(2024, 2, 15),
             "sector": "Technology",
-            "website": "https://abc.xyz/"
+            "website": "https://abc.xyz/",
         },
         {
             "ticker": "MSFT",
@@ -80,7 +82,7 @@ def mock_test_database_tickers():
             "currency": "USD",
             "date": date(2024, 2, 15),
             "sector": "Technology",
-            "website": "https://www.microsoft.com/"
+            "website": "https://www.microsoft.com/",
         },
         {
             "ticker": "AMZN",
@@ -89,7 +91,7 @@ def mock_test_database_tickers():
             "currency": "USD",
             "date": date(2024, 2, 15),
             "sector": "Retail",
-            "website": "https://www.amazon.com/"
+            "website": "https://www.amazon.com/",
         },
         {
             "ticker": "TSLA",
@@ -98,7 +100,7 @@ def mock_test_database_tickers():
             "currency": "USD",
             "date": date(2024, 2, 15),
             "sector": "Automotive",
-            "website": "https://www.tesla.com/"
+            "website": "https://www.tesla.com/",
         },
         {
             "ticker": "FB",
@@ -107,7 +109,7 @@ def mock_test_database_tickers():
             "currency": "USD",
             "date": date(2024, 2, 15),
             "sector": "Technology",
-            "website": "https://www.meta.com/"
+            "website": "https://www.meta.com/",
         },
         {
             "ticker": "JPM",
@@ -116,7 +118,7 @@ def mock_test_database_tickers():
             "currency": "EUR",
             "date": date(2024, 2, 15),
             "sector": "Finance",
-            "website": "https://www.jpmorganchase.com/"
+            "website": "https://www.jpmorganchase.com/",
         },
         {
             "ticker": "V",
@@ -125,7 +127,7 @@ def mock_test_database_tickers():
             "currency": "EUR",
             "date": date(2024, 2, 15),
             "sector": "Finance",
-            "website": "https://www.visa.com/"
+            "website": "https://www.visa.com/",
         },
         {
             "ticker": "DIS",
@@ -134,7 +136,7 @@ def mock_test_database_tickers():
             "currency": "EUR",
             "date": date(2024, 2, 15),
             "sector": "Entertainment",
-            "website": "https://www.disney.com/"
+            "website": "https://www.disney.com/",
         },
         {
             "ticker": "IBM",
@@ -143,10 +145,9 @@ def mock_test_database_tickers():
             "currency": "EUR",
             "date": date(2024, 2, 15),
             "sector": "Technology",
-            "website": "https://www.ibm.com/"
-        }
-        ]
-
+            "website": "https://www.ibm.com/",
+        },
+    ]
 
     return tickers_data
 
@@ -161,7 +162,7 @@ def mock_tickers_updated():
             "currency": "USD",
             "date": date(2024, 2, 16),
             "sector": "Technology",
-            "website": "https://www.appleapple.com/"
+            "website": "https://www.appleapple.com/",
         }
     ]
 
