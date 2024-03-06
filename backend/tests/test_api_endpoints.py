@@ -87,3 +87,15 @@ def test_get_companies_count(client):
     response = client.post("/api/get_companies", json={"count": 5})
 
     assert len(response.json) == 5
+
+
+def test_get_companies_with_other_content_type(client):
+    response = client.post(
+        "/api/get_companies",
+        headers={"content-type": "application/x-www-form-urlencoded"},
+    )
+    print(response.json)
+    assert (
+        response.json["msg"]
+        == "Please encode your request as application/json or send one without a body and content-type header"
+    )

@@ -70,6 +70,10 @@ def get_companies():
             }
         ]
     """
+    if request.content_type != "application/json" and request.content_type is not None:
+        return {
+            "msg": "Please encode your request as application/json or send one without a body and content-type header"
+        }
 
     # Get params from request body
     raw_data = request.data
