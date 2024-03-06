@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, jsonify, send_from_directory
+import json
 from dotenv import find_dotenv, load_dotenv
 from flask_cors import CORS
 from flaskr import utils
@@ -71,19 +72,19 @@ def get_companies():
     """
 
     # Get params from request body
-    requestBody = request.get_json()
+    raw_data = request.data
+    try:
+        json_data = json.loads(raw_data)
+    except Exception:
+        json_data = {}
     exclude_tickers = (
-        requestBody.get("excluded_tickers")
-        if requestBody.get("excluded_tickers")
-        else []
+        json_data.get("excluded_tickers") if json_data.get("excluded_tickers") else []
     )
     wanted_categories = (
-        requestBody.get("wanted_categories")
-        if requestBody.get("wanted_categories")
-        else []
+        json_data.get("wanted_categories") if json_data.get("wanted_categories") else []
     )
-    count = int(requestBody.get("count") or 10)
-    currency = requestBody.get("currency") if requestBody.get("currency") else "USD"
+    count = int(json_data.get("count") or 10)
+    currency = json_data.get("currency") if json_data.get("currency") else "USD"
 
     # Get company data from database
     companies = utils.get_companies_from_database(
