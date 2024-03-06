@@ -11,16 +11,21 @@ const Currency = new Intl.NumberFormat('en-US', {
     notation: 'compact'
 });
 
-const Panel = ({ handleClick, id, companyName, marketCap, color, imageSrc }) => {
+const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
     return (
         <ButtonBase value={id} id={id} data-testid="panel" className="panel" onClick={handleClick} sx={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            minWidth: "50vw",
-            height: "100vh",
-            backgroundColor: color,
+            //minWidth: "30%",
+            //height: "10%",
+            marginBottom: "32px",
+            backgroundColor: "primary.light",
+            borderStyle: 'solid',
+            borderWidth: 1,
+            borderColor: "text.secondary",
+            borderRadius: "8px",
             '&:hover': {
                 opacity: 0.85,
                 transition: "0.2s",
@@ -29,7 +34,7 @@ const Panel = ({ handleClick, id, companyName, marketCap, color, imageSrc }) => 
             <Typography variant="h2" sx={{ textAlign: "center", marginBottom: "32px" }}>
                 {companyName}
             </Typography>
-            <Box component="img" src={imageSrc} sx={{ width: "400px", height: "400px", borderRadius: "16px" }}></Box>
+            <Box component="img" src={imageSrc} sx={{ width: "200px", height: "200px", borderRadius: "16px" }}></Box>
             <Typography variant="h4" sx={{ padding: "32px 0px 6px 0px" }}>Market Cap</Typography>
             <Typography variant="h2" data-testid="market-cap">{marketCap}</Typography>
         </ButtonBase>
@@ -133,8 +138,14 @@ export default function GamePage() {
     }
 
     return (
-        <div>
-            <Box className="scroller" sx={{ display: "flex", flexDirection: "row", overflowX: "hidden" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", width: "100vw", height: "100vh", justifyContent: "center", alignItems: "center" }}>
+            <Box className="score-wrapper" sx={{ display: "flex", width: "100vw", justifyContent: "center" }}>
+                <Paper elevation={4} sx={{ position: "absolute", textAlign: "center", top: -4, zIndex: 1, backgroundColor: "text.primary" }}>
+                    <Typography variant="h5" sx={{ color: "black", padding: "16px 48px 6px 48px" }}>SCORE</Typography>
+                    <Typography data-testid="text-score" variant="h3" sx={{ color: "black", padding: "0px 32px 12px 32px" }}>{score}</Typography>
+                </Paper>
+            </Box>
+            <Box className="scroller" sx={{ display: "flex", flexDirection: "column", overflowY: "hidden", width: "40%", justifyContent: "center" }}>
                 {isPending ? <PanelSkeletons/> : (
                     <>
                         <Panel
@@ -142,7 +153,6 @@ export default function GamePage() {
                             id={companies[leftIndex].ticker}
                             companyName={companies[leftIndex].name}
                             marketCap={Currency.format(companies[leftIndex].market_cap)}
-                            color={"MediumTurquoise"}
                             imageSrc={companies[leftIndex].img_url}
                             index={leftIndex}
                         />
@@ -151,7 +161,6 @@ export default function GamePage() {
                             id={companies[rightIndex].ticker}
                             companyName={companies[rightIndex].name}
                             marketCap={Currency.format(companies[rightIndex].market_cap)}
-                            color={"MediumSpringGreen"}
                             imageSrc={companies[rightIndex].img_url}
                             index={rightIndex}
                         />
@@ -161,12 +170,6 @@ export default function GamePage() {
                     High Score: {highScore}
                 </Typography>
             </Box>
-            <Box className="score-wrapper" sx={{ display: "flex", width: "100vw", justifyContent: "center" }}>
-                <Paper elevation={4} sx={{ position: "absolute", textAlign: "center", top: -4, zIndex: 1 }}>
-                    <Typography variant="h5" sx={{ color: "black", padding: "16px 32px 6px 32px" }}>SCORE</Typography>
-                    <Typography data-testid="text-score" variant="h3" sx={{ color: "black", padding: "0px 32px 12px 32px" }}>{score}</Typography>
-                </Paper>
-            </Box>
-        </div>
+        </Box>
     )
 }
