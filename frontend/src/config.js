@@ -24,6 +24,9 @@ export const theme = createTheme({
             semiLight: "#1F2029",
             light: "#313741"
         },
+        green: {
+            main: "#48A52E"
+        },
         text: {
             primary: "#F1F1F1",
             secondary: "#9BA8AF"

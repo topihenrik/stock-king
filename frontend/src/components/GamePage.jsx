@@ -1,8 +1,9 @@
-import {Box, ButtonBase, Paper, Skeleton, Typography} from "@mui/material";
-import {baseUri, queryClient} from "../config.js";
+import { Box, ButtonBase, Paper, Skeleton, Typography } from "@mui/material";
+import { Home } from "@mui/icons-material";
+import { baseUri, queryClient } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGameStore } from "../stores/game-store.jsx";
 
 const Currency = new Intl.NumberFormat('en-US', {
@@ -15,34 +16,36 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
     return (
         <ButtonBase value={id} id={id} data-testid="panel" className="panel" onClick={handleClick} sx={{
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            //minWidth: "30%",
-            //height: "10%",
+            flexDirection: "row",
+            justifyContent: "left",
+            alignItems: "left",
+            width: "100%",
+            height: "30rem",
             marginBottom: "32px",
             backgroundColor: "primary.light",
             borderStyle: 'solid',
             borderWidth: 1,
             borderColor: "text.secondary",
             borderRadius: "8px",
+            boxShadow: "0px 2px 10px rgba(0, 0, 0, 1)",
             '&:hover': {
                 opacity: 0.85,
                 transition: "0.2s",
             }
         }}>
-            <Typography variant="h2" sx={{ textAlign: "center", marginBottom: "32px" }}>
-                {companyName}
-            </Typography>
-            <Box component="img" src={imageSrc} sx={{ width: "200px", height: "200px", borderRadius: "16px" }}></Box>
-            <Typography variant="h4" sx={{ padding: "32px 0px 6px 0px" }}>Market Cap</Typography>
-            <Typography variant="h2" data-testid="market-cap">{marketCap}</Typography>
+            <Box component="img" src={imageSrc} sx={{ width: "200px", height: "200px", margin: "5rem", borderRadius: "8px" }}></Box>
+            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", margin: "0rem 5rem 1rem 0rem", width: "100%" }}>
+                <Typography variant="h3" sx={{ textAlign: "center", marginBottom: "1rem", color: "text.secondary" }}>
+                    {companyName}
+                </Typography>
+                <Typography variant="h2" data-testid="market-cap" sx={{ textAlign: "center", textWrap: "wrap" }}>{marketCap}</Typography>
+            </Box>
         </ButtonBase>
     )
 }
 
 const PanelSkeletons = () => (
-    <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Box sx={{
             display: "flex",
             gap: '32px',
@@ -51,7 +54,8 @@ const PanelSkeletons = () => (
             alignItems: "center",
             width: "50vw",
             height: "100vh",
-            backgroundColor: 'MediumTurquoise'}}
+            backgroundColor: 'MediumTurquoise'
+        }}
         >
             <Skeleton variant="rectangular" width="clamp(250px, 55%, 500px)" height={118} />
             <Skeleton variant="rectangular" width="clamp(200px, 35%, 400px)" height={320} />
@@ -65,7 +69,8 @@ const PanelSkeletons = () => (
             alignItems: "center",
             minWidth: "50vw",
             height: "100vh",
-            backgroundColor: 'MediumSpringGreen'}}
+            backgroundColor: 'MediumSpringGreen'
+        }}
         >
             <Skeleton variant="rectangular" width="clamp(250px, 55%, 500px)" height={118} />
             <Skeleton variant="rectangular" width="clamp(200px, 35%, 400px)" height={320} />
@@ -131,22 +136,44 @@ export default function GamePage() {
 
     if (error) {
         return (
-            <Box sx={{display: "flex", justifyContent: "center", alignItems: "center", height: '90vh'}}>
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: '90vh' }}>
                 <Typography variant="h4">😢 Error occurred in our services</Typography>
             </Box>
         )
     }
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", width: "100vw", height: "100vh", justifyContent: "center", alignItems: "center" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", width: "100vw", height: "100vh", justifyContent: "flex-end", alignItems: "center" }}>
+            <ButtonBase data-testid="button-home" component={Link} to="/" sx={{
+                position: "absolute",
+                top: "0",
+                left: "0",
+                padding: "32px",
+                backgroundColor: "primary.light",
+                borderRadius: "0px 0px 8px 0px",
+                boxShadow: "0px 2px 5px rgba(0, 0, 0, 1)"
+            }}>
+                <Home fontSize="large" />
+            </ButtonBase>
+            <Typography data-testid="text-highscore" variant="h5" sx={{ color: "text.secondary", position: "absolute", top: 32, right: 32, textShadow: "0px 2px 5px rgba(0, 0, 0, 1)" }}>
+                High Score: {highScore}
+            </Typography>
             <Box className="score-wrapper" sx={{ display: "flex", width: "100vw", justifyContent: "center" }}>
                 <Paper elevation={4} sx={{ position: "absolute", textAlign: "center", top: -4, zIndex: 1, backgroundColor: "text.primary" }}>
                     <Typography variant="h5" sx={{ color: "black", padding: "16px 48px 6px 48px" }}>SCORE</Typography>
                     <Typography data-testid="text-score" variant="h3" sx={{ color: "black", padding: "0px 32px 12px 32px" }}>{score}</Typography>
                 </Paper>
             </Box>
-            <Box className="scroller" sx={{ display: "flex", flexDirection: "column", overflowY: "hidden", width: "40%", justifyContent: "center" }}>
-                {isPending ? <PanelSkeletons/> : (
+            <Typography variant="h4" sx={{ color: "text.secondary", margin: "10rem 0rem 2rem 0rem" }}>Which has the <Typography variant="h4" sx={{ display: "inline", color: "green.main" }}>higher</Typography> market cap?</Typography>
+            <Box className="scroller" sx={{
+                display: "flex",
+                flexDirection: "column",
+                marginBottom: "1rem",
+                width: "60rem",
+                overflowY: "hidden",
+                alignItems: "center"
+            }}>
+                {isPending ? <PanelSkeletons /> : (
                     <>
                         <Panel
                             handleClick={handleClick}
@@ -166,10 +193,8 @@ export default function GamePage() {
                         />
                     </>
                 )}
-                <Typography data-testid="text-highscore" sx={{ position: "absolute", top: 16, left: 16 }}>
-                    High Score: {highScore}
-                </Typography>
             </Box>
+            <Typography component={Link} to="https://clearbit.com" sx={{ position: "absolute", bottom: "1rem", color: "text.secondary", fontSize: "12px" }}>Logos provided by Clearbit</Typography>
         </Box>
     )
 }
