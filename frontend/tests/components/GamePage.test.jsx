@@ -17,7 +17,7 @@ describe('GamePage', () => {
 
         const highScoreText = getByTestId('text-highscore');
 
-        expect(highScoreText).toHaveTextContent('High Score: 0');
+        expect(highScoreText).toHaveTextContent('0');
     });
 
     it('Should update score properly', async () => {
@@ -39,13 +39,13 @@ describe('GamePage', () => {
         const panels = await findAllByTestId("panel");
         const highScoreText = await findByTestId("text-highscore");
 
-        expect(highScoreText).toHaveTextContent('High Score: 0');
+        expect(highScoreText).toHaveTextContent('0');
 
         await act(async () => {
             await user.click(panels[0]);
         });
 
-        expect(highScoreText).toHaveTextContent('High Score: 1');
+        expect(highScoreText).toHaveTextContent('1');
     });
 
 })
