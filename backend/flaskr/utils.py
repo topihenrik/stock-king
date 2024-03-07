@@ -82,6 +82,18 @@ def process_stock_data(tickers):
     return stock_data
 
 
+def get_category_data():
+    """
+    Returns an array of available categories of stocks in the database
+    """
+    with connect_to_db() as conn:
+        with conn.cursor() as cursor:
+            query = sql.SQL('SELECT DISTINCT sector FROM company')
+            cursor.execute(query)
+            categories = cursor.fetchall()
+            categories = [category[0] for category in categories]
+            return categories
+
 def get_stock_data(stocks):
     """
     Takes a space-separated string of tickers/symbols as the parameter

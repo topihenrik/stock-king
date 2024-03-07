@@ -99,3 +99,13 @@ def test_get_companies_with_other_content_type(client):
         response.json["msg"]
         == "Please encode your request as application/json or send one without a body and content-type header"
     )
+
+    
+def test_get_categories(client):
+    """
+    Test to get a list of unique categories for all companies in database. Each category should appear only once.
+    """
+    response = client.get("/api/get_categories")
+    assert len(response.json) == 5
+    for category in response.json:
+            assert category in ["Technology","Retail","Automotive","Finance","Entertainment"]

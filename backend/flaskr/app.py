@@ -30,6 +30,21 @@ if ENV != "test":
 def test_function():
     return True
 
+  
+@app.get("/api/get_categories")
+def get_categories():
+    """
+    Endpoint for getting category data.
+    No parameters required.
+
+    Returns:
+        Array of strings of category data in database.
+        Example:
+        ["Basic Materials","Communication Services","Consumer Cyclical","Consumer Defensive","Financial Services","Healthcare","Industrials","Real Estate","Technology","Utilities"]
+    """
+    categories = utils.get_category_data()
+    return categories
+
 
 @app.post("/api/get_companies")
 def get_companies():
