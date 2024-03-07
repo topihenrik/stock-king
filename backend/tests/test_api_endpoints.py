@@ -59,3 +59,12 @@ def test_get_companies_one_company(client):
         assert company["currency"] == "USD"
         assert company["ticker"] == "IBM"
         assert company["market_cap"] == 1317
+
+def test_get_categories(client):
+    """
+    Test to get a list of unique categories for all companies in database. Each category should appear only once.
+    """
+    response = client.get("/api/get_categories")
+    assert len(response.json) == 5
+    for category in response.json:
+            assert category in ["Technology","Retail","Automotive","Finance","Entertainment"]
