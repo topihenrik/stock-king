@@ -12,7 +12,7 @@ export const theme = createTheme({
             styleOverrides: {
                 body: {
                     // Colors used here: primary.main, primary.semiLight
-                    backgroundImage: 'linear-gradient(to bottom, #17171B, #1F2029)'
+                    backgroundImage: 'linear-gradient(to bottom, #17171B, #262833)'
                 }
             }
         }
@@ -21,7 +21,7 @@ export const theme = createTheme({
         mode: "dark",
         primary: {
             main: "#17171B",
-            semiLight: "#1F2029",
+            semiLight: "#262833",
             light: "#313741"
         },
         green: {
