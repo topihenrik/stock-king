@@ -354,3 +354,16 @@ def convert_marketcaps_currencies(companies, game_currency):
                     company.update({"currency": game_currency})
                     break
     return companies
+
+    def get_currency_data():
+        """
+        Returns a JSON array of all existing currencies in the database
+        """
+        with connect_to_db() as conn:
+            with conn.cursor() as cursor:
+                query = sql.SQL('SELECT DISTINCT to_currency, from_currency FROM ExchangeRates')
+                cursor.execute(query)
+                currencies = cursor.fetchall()
+                currencies = [currency[0] for currency in currencies]
+                return jsonify(currencies)
+
