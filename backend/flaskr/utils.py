@@ -366,5 +366,6 @@ def get_currency_data():
             cursor.execute(query)
             currencies = cursor.fetchall()
             currencies = [currency[0] for currency in currencies]
+            currencies.append("USD")
             return jsonify(currencies)
 
