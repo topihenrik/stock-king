@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useGameStore } from "../stores/game-store.jsx";
+import {queryKeys} from "../constants.js";
 
 const Currency = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -153,7 +154,8 @@ export default function GamePage() {
     const rightIndex = companyIndex + 1;
 
     const { isPending, error, data: companies } = useQuery({
-        queryKey: ['companies'],
+        refetchOnWindowFocus: false,
+        queryKey: [queryKeys.COMPANIES],
         queryFn: () =>
             fetch(
                 `${baseUri}/get_companies`,
@@ -191,7 +193,6 @@ export default function GamePage() {
             updateHighScore();
             setCompanyIndex(companyIndex + 1);
         } else {
-            queryClient.clear()
             navigate("/gameover");
         }
     }
