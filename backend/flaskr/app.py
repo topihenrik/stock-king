@@ -145,3 +145,16 @@ def loadStockDataFromDB():
     # gameData = db.query('SELECT * FROM TICKERS')
     # sendToFrontend
     return
+
+@app.get("/api/get_all_currencies")
+def get_all_currencies():
+    """
+    Endpoint for getting all existing currencies.
+    No parameters required.
+
+    Returns:
+        Array of currency codes in JSON format
+    """
+    currencies = utils.get_currency_data()
+    return currencies
+
