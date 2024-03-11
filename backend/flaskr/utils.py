@@ -14,7 +14,7 @@ TICKERS = tickers.TICKERS
 def initial_data_update():
     random_tickers = sample(TICKERS, 30)
     string_tickers = " ".join(random_tickers)
-    #string_tickers = string_tickers+" KNEBV.HE FORTUM.HE NESTE.HE UPM.HE WRT1V.HE PSON.L HUSQ-B.ST" # Uncomment this line to get companies with other currencies than USD
+    string_tickers = string_tickers+" KNEBV.HE FORTUM.HE NESTE.HE UPM.HE WRT1V.HE PSON.L HUSQ-B.ST" # Uncomment this line to get companies with other currencies than USD
     upsert_stock_data(get_stock_data(string_tickers)) 
     processed_currencies = get_exchange_rates_from_api()
     upsert_exchange_rates(processed_currencies,True)
@@ -169,7 +169,7 @@ def process_currency_data(rates):
                 }
             )
         except:
-            print(f"Failed to get exchange rate data on {rate}")
+            print(f"Failed to get exchange rate data")
             continue
     return rate_data
 
