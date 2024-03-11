@@ -7,7 +7,7 @@ def run_before_testing(utils, mock_test_database_tickers, mock_exchangerates_ini
     Upsert the mock data before each test
     """
     utils.upsert_stock_data(mock_test_database_tickers)
-    utils.upsert_exchange_rates(mock_exchangerates_initial)
+    utils.upsert_exchange_rates(mock_exchangerates_initial,True)
 
     yield
 

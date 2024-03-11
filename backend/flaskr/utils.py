@@ -17,7 +17,7 @@ def initial_data_update():
     #string_tickers = string_tickers+" KNEBV.HE FORTUM.HE NESTE.HE UPM.HE WRT1V.HE PSON.L HUSQ-B.ST" # Uncomment this line to get companies with other currencies than USD
     upsert_stock_data(get_stock_data(string_tickers)) 
     processed_currencies = get_exchange_rates_from_api()
-    upsert_exchange_rates(processed_currencies)
+    upsert_exchange_rates(processed_currencies,True)
 
 
 def clear_companies():
@@ -169,9 +169,8 @@ def process_currency_data(rates):
                 }
             )
         except:
-            print(f"Failed to get company data on some ticker lol")
+            print(f"Failed to get exchange rate data on {rate}")
             continue
-
     return rate_data
 
 
@@ -188,28 +187,29 @@ def get_exchange_rates_from_api():
     return processed_currencies
 
 
-def upsert_exchange_rates(data):
+def upsert_exchange_rates(data, enable = False):
     """
     Function for upserting exchange rates into the "exchange_rate" table in the database.
     """
-    current_date = date.today()
-    with connect_to_db() as conn:
-        with conn.cursor() as cursor:
-            for row in data:
-                currency = list(row.values())[0]
-                rate = list(row.values())[1]
-                # Construct SQL query
-                query = sql.SQL(
+    if(enable):
+        current_date = date.today()
+        with connect_to_db() as conn:
+            with conn.cursor() as cursor:
+                for row in data:
+                    currency = list(row.values())[0]
+                    rate = list(row.values())[1]
+                    # Construct SQL query
+                    query = sql.SQL(
+                        """
+                        INSERT INTO ExchangeRates (from_currency, to_currency, ratio, date)
+                        VALUES (%s, %s, %s, %s)
+                        ON CONFLICT (from_currency, to_currency) DO UPDATE
+                        SET ratio = EXCLUDED.ratio;
                     """
-                    INSERT INTO ExchangeRates (from_currency, to_currency, ratio, date)
-                    VALUES (%s, %s, %s, %s)
-                    ON CONFLICT (from_currency, to_currency) DO UPDATE
-                    SET ratio = EXCLUDED.ratio;
-                """
-                )
-                # Execute the query
-                cursor.execute(query, (currency, "USD", rate, current_date))
-            conn.commit()
+                    )
+                    # Execute the query
+                    cursor.execute(query, (currency, "USD", rate, current_date))
+                conn.commit()
 
 
 def get_companies_from_database(exclude_tickers=[], wanted_categories=[], count=10):
