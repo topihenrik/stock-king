@@ -7,6 +7,7 @@ from forex_python.converter import CurrencyRates
 from dotenv import load_dotenv, find_dotenv
 from random import sample
 from flaskr import tickers
+from flask import jsonify
 
 TICKERS = tickers.TICKERS
 
