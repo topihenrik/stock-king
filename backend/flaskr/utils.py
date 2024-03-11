@@ -14,7 +14,10 @@ TICKERS = tickers.TICKERS
 def initial_data_update():
     random_tickers = sample(TICKERS, 30)
     string_tickers = " ".join(random_tickers)
-    upsert_stock_data(get_stock_data(string_tickers))
+    #string_tickers = string_tickers+" KNEBV.HE FORTUM.HE NESTE.HE UPM.HE WRT1V.HE PSON.L HUSQ-B.ST" # Uncomment this line to get companies with other currencies than USD
+    upsert_stock_data(get_stock_data(string_tickers)) 
+    processed_currencies = get_exchange_rates_from_api()
+    upsert_exchange_rates(processed_currencies)
 
 
 def clear_companies():
@@ -80,7 +83,6 @@ def process_stock_data(tickers):
             continue
 
     return stock_data
-
 
 def get_category_data():
     """
@@ -150,27 +152,38 @@ def get_currencies_from_database():
         with conn.cursor() as cursor:
             cursor.execute("SELECT DISTINCT currency FROM Company;")
             currencies = cursor.fetchall()
-            currencies = [currency[0] for currency in currencies]
+            currencies = [currency[0].upper() for currency in currencies]
     return currencies
 
 
-def process_currency_data(existing_currencies, rates):
-    needed_currency_rates = [
-        {currency: rates[currency]}
-        for currency in existing_currencies
-        if currency != "USD"
-    ]
-    return needed_currency_rates
+def process_currency_data(rates):
+    current_date = date.today()
+    rate_data = []
+    for rate in rates:
+        try:
+            rate_data.append(
+                {
+                    "currency": str(rate.info["shortName"]).split("/")[0],
+                    "ratio": rate.info["previousClose"],
+                    "date": current_date
+                }
+            )
+        except:
+            print(f"Failed to get company data on some ticker lol")
+            continue
+
+    return rate_data
 
 
 def get_exchange_rates_from_api():
     """
     Function for getting exchange rates from Forex API.
     """
-    existing_currencies = get_currencies_from_database()
-    c = CurrencyRates()
-    rates = c.get_rates("USD")
-    processed_currencies = process_currency_data(existing_currencies, rates)
+    existing_currencies = [currency+"USD=X" for currency in get_currencies_from_database() if currency != "USD"]
+    rates = []
+    for currency in existing_currencies:   
+        rates.append(yahoo.Ticker(currency))
+    processed_currencies = process_currency_data(rates)
 
     return processed_currencies
 
@@ -183,9 +196,8 @@ def upsert_exchange_rates(data):
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
             for row in data:
-                currency = list(row.keys())[0]
-                # Revert the exchange rate to get the rate from the currency to USD
-                rate = 1 / row[currency]
+                currency = list(row.values())[0]
+                rate = list(row.values())[1]
                 # Construct SQL query
                 query = sql.SQL(
                     """

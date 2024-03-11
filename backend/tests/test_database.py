@@ -97,12 +97,11 @@ def test_upsert_exchangerates_new_entry(utils, mock_exchangerates_initial):
             result_count = cursor.fetchone()
 
     cleaned_result = [(item[0], item[1], item[2]) for item in result_data]
-
     expected_data = [
         (
             "EUR",
             "USD",
-            1 / mock_exchangerates_initial[0]["EUR"],
+            mock_exchangerates_initial[0]["ratio"],
         )
     ]
     expected_count = (1,)
