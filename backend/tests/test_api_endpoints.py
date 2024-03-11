@@ -120,4 +120,4 @@ def test_get_all_currencies(client):
     data = response.json
     assert data
     for currency in data:
-        assert currency in ["EUR, USD, PHP, SEK, NOK "]
+        assert currency in ["EUR", "USD", "PHP", "SEK", "NOK "]
