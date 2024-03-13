@@ -1,11 +1,19 @@
 # Database
 
-## Setup development database (Linux)
+To setup the database:
 
-    sudo su postgres
-    ./initdb.sh
+1. activate a virtual environment and install the requirements (if you've already activated the virtual env within backend folder, the script should work, in which case skip straight to step 2)
+    ```
+    python3 -m venv env
+    env/bin/activate
+    pip install -r requirements.txt
+    ```
 
-## Setup testing database (Linux)
+2. run the script and provide the environment for which you'd like to setup the database: either dev or test (pipeline is also a recognized environment as it needs a different user name)
+    ```
+    python3 init_database.py dev
+    ```
 
-    sudo su postgres
-    ./init-test-db.sh
+## Prerequisites
+
+- Installation of Postgres
