@@ -2,8 +2,8 @@ import { expect, afterEach } from 'vitest';
 import {act, cleanup} from '@testing-library/react';
 import * as matchers from "@testing-library/jest-dom/matchers";
 import {http, HttpResponse} from "msw";
-//import { rest } from "msw";
 import {companies} from "./mock-data/companies.js";
+import {exchangeRates} from './mock-data/exchangerates.js';
 import {setupServer} from "msw/node";
 
 vi.mock("zustand");
@@ -16,12 +16,29 @@ export const restHandlers = [
 
         // Construct the response based on the request parameters
         let response = companies.filter(company => !excluded_tickers.includes(company.ticker));
+        
         if (!(wanted_categories.length === 0)) {
             response = response.filter(response => wanted_categories.includes(response.sector))
-        } 
+        }
+
+        if (!(currency.length === 0)) {
+            response.forEach(company => {
+                if (!(company.currency === currency)) {
+                    const exchangeRate = exchangeRates.find(rate => rate.from_currency === company.currency &&
+                                                            rate.to_currency === currency);
+                    if (exchangeRate) {
+                        // Convert company market cap to the requested currency
+                        company.market_cap = company.market_cap * exchangeRate.ratio;
+                        company.currency = currency;
+                    } else {
+                        console.log("The exchange rate between", company.currency ,"and",
+                                    currency, "hasn't been added in the mock data in exchangeRates.js");
+                    }
+                }
+            });
+        }
+
         response = response.slice(0, count);
-        
-        //console.log(response);
 
         return HttpResponse.json(response)
     }),
