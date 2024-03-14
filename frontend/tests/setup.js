@@ -3,7 +3,7 @@ import {act, cleanup} from '@testing-library/react';
 import * as matchers from "@testing-library/jest-dom/matchers";
 import {http, HttpResponse} from "msw";
 import {companies} from "./mock-data/companies.js";
-import {exchangeRates} from './mock-data/exchangerates.js';
+import {exchangeRates} from './mock-data/exchangeRates.js';
 import {setupServer} from "msw/node";
 
 vi.mock("zustand");
