@@ -30,7 +30,7 @@ jobs:
         env:
           POSTGRES_USER: runner
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: StocKingTest
+          POSTGRES_DB: stockingtest
           POSTGRES_HOST_AUTH_METHOD: "trust"
         ports:
           - 5432:5432
@@ -48,8 +48,9 @@ jobs:
       - name: Initialize testing database
         working-directory: database
         run: |
-          yarn install
-          node init-test-db.js
+          python3 --version
+          pip install -r requirements.txt
+          python3 init_database.py pipeline
       - name: Set environment variables
         working-directory: backend
         run: |
@@ -58,7 +59,7 @@ jobs:
           echo DB_PASSWORD="postgres" >> .env.test
           echo DB_HOST="localhost" >> .env.test
           echo DB_PORT="5432" >> .env.test
-          echo DB_DATABASE="StocKingTest" >> .env.test
+          echo DB_DATABASE="stockingtest" >> .env.test
       - name: Install packages
         working-directory: backend
         run: |
