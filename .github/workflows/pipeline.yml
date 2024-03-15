@@ -48,8 +48,9 @@ jobs:
       - name: Initialize testing database
         working-directory: database
         run: |
-          yarn install
-          node init-test-db.js
+          python3 --version
+          pip install -r requirements.txt
+          python3 init_database.py pipeline
       - name: Set environment variables
         working-directory: backend
         run: |

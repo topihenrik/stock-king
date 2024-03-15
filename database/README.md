@@ -1,6 +1,8 @@
 # Database
 
-To setup the database:
+To setup the database: 
+
+### Linux
 
 1. activate a virtual environment and install the requirements (if you've already activated the virtual env within backend folder, the script should work, in which case skip straight to step 2)
     ```
@@ -12,6 +14,20 @@ To setup the database:
 2. run the script and provide the environment for which you'd like to setup the database: either dev or test (pipeline is also a recognized environment as it needs a different user name)
     ```
     python3 init_database.py dev
+    ```
+
+### Windows
+
+1. activate a virtual environment and install the requirements (if you've already activated the virtual env within backend folder, the script should work, in which case skip straight to step 2)
+    ```
+    python -m venv env
+    env/Scripts/Activate
+    pip install -r requirements.txt
+    ```
+
+2. run the script and provide the environment for which you'd like to setup the database: either dev or test (pipeline is also a recognized environment as it needs a different user name)
+    ```
+    python init_database.py dev
     ```
 
 ## Prerequisites
