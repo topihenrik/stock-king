@@ -19,7 +19,7 @@ elif sys.argv[1] == "test":
 elif sys.argv[1] == "pipeline":
     DB_NAME = "stockingtest"
     DB_USER = "runner"
-    DB_PASSWORD = ""
+    DB_PASSWORD = "postgres"
 else:
     print(
         "Invalid environment provided, please provide one of the following: dev, test, pipeline"
@@ -85,5 +85,6 @@ def initialize_tables():
     print("Tables created successfully!")
 
 
-initialize_database()
+if sys.argv[1] != "pipeline":
+    initialize_database()
 initialize_tables()

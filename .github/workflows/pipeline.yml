@@ -30,7 +30,7 @@ jobs:
         env:
           POSTGRES_USER: runner
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: StocKingTest
+          POSTGRES_DB: stockingtest
           POSTGRES_HOST_AUTH_METHOD: "trust"
         ports:
           - 5432:5432
@@ -59,7 +59,7 @@ jobs:
           echo DB_PASSWORD="postgres" >> .env.test
           echo DB_HOST="localhost" >> .env.test
           echo DB_PORT="5432" >> .env.test
-          echo DB_DATABASE="StocKingTest" >> .env.test
+          echo DB_DATABASE="stockingtest" >> .env.test
       - name: Install packages
         working-directory: backend
         run: |
