@@ -9,11 +9,11 @@ if len(sys.argv) < 2:
 
 # Database Configuration
 if sys.argv[1] == "dev":
-    DB_NAME = "StocKing"
+    DB_NAME = "stocking"
     DB_USER = "stocking"
     DB_PASSWORD = ""
 elif sys.argv[1] == "test":
-    DB_NAME = "StocKingTest"
+    DB_NAME = "stockingtest"
     DB_USER = "stockingtest"
     DB_PASSWORD = ""
 elif sys.argv[1] == "pipeline":
