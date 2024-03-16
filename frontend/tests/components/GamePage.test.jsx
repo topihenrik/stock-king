@@ -48,4 +48,16 @@ describe('GamePage', () => {
         expect(highScoreText).toHaveTextContent('1');
     });
 
+    it('Should render placeholder logo when image URL is invalid', async () => {
+        const {findByAltText} = setupWithProviders(<GamePage/>);
+
+        const img = await findByAltText('Archer-Daniels-Midland Company');
+
+        // Separately trigger an onError event, as vitest cannot verify the validity of URLs
+        img.dispatchEvent(new Event('error'));  
+        
+        const placeholderLogo = await findByAltText('Placeholder logo');
+        expect(placeholderLogo).toBeTruthy();
+    });
+
 })
