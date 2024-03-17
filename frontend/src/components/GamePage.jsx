@@ -4,8 +4,21 @@ import { baseUri, queryClient } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import numeral from 'numeral';
+import getSymbolFromCurrency from 'currency-symbol-map'
 import { useGameStore } from "../stores/game-store.jsx";
 import {queryKeys} from "../constants.js";
+
+const customNumberFormat = (value, currencyCode) => {
+    const symbol = getSymbolFromCurrency(currencyCode) || currencyCode;
+    let formattedValue;
+    if ((value > 10000000000) || ((value < 1000000000) && (value > 10000000))) {
+        formattedValue = numeral(value).format('(0a)').toUpperCase();
+    } else {
+        formattedValue = numeral(value).format('(0.0a)').toUpperCase();
+    }
+    return `${formattedValue} ${symbol}`;
+};
 
 const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
     return (
@@ -263,7 +276,7 @@ export default function GamePage() {
                             handleClick={handleClick}
                             id={companies[leftIndex].ticker}
                             companyName={companies[leftIndex].name}
-                            marketCap={Currency.format(companies[leftIndex].market_cap)}
+                            marketCap={customNumberFormat(companies[leftIndex].market_cap, gameCurrency)}
                             imageSrc={companies[leftIndex].img_url}
                             index={leftIndex}
                         />
@@ -271,7 +284,7 @@ export default function GamePage() {
                             handleClick={handleClick}
                             id={companies[rightIndex].ticker}
                             companyName={companies[rightIndex].name}
-                            marketCap={Currency.format(companies[rightIndex].market_cap)}
+                            marketCap={customNumberFormat(companies[rightIndex].market_cap, gameCurrency)}
                             imageSrc={companies[rightIndex].img_url}
                             index={rightIndex}
                         />
