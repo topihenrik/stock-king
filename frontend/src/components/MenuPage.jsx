@@ -6,12 +6,15 @@ import Logo from '../../public/logo.png';
 import { baseUri, queryClient } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import {queryKeys} from "../constants.js";
+import { useGameStore } from "../stores/game-store.jsx";
 
 export default function MenuPage() {
+    const gameCurrency = useGameStore((state) => state.gameCurrency);
+    const changeGameCurrency = useGameStore((state) => state.changeGameCurrency);
     const [categoryAnchorEl, setCategoryAnchorEl] = useState(null);
     const [currencyAnchorEl, setCurrencyAnchorEl] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
-    const [selectedCurrency, setSelectedCurrency] = useState('USD');
+    const [selectedCurrency, setSelectedCurrency] = useState(gameCurrency);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -59,6 +62,7 @@ export default function MenuPage() {
 
     const handleCurrencySelect = (currency) => {
         setSelectedCurrency(currency);
+        changeGameCurrency(currency);
         handleClose();
     }
 
@@ -81,7 +85,7 @@ export default function MenuPage() {
                 <Button 
                     variant="contained"
                     data-testid="category-btn"
-                    onClick={handleClick}
+                    onClick={handleCategoryClick}
                     endIcon={<ArrowDropDown />}>{selectedCategory || "Choose category"}
                 </Button>
                 <Menu

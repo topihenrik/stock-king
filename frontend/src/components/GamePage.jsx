@@ -7,12 +7,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useGameStore } from "../stores/game-store.jsx";
 import {queryKeys} from "../constants.js";
 
-const Currency = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    notation: 'compact'
-});
-
 const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
     return (
         <ButtonBase value={id} id={id} data-testid="panel" className="panel" onClick={handleClick} sx={{
@@ -149,9 +143,16 @@ export default function GamePage() {
     const resetScore = useGameStore((state) => state.resetScore);
     const highScore = useGameStore((state) => state.highScore);
     const updateHighScore = useGameStore((state) => state.updateHighScore);
+    const gameCurrency = useGameStore((state) => state.gameCurrency);
     const [companyIndex, setCompanyIndex] = useState(0);
     const leftIndex = companyIndex;
     const rightIndex = companyIndex + 1;
+
+    const Currency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: gameCurrency,
+        notation: 'compact'
+    });
 
     const { isPending, error, data: companies } = useQuery({
         refetchOnWindowFocus: false,
