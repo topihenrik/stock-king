@@ -101,7 +101,7 @@ export default function MenuPage() {
                         horizontal: 'center',
                     }}
                 >
-                    <MenuItem onClick={() => handleCategorySelect('Category 1')} >Category 1</MenuItem>
+                    <MenuItem data-testid="category1" onClick={() => handleCategorySelect('Category 1')} >Category 1</MenuItem>
                     <MenuItem onClick={() => handleCategorySelect('Category 2')} >Category 2</MenuItem>
                     <MenuItem onClick={() => handleCategorySelect('Category 3')} >Category 3</MenuItem>
                 </Menu>

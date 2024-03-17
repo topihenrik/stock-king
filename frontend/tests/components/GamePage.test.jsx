@@ -2,6 +2,7 @@ import {describe, it, expect} from "vitest";
 import {act} from "@testing-library/react";
 import {setupWithProviders} from "../test-utils.jsx";
 import GamePage from "../../src/components/GamePage.jsx";
+import { useGameStore } from "../../src/stores/game-store.jsx";
 
 describe('GamePage', () => {
     it('Should create company panels', async () => {
@@ -47,5 +48,19 @@ describe('GamePage', () => {
 
         expect(highScoreText).toHaveTextContent('1');
     });
+
+    it("Should display correct currency based on game currency", async () => {
+        const {findAllByTestId} = setupWithProviders(<GamePage/>);
+
+        act(() => {
+            useGameStore.setState({ gameCurrency: "EUR" });
+        });
+
+        const marketCaps = await findAllByTestId("market-cap");
+    
+        marketCaps.forEach((marketCap) => {
+            expect(marketCap).toHaveTextContent("€");
+        })
+      });
 
 })

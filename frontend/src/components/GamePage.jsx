@@ -168,7 +168,7 @@ export default function GamePage() {
                     body: JSON.stringify({
                         excluded_tickers: [],
                         wanted_categories: [],
-                        currency: "USD",
+                        currency: gameCurrency,
                         count: 20
                     })
                 }

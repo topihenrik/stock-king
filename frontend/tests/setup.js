@@ -42,6 +42,12 @@ export const restHandlers = [
 
         return HttpResponse.json(response)
     }),
+
+    http.get('http://localhost:5000/api/get_all_currencies', () => {
+        const currenciesList = [...new Set(exchangeRates.map(rate => rate.from_currency))];
+
+        return HttpResponse.json(currenciesList)
+    }),
 ];
 
 const server = setupServer(...restHandlers);
