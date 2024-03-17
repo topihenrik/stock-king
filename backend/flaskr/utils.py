@@ -13,9 +13,15 @@ TICKERS = tickers.TICKERS
 
 
 def initial_data_update():
-    random_tickers = sample(TICKERS, 30)
-    string_tickers = " ".join(random_tickers)
-    upsert_stock_data(get_stock_data(string_tickers))
+    load_dotenv(find_dotenv())
+    env = os.getenv("ENV")
+    if env != "dev":
+        string_tickers = " ".join(TICKERS)
+        upsert_stock_data(get_stock_data(string_tickers))
+    else:
+        random_tickers = sample(TICKERS, 30)
+        string_tickers = " ".join(random_tickers)
+        upsert_stock_data(get_stock_data(string_tickers))
 
 
 def clear_companies():
@@ -83,7 +89,7 @@ def process_stock_data(tickers):
     return stock_data
 
 
-def get_category_data():
+def get_categories_from_database():
     """
     Returns an array of available categories of stocks in the database
     """
@@ -94,6 +100,7 @@ def get_category_data():
             categories = cursor.fetchall()
             categories = [category[0] for category in categories]
             return categories
+
 
 def get_stock_data(stocks):
     """
@@ -356,7 +363,8 @@ def convert_marketcaps_currencies(companies, game_currency):
                     break
     return companies
 
-def get_currency_data():
+
+def get_currencies_from_database():
     """
     Returns a JSON array of all existing currencies in the database
      """
