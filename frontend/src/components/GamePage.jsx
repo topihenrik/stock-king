@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useGameStore } from "../stores/game-store.jsx";
 import {queryKeys} from "../constants.js";
+import PlaceholderLogo from '../../public/placeholder_company_logo.png';
 
 const Currency = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -35,11 +36,17 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
             },
             overflow: "hidden"
         }}>
-            <Box component="img" src={imageSrc} sx={{
-                width: { xs: "100px", sm: "150px", md: "200px" },
-                height: { xs: "100px", sm: "150px", md: "200px" },
-                margin: {xs: "32px", sm: "64px", md: "80px"},
-                borderRadius: "8px"
+            <Box component="img" src={imageSrc} alt={companyName}
+                onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = PlaceholderLogo;
+                    e.target.alt = "Placeholder logo"
+                }}
+                sx={{
+                    width: { xs: "100px", sm: "150px", md: "200px" },
+                    height: { xs: "100px", sm: "150px", md: "200px" },
+                    margin: {xs: "32px", sm: "64px", md: "80px"},
+                    borderRadius: "8px"
             }}></Box>
             <Box sx={{ 
                 display: "flex",
