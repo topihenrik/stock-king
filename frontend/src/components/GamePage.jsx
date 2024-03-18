@@ -8,6 +8,7 @@ import numeral from 'numeral';
 import getSymbolFromCurrency from 'currency-symbol-map'
 import { useGameStore } from "../stores/game-store.jsx";
 import {queryKeys} from "../constants.js";
+import PlaceholderLogo from '../../public/placeholder_company_logo.png';
 
 const customNumberFormat = (value, currencyCode) => {
     const symbol = getSymbolFromCurrency(currencyCode) || currencyCode;
@@ -42,11 +43,17 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
             },
             overflow: "hidden"
         }}>
-            <Box component="img" src={imageSrc} sx={{
-                width: { xs: "100px", sm: "150px", md: "200px" },
-                height: { xs: "100px", sm: "150px", md: "200px" },
-                margin: {xs: "32px", sm: "64px", md: "80px"},
-                borderRadius: "8px"
+            <Box component="img" src={imageSrc} alt={companyName}
+                onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = PlaceholderLogo;
+                    e.target.alt = "Placeholder logo"
+                }}
+                sx={{
+                    width: { xs: "100px", sm: "150px", md: "200px" },
+                    height: { xs: "100px", sm: "150px", md: "200px" },
+                    margin: {xs: "32px", sm: "64px", md: "80px"},
+                    borderRadius: "8px"
             }}></Box>
             <Box sx={{ 
                 display: "flex",

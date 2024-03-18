@@ -43,3 +43,4 @@ webencodings==0.5.1
 werkzeug==3.0.1
 yfinance==0.2.36
 zipp==3.17.0
+Flask-APScheduler==1.13.1
