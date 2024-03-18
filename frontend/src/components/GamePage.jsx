@@ -1,9 +1,12 @@
-import {Box, ButtonBase, Paper, Skeleton, Typography} from "@mui/material";
-import {baseUri, queryClient} from "../config.js";
+import { Box, ButtonBase, Paper, Skeleton, Typography, Stack } from "@mui/material";
+import { Home, EmojiEvents } from "@mui/icons-material";
+import { baseUri, queryClient } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGameStore } from "../stores/game-store.jsx";
+import {queryKeys} from "../constants.js";
+import PlaceholderLogo from '../../public/placeholder_company_logo.png';
 
 const Currency = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -11,60 +14,137 @@ const Currency = new Intl.NumberFormat('en-US', {
     notation: 'compact'
 });
 
-const Panel = ({ handleClick, id, companyName, marketCap, color, imageSrc }) => {
+const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
     return (
         <ButtonBase value={id} id={id} data-testid="panel" className="panel" onClick={handleClick} sx={{
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            minWidth: "50vw",
-            height: "100vh",
-            backgroundColor: color,
+            flexDirection: "row",
+            justifyContent: "left",
+            alignItems: "left",
+            width: { xs: "100%", sm: "560px", md: "880px", lg: "1040px" },
+            height: { xs: "45%", sm: "400px", md: "480px", lg: "560px" },
+            marginBottom: "24px",
+            backgroundColor: "primary.light",
+            borderStyle: 'solid',
+            borderWidth: 1,
+            borderColor: "text.secondary",
+            borderRadius: "8px",
+            boxShadow: "0px 2px 10px rgba(0, 0, 0, 1)",
             '&:hover': {
                 opacity: 0.85,
                 transition: "0.2s",
-            }
+            },
+            overflow: "hidden"
         }}>
-            <Typography variant="h2" sx={{ textAlign: "center", marginBottom: "32px" }}>
-                {companyName}
-            </Typography>
-            <Box component="img" src={imageSrc} sx={{ width: "400px", height: "400px", borderRadius: "16px" }}></Box>
-            <Typography variant="h4" sx={{ padding: "32px 0px 6px 0px" }}>Market Cap</Typography>
-            <Typography variant="h2" data-testid="market-cap">{marketCap}</Typography>
+            <Box component="img" src={imageSrc} alt={companyName}
+                onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = PlaceholderLogo;
+                    e.target.alt = "Placeholder logo"
+                }}
+                sx={{
+                    width: { xs: "100px", sm: "150px", md: "200px" },
+                    height: { xs: "100px", sm: "150px", md: "200px" },
+                    margin: {xs: "32px", sm: "64px", md: "80px"},
+                    borderRadius: "8px"
+            }}></Box>
+            <Box sx={{ 
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0px 32px 0px 0px",
+                width: "100%"
+            }}>
+                <Typography variant="h3" sx={{
+                    fontSize: { xs: "1.75rem", sm: "2rem", md: "3rem" },
+                    textAlign: "center",
+                    marginBottom: "1rem",
+                    color: "text.secondary"
+                }}>
+                    {companyName}
+                </Typography>
+                <Typography data-testid="market-cap" variant="h1" sx={{
+                    fontSize: { xs: "3rem", sm: "4rem", md: "6rem" },
+                    textAlign: "center",
+                    textWrap: "wrap"
+                }}>
+                    {marketCap}
+                </Typography>
+            </Box>
         </ButtonBase>
     )
 }
 
 const PanelSkeletons = () => (
-    <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+    <Box sx={{width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end"}}>
         <Box sx={{
             display: "flex",
-            gap: '32px',
-            flexDirection: "column",
-            justifyContent: "center",
+            flexDirection: "row",
+            justifyContent: "left",
             alignItems: "center",
-            width: "50vw",
-            height: "100vh",
-            backgroundColor: 'MediumTurquoise'}}
+            width: { xs: "100%", sm: "560px", md: "880px", lg: "1040px" },
+            height: { xs: "45%", sm: "400px", md: "480px", lg: "560px" },
+            marginBottom: "24px",
+            backgroundColor: "primary.light",
+            borderStyle: 'solid',
+            borderWidth: 1,
+            borderColor: "text.secondary",
+            borderRadius: "8px",
+            boxShadow: "0px 2px 10px rgba(0, 0, 0, 1)",
+            overflow: "hidden"
+        }}
         >
-            <Skeleton variant="rectangular" width="clamp(250px, 55%, 500px)" height={118} />
-            <Skeleton variant="rectangular" width="clamp(200px, 35%, 400px)" height={320} />
-            <Skeleton variant="rectangular" width="clamp(150px, 16%, 300px)" height={120} />
+            <Skeleton variant="rectangular" sx={{
+                minWidth: { xs: "100px", sm: "150px", md: "200px" },
+                height: { xs: "100px", sm: "150px", md: "200px" },
+                margin: {xs: "32px", sm: "64px", md: "80px"}
+            }} />
+            <Box sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0px 32px 0px 0px",
+                width: "100%"
+            }}>
+                <Skeleton variant="rectangular" sx={{ width: "100%", height: "3rem", margin: "1rem 0rem 1rem 0rem" }} />
+                <Skeleton variant="rectangular" sx={{ width: "100%", height: "3rem", margin: "0rem 0rem 1rem 0rem" }} />
+            </Box>
         </Box>
         <Box sx={{
             display: "flex",
-            gap: '32px',
-            flexDirection: "column",
-            justifyContent: "center",
+            flexDirection: "row",
+            justifyContent: "left",
             alignItems: "center",
-            minWidth: "50vw",
-            height: "100vh",
-            backgroundColor: 'MediumSpringGreen'}}
+            width: { xs: "100%", sm: "560px", md: "880px", lg: "1040px" },
+            height: { xs: "45%", sm: "400px", md: "480px", lg: "560px" },
+            marginBottom: "24px",
+            backgroundColor: "primary.light",
+            borderStyle: 'solid',
+            borderWidth: 1,
+            borderColor: "text.secondary",
+            borderRadius: "8px",
+            boxShadow: "0px 2px 10px rgba(0, 0, 0, 1)",
+            overflow: "hidden"
+        }}
         >
-            <Skeleton variant="rectangular" width="clamp(250px, 55%, 500px)" height={118} />
-            <Skeleton variant="rectangular" width="clamp(200px, 35%, 400px)" height={320} />
-            <Skeleton variant="rectangular" width="clamp(150px, 16%, 300px)" height={120} />
+            <Skeleton variant="rectangular" sx={{
+                minWidth: { xs: "100px", sm: "150px", md: "200px" },
+                height: { xs: "100px", sm: "150px", md: "200px" },
+                margin: {xs: "32px", sm: "64px", md: "80px"}
+            }} />
+            <Box sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0px 32px 0px 0px",
+                width: "100%"
+            }}>
+                <Skeleton variant="rectangular" sx={{ width: "100%", height: "48px", marginY: "16px" }} />
+                <Skeleton variant="rectangular" sx={{ width: "100%", height: "48px", marginBottom: "16px" }} />
+            </Box>
         </Box>
     </Box>
 )
@@ -81,7 +161,8 @@ export default function GamePage() {
     const rightIndex = companyIndex + 1;
 
     const { isPending, error, data: companies } = useQuery({
-        queryKey: ['companies'],
+        refetchOnWindowFocus: false,
+        queryKey: [queryKeys.COMPANIES],
         queryFn: () =>
             fetch(
                 `${baseUri}/get_companies`,
@@ -119,30 +200,76 @@ export default function GamePage() {
             updateHighScore();
             setCompanyIndex(companyIndex + 1);
         } else {
-            queryClient.clear()
             navigate("/gameover");
         }
     }
-
+    
     if (error) {
         return (
-            <Box sx={{display: "flex", justifyContent: "center", alignItems: "center", height: '90vh'}}>
-                <Typography variant="h4">😢 Error occurred in our services</Typography>
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: '90vh' }}>
+                <Typography variant="h4" sx={{ marginX: "16px" }}>😢 An error occurred in our services</Typography>
             </Box>
         )
     }
 
     return (
-        <div>
-            <Box className="scroller" sx={{ display: "flex", flexDirection: "row", overflowX: "hidden" }}>
-                {isPending ? <PanelSkeletons/> : (
-                    <>
+        <Box sx={{ display: "flex", flexDirection: "column", width: "100vw", height: "100vh", alignItems: "center" }}>
+            <ButtonBase data-testid="button-home" component={Link} to="/" sx={{
+                position: "fixed",
+                top: "0",
+                left: "0",
+                padding: "32px",
+                backgroundColor: "primary.light",
+                borderRadius: "0px 0px 8px 0px",
+                boxShadow: "0px 2px 5px rgba(0, 0, 0, 1)",
+                '&:hover': {
+                    opacity: 0.85,
+                    transition: "0.2s",
+                }
+            }}>
+                <Home fontSize="large" />
+            </ButtonBase>
+            <Stack direction="row" alignItems="center" gap={1} sx={{ position: "fixed", top: 32, right: 32 }}>
+                <EmojiEvents fontSize="large" sx={{ color: "text.secondary" }} />
+                <Typography data-testid="text-highscore" variant="h4" sx={{ color: "text.secondary", textShadow: "0px 2px 5px rgba(0, 0, 0, 1)" }}>
+                    {highScore}
+                </Typography>
+            </Stack>
+
+            <Box className="score-wrapper" sx={{ display: "flex", width: "100vw", justifyContent: "center" }}>
+                <Paper elevation={4} sx={{
+                    position: "fixed",
+                    textAlign: "center",
+                    top: -6,
+                    zIndex: 1,
+                    backgroundColor: "text.primary",
+                    borderRadius: "8px"
+                }}>
+                    <Typography variant="h5" sx={{ color: "black", paddingX: {xs: "32px", sm: "62px"}, paddingTop: "16px", paddingBottom: "8px" }}>SCORE</Typography>
+                    <Typography data-testid="text-score" variant="h3" sx={{ color: "black", padding: "0px 32px 8px 32px" }}>{score}</Typography>
+                </Paper>
+            </Box>
+            <Typography variant="h4" sx={{ fontSize: {xs: "1.5rem", sm: "2rem"}, color: "text.secondary", textAlign: "center", margin: "160px 32px 32px 32px" }}>
+                Which has the <Box sx={{ display: "inline", color: "green.main" }}>higher</Box> market cap?
+            </Typography>
+            <Box className="scroller" sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                margin: "0px 16px 48px 16px",
+                width: { xs: "95%", sm: "560px", md: "880px", lg: "1040px" },
+                height: "100vh",
+                overflowX: "hidden",
+                overflowY: "hidden",
+                alignItems: "center"
+            }}>
+                {isPending ? <PanelSkeletons /> : (
+                    <Box sx={{width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end"}}>
                         <Panel
                             handleClick={handleClick}
                             id={companies[leftIndex].ticker}
                             companyName={companies[leftIndex].name}
                             marketCap={Currency.format(companies[leftIndex].market_cap)}
-                            color={"MediumTurquoise"}
                             imageSrc={companies[leftIndex].img_url}
                             index={leftIndex}
                         />
@@ -151,22 +278,20 @@ export default function GamePage() {
                             id={companies[rightIndex].ticker}
                             companyName={companies[rightIndex].name}
                             marketCap={Currency.format(companies[rightIndex].market_cap)}
-                            color={"MediumSpringGreen"}
                             imageSrc={companies[rightIndex].img_url}
                             index={rightIndex}
                         />
-                    </>
+                    </Box>
                 )}
-                <Typography data-testid="text-highscore" sx={{ position: "absolute", top: 16, left: 16 }}>
-                    High Score: {highScore}
-                </Typography>
             </Box>
-            <Box className="score-wrapper" sx={{ display: "flex", width: "100vw", justifyContent: "center" }}>
-                <Paper elevation={4} sx={{ position: "absolute", textAlign: "center", top: -4, zIndex: 1 }}>
-                    <Typography variant="h5" sx={{ color: "black", padding: "16px 32px 6px 32px" }}>SCORE</Typography>
-                    <Typography data-testid="text-score" variant="h3" sx={{ color: "black", padding: "0px 32px 12px 32px" }}>{score}</Typography>
-                </Paper>
-            </Box>
-        </div>
+            <Typography component={Link} to="https://clearbit.com" sx={{
+                position: "static",            
+                marginBottom: "16px",
+                color: "text.secondary",
+                fontSize: "12px"
+            }}>
+                Logos provided by Clearbit
+            </Typography>
+        </Box>
     )
 }

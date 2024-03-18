@@ -1,11 +1,18 @@
 import {Box, Button, Typography} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useGameStore } from "../stores/game-store.jsx";
+import {queryClient} from "../config.js";
+import {useEffect} from "react";
+import {queryKeys} from "../constants.js";
 
 export default function GameOverPage() {
     const navigate = useNavigate();
     const score = useGameStore((state) => state.score);
-    const highScore = useGameStore((state) => state.highScore)
+    const highScore = useGameStore((state) => state.highScore);
+
+    useEffect(() => {
+        queryClient.removeQueries({ queryKey: [queryKeys.COMPANIES] });
+    }, []);
 
     const handleMainMenu = (event) => {
         navigate("/");

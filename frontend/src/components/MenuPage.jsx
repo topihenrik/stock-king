@@ -1,13 +1,19 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu, MenuItem, Button, Box } from '@mui/material';
 import { ArrowDropDown } from '@mui/icons-material';
 import Logo from '../../public/logo.png';
+import {queryClient} from "../config.js";
+import {queryKeys} from "../constants.js";
 
 export default function MenuPage() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        queryClient.removeQueries({ queryKey: [queryKeys.COMPANIES] });
+    }, []);
 
     const startGame = () => {
         navigate("/game");

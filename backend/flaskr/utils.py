@@ -7,16 +7,21 @@ from forex_python.converter import CurrencyRates
 from dotenv import load_dotenv, find_dotenv
 from random import sample
 from flaskr import tickers
+from flask import jsonify
 
 TICKERS = tickers.TICKERS
 
 
 def initial_data_update():
-    random_tickers = sample(TICKERS, 30)
-    string_tickers = " ".join(random_tickers)
-    upsert_stock_data(get_stock_data(string_tickers)) 
-    processed_currencies = get_exchange_rates_from_api()
-    upsert_exchange_rates(processed_currencies,True)
+    load_dotenv(find_dotenv())
+    env = os.getenv("ENV")
+    if env != "dev":
+        string_tickers = " ".join(TICKERS)
+        upsert_stock_data(get_stock_data(string_tickers))
+    else:
+        random_tickers = sample(TICKERS, 30)
+        string_tickers = " ".join(random_tickers)
+        upsert_stock_data(get_stock_data(string_tickers))
 
 
 def clear_companies():
@@ -83,7 +88,8 @@ def process_stock_data(tickers):
 
     return stock_data
 
-def get_category_data():
+
+def get_categories_from_database():
     """
     Returns an array of available categories of stocks in the database
     """
@@ -94,6 +100,7 @@ def get_category_data():
             categories = cursor.fetchall()
             categories = [category[0] for category in categories]
             return categories
+
 
 def get_stock_data(stocks):
     """
@@ -365,3 +372,18 @@ def convert_marketcaps_currencies(companies, game_currency):
                     company.update({"currency": game_currency})
                     break
     return companies
+
+
+def get_currencies_from_database():
+    """
+    Returns a JSON array of all existing currencies in the database
+     """
+    with connect_to_db() as conn:
+        with conn.cursor() as cursor:
+            query = sql.SQL('SELECT DISTINCT to_currency, from_currency FROM ExchangeRates')
+            cursor.execute(query)
+            currencies = cursor.fetchall()
+            currencies = [currency[0] for currency in currencies]
+            currencies.append("USD")
+            return jsonify(currencies)
+

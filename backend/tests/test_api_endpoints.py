@@ -109,3 +109,15 @@ def test_get_categories(client):
     assert len(response.json) == 5
     for category in response.json:
             assert category in ["Technology","Retail","Automotive","Finance","Entertainment"]
+
+
+def test_get_all_currencies(client):
+    """
+    Test the get_all_currencies API
+    """
+    response = client.get("/api/get_all_currencies")
+    assert response.status_code == 200
+    data = response.json
+    assert data
+    for currency in data:
+        assert currency in ["EUR", "USD", "PHP", "SEK", "NOK"]
