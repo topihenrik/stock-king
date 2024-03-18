@@ -18,12 +18,6 @@ def initial_data_update():
     upsert_stock_data(get_stock_data(string_tickers))
 
 
-def clear_companies():
-    with connect_to_db() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("TRUNCATE Company;")
-
-
 def connect_to_db():
     """
     Function to connect to the database

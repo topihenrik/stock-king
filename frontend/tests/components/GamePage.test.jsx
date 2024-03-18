@@ -47,5 +47,4 @@ describe('GamePage', () => {
 
         expect(highScoreText).toHaveTextContent('1');
     });
-
 })
