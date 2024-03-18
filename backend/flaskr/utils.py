@@ -16,7 +16,11 @@ def initial_data_update():
     load_dotenv(find_dotenv())
     env = os.getenv("ENV")
     if env != "dev":
-        string_tickers = " ".join(TICKERS)
+        # Disabled fetching all the tickers
+        # string_tickers = " ".join(TICKERS)
+        # upsert_stock_data(get_stock_data(string_tickers))
+        random_tickers = sample(TICKERS, 30)
+        string_tickers = " ".join(random_tickers)
         upsert_stock_data(get_stock_data(string_tickers))
     else:
         random_tickers = sample(TICKERS, 30)
