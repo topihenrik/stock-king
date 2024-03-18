@@ -1,4 +1,5 @@
 
 export const queryKeys = {
-    COMPANIES: "COMPANIES"
+    COMPANIES: "COMPANIES",
+    CURRENCIES: "CURRENCIES"
 };

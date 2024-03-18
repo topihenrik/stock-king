@@ -4,15 +4,22 @@ import { baseUri, queryClient } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import numeral from 'numeral';
+import getSymbolFromCurrency from 'currency-symbol-map'
 import { useGameStore } from "../stores/game-store.jsx";
 import {queryKeys} from "../constants.js";
 import PlaceholderLogo from '../../public/placeholder_company_logo.png';
 
-const Currency = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    notation: 'compact'
-});
+const customNumberFormat = (value, currencyCode) => {
+    const symbol = getSymbolFromCurrency(currencyCode) || currencyCode;
+    let formattedValue;
+    if ((value > 10000000000) || ((value < 1000000000) && (value > 10000000))) {
+        formattedValue = numeral(value).format('(0a)').toUpperCase();
+    } else {
+        formattedValue = numeral(value).format('(0.0a)').toUpperCase();
+    }
+    return `${formattedValue} ${symbol}`;
+};
 
 const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
     return (
@@ -156,9 +163,16 @@ export default function GamePage() {
     const resetScore = useGameStore((state) => state.resetScore);
     const highScore = useGameStore((state) => state.highScore);
     const updateHighScore = useGameStore((state) => state.updateHighScore);
+    const gameCurrency = useGameStore((state) => state.gameCurrency);
     const [companyIndex, setCompanyIndex] = useState(0);
     const leftIndex = companyIndex;
     const rightIndex = companyIndex + 1;
+
+    const Currency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: gameCurrency,
+        notation: 'compact'
+    });
 
     const { isPending, error, data: companies } = useQuery({
         refetchOnWindowFocus: false,
@@ -174,7 +188,7 @@ export default function GamePage() {
                     body: JSON.stringify({
                         excluded_tickers: [],
                         wanted_categories: [],
-                        currency: "USD",
+                        currency: gameCurrency,
                         count: 20
                     })
                 }
@@ -269,7 +283,7 @@ export default function GamePage() {
                             handleClick={handleClick}
                             id={companies[leftIndex].ticker}
                             companyName={companies[leftIndex].name}
-                            marketCap={Currency.format(companies[leftIndex].market_cap)}
+                            marketCap={customNumberFormat(companies[leftIndex].market_cap, gameCurrency)}
                             imageSrc={companies[leftIndex].img_url}
                             index={leftIndex}
                         />
@@ -277,7 +291,7 @@ export default function GamePage() {
                             handleClick={handleClick}
                             id={companies[rightIndex].ticker}
                             companyName={companies[rightIndex].name}
-                            marketCap={Currency.format(companies[rightIndex].market_cap)}
+                            marketCap={customNumberFormat(companies[rightIndex].market_cap, gameCurrency)}
                             imageSrc={companies[rightIndex].img_url}
                             index={rightIndex}
                         />
