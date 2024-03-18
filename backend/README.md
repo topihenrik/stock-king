@@ -44,6 +44,12 @@ Install packages
 
     pip install -r requirements.txt
 
+Set environment variables
+    For dev:
+        set "ENV=dev" & set "DB_USER=stocking" & set "DB_PASSWORD=" & set "DB_HOST=localhost" & set "DB_PORT=5432" & set "DB_DATABASE=StocKing"
+    For test:
+        set "ENV=dev" & set "DB_USER=stockingtest" & set "DB_PASSWORD=" & set "DB_HOST=localhost" & set "DB_PORT=5432" & set "DB_DATABASE=StocKingTest"
+
 ## Linux
 
 Setup virtual environment

@@ -13,9 +13,15 @@ TICKERS = tickers.TICKERS
 
 
 def initial_data_update():
-    random_tickers = sample(TICKERS, 30)
-    string_tickers = " ".join(random_tickers)
-    upsert_stock_data(get_stock_data(string_tickers))
+    load_dotenv(find_dotenv())
+    env = os.getenv("ENV")
+    if env != "dev":
+        string_tickers = " ".join(TICKERS)
+        upsert_stock_data(get_stock_data(string_tickers))
+    else:
+        random_tickers = sample(TICKERS, 30)
+        string_tickers = " ".join(random_tickers)
+        upsert_stock_data(get_stock_data(string_tickers))
 
 
 def connect_to_db():
@@ -77,7 +83,7 @@ def process_stock_data(tickers):
     return stock_data
 
 
-def get_category_data():
+def get_categories_from_database():
     """
     Returns an array of available categories of stocks in the database
     """
@@ -88,6 +94,7 @@ def get_category_data():
             categories = cursor.fetchall()
             categories = [category[0] for category in categories]
             return categories
+
 
 def get_stock_data(stocks):
     """
@@ -145,54 +152,64 @@ def get_currencies_from_database():
         with conn.cursor() as cursor:
             cursor.execute("SELECT DISTINCT currency FROM Company;")
             currencies = cursor.fetchall()
-            currencies = [currency[0] for currency in currencies]
+            currencies = [currency[0].upper() for currency in currencies]
     return currencies
 
 
-def process_currency_data(existing_currencies, rates):
-    needed_currency_rates = [
-        {currency: rates[currency]}
-        for currency in existing_currencies
-        if currency != "USD"
-    ]
-    return needed_currency_rates
+def process_currency_data(rates):
+    current_date = date.today()
+    rate_data = []
+    for rate in rates:
+        try:
+            rate_data.append(
+                {
+                    "currency": str(rate.info["shortName"]).split("/")[0],
+                    "ratio": rate.info["previousClose"],
+                    "date": current_date
+                }
+            )
+        except:
+            print(f"Failed to get exchange rate data")
+            continue
+    return rate_data
 
 
 def get_exchange_rates_from_api():
     """
     Function for getting exchange rates from Forex API.
     """
-    existing_currencies = get_currencies_from_database()
-    c = CurrencyRates()
-    rates = c.get_rates("USD")
-    processed_currencies = process_currency_data(existing_currencies, rates)
+    existing_currencies = [currency+"USD=X" for currency in get_currencies_from_database() if currency != "USD"]
+    rates = []
+    for currency in existing_currencies:   
+        rates.append(yahoo.Ticker(currency))
+    processed_currencies = process_currency_data(rates)
 
     return processed_currencies
 
 
-def upsert_exchange_rates(data):
+def upsert_exchange_rates(data, enable = False):
     """
     Function for upserting exchange rates into the "exchange_rate" table in the database.
     """
-    current_date = date.today()
-    with connect_to_db() as conn:
-        with conn.cursor() as cursor:
-            for row in data:
-                currency = list(row.keys())[0]
-                # Revert the exchange rate to get the rate from the currency to USD
-                rate = 1 / row[currency]
-                # Construct SQL query
-                query = sql.SQL(
+    if(enable):
+        current_date = date.today()
+        with connect_to_db() as conn:
+            with conn.cursor() as cursor:
+                for row in data:
+                    currency = list(row.values())[0]
+                    rate = list(row.values())[1]
+                    # Construct SQL query
+                    query = sql.SQL(
+                        """
+                        INSERT INTO ExchangeRates (from_currency, to_currency, ratio, date)
+                        VALUES (%s, %s, %s, %s)
+                        ON CONFLICT (from_currency, to_currency) DO UPDATE
+                        SET ratio = EXCLUDED.ratio;
                     """
-                    INSERT INTO ExchangeRates (from_currency, to_currency, ratio, date)
-                    VALUES (%s, %s, %s, %s)
-                    ON CONFLICT (from_currency, to_currency) DO UPDATE
-                    SET ratio = EXCLUDED.ratio;
-                """
-                )
-                # Execute the query
-                cursor.execute(query, (currency, "USD", rate, current_date))
-            conn.commit()
+                    )
+                    # Execute the query
+                    cursor.execute(query, (currency, "USD", rate, current_date))
+                conn.commit()
 
 
 def get_companies_from_database(exclude_tickers=[], wanted_categories=[], count=10):
@@ -350,7 +367,8 @@ def convert_marketcaps_currencies(companies, game_currency):
                     break
     return companies
 
-def get_currency_data():
+
+def get_currencies_from_database():
     """
     Returns a JSON array of all existing currencies in the database
      """

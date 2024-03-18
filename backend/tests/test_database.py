@@ -88,7 +88,7 @@ def test_upsert_exchangerates_new_entry(utils, mock_exchangerates_initial):
     """
     Test that upserting a new company creates a new entry in the database
     """
-    utils.upsert_exchange_rates(mock_exchangerates_initial)
+    utils.upsert_exchange_rates(mock_exchangerates_initial,True)
     with utils.connect_to_db() as conn:
         with conn.cursor() as cursor:
             cursor.execute("SELECT * from ExchangeRates")
@@ -97,12 +97,11 @@ def test_upsert_exchangerates_new_entry(utils, mock_exchangerates_initial):
             result_count = cursor.fetchone()
 
     cleaned_result = [(item[0], item[1], item[2]) for item in result_data]
-
     expected_data = [
         (
             "EUR",
             "USD",
-            1 / mock_exchangerates_initial[0]["EUR"],
+            mock_exchangerates_initial[0]["ratio"],
         )
     ]
     expected_count = (1,)
@@ -116,7 +115,7 @@ def test_upsert_exchangerates_updated_market_cap(utils, mock_exchangerates_updat
     Test that second upsert of the same company updates the market cap and date,
     and doesn't create a new entry
     """
-    utils.upsert_exchange_rates(mock_exchangerates_updated)
+    utils.upsert_exchange_rates(mock_exchangerates_updated,True)
     with utils.connect_to_db() as conn:
         with conn.cursor() as cursor:
             cursor.execute("SELECT * from ExchangeRates")
