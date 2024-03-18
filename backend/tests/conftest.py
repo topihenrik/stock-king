@@ -168,12 +168,11 @@ def mock_tickers_updated():
 
     return tickers_data
 
-
 @pytest.fixture()
 def mock_exchangerates_initial():
-    return [{"EUR": 0.9372071227741331}]
+    return [{"currency":"EUR","ratio": 1.0669999999999999811141,"date": date(2023,5,20)}]
 
 
 @pytest.fixture()
 def mock_exchangerates_updated():
-    return [{"EUR": 1}]
+    return [{"currency":"EUR","ratio": 1,"date": date(2023,5,20)}]
