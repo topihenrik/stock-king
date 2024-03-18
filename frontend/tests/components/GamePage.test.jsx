@@ -74,5 +74,4 @@ describe('GamePage', () => {
         const placeholderLogo = await findByAltText('Placeholder logo');
         expect(placeholderLogo).toBeTruthy();
     });
-
 })
