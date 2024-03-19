@@ -30,6 +30,22 @@ To setup the database:
     python init_database.py dev
     ```
 
+## Production
+
+If changes are made to database and production database needs to be reinitialized, use the following commands
+
+1. First open the proxy tunnel to fly's postgres service
+
+    ```
+    fly proxy 5433:5432 -a <postgres-app-name>
+    ```
+
+2. Execute the .sql file against the stocking database
+
+    ```
+    psql postgres://postgres:<password>@localhost:5433/stock_king -a -f init_tables.sql
+    ```
+    
 ## Prerequisites
 
 - Installation of Postgres
