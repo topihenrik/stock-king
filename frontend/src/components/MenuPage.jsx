@@ -160,7 +160,7 @@ export default function MenuPage() {
                 </Box>
                 <Box>
                     <Button
-                        id="basic-button"
+                        data-testid="language-button"
                         aria-controls={open ? 'basic-menu' : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
@@ -171,7 +171,7 @@ export default function MenuPage() {
                         {selectedLanguage}
                     </Button>
                     <Menu
-                        id="basic-menu"
+                        data-testid="language-menu"
                         anchorEl={languageAnchorEl}
                         open={languageOpen}
                         onClose={handleLanguageClose}
@@ -179,10 +179,18 @@ export default function MenuPage() {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem sx={{ textTransform: 'uppercase' }} onClick={() => { handleLanguageSelect('en')}}>
+                        <MenuItem
+                            data-testid="language-menu-item-1"
+                            sx={{ textTransform: 'uppercase' }}
+                            onClick={() => { handleLanguageSelect('en')}}
+                        >
                             en
                         </MenuItem>
-                        <MenuItem sx={{ textTransform: 'uppercase' }} onClick={() => { handleLanguageSelect('fi')}}>
+                        <MenuItem
+                            data-testid="language-menu-item-2"
+                            sx={{ textTransform: 'uppercase' }}
+                            onClick={() => { handleLanguageSelect('fi')}}
+                        >
                             fi
                         </MenuItem>
                     </Menu>
