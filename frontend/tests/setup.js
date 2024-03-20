@@ -1,5 +1,5 @@
 import { expect, afterEach } from 'vitest';
-import {act, cleanup} from '@testing-library/react';
+import {cleanup} from '@testing-library/react';
 import * as matchers from "@testing-library/jest-dom/matchers";
 import {http, HttpResponse} from "msw";
 import {companies} from "./mock-data/companies.js";
@@ -7,8 +7,11 @@ import {exchangeRates} from './mock-data/exchangeRates.js';
 import {setupServer} from "msw/node";
 
 vi.mock("zustand");
+vi.mock('i18next');
+vi.mock('react-i18next');
 
 expect.extend(matchers);
+
 
 export const restHandlers = [
     http.post('http://localhost:5000/api/get_companies', async ({ request }) => {
