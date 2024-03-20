@@ -169,21 +169,29 @@ def get_scores():
     Returns:
         Array of JSON objects of scores in database.
         Example:
-        [{
-            'sid': '1', 
-            'player_name': 'Ketsuppimakkara', 
-            'score': 50, 
-            'country':'FIN', 
-            'timestamp':'2024-03-20 20:32:29.957037+02'
-        },
-        {
-            'sid': '2', 
-            'player_name': 'Sinappimakkara', 
-            'score': 25, 
-            'country':'SWE', 
-            'timestamp':'2024-03-19 21:32:29.957037+02'
-        }
-        ]
+            [
+                {
+                    "country": "USA",
+                    "gamemode": "normal",
+                    "name": "ketsuppimakkara",
+                    "score": 522,
+                    "timestamp": "Wed, 20 Mar 2024 20:30:37 GMT"
+                },
+                {
+                    "country": "FIN",
+                    "gamemode": "normal",
+                    "name": "ketsuppimakkara",
+                    "score": 500,
+                    "timestamp": "Wed, 20 Mar 2024 18:32:29 GMT"
+                },
+                {
+                    "country": "FIN",
+                    "gamemode": "normal",
+                    "name": "sinappimakkara",
+                    "score": 500,
+                    "timestamp": "Wed, 20 Mar 2024 18:32:38 GMT"
+                }
+            ]
     """
 
     # Get params from request body
