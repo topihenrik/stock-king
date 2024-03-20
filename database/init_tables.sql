@@ -25,5 +25,6 @@ CREATE TABLE Scores(
     player_name TEXT NOT NULL,
     score INT NOT NULL,
     country TEXT,
+    gamemode TEXT,
     timestamp TIMESTAMP WITH TIME ZONE NOT NULL
 );
