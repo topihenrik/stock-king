@@ -5,7 +5,7 @@ CREATE TABLE ExchangeRates(
     ratio FLOAT NOT NULL,
     date DATE NOT NULL,
     PRIMARY KEY (to_currency, from_currency)
-    );
+);
 
 DROP TABLE IF EXISTS Company CASCADE;
 CREATE TABLE Company(
@@ -17,4 +17,14 @@ CREATE TABLE Company(
     date DATE NOT NULL,
     sector TEXT NOT NULL,
     website TEXT
+);
+
+DROP TABLE IF EXISTS Scores CASCADE;
+CREATE TABLE Scores(
+    sid INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    player_name TEXT NOT NULL,
+    score INT NOT NULL,
+    country TEXT,
+    gamemode TEXT,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL
 );

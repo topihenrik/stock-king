@@ -82,3 +82,7 @@ Linux
 Windows
 
     python -m pytest
+
+## Database queries
+
+- For inserting timestamps and dates you can use the Postgres [built-in functions](https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT).
