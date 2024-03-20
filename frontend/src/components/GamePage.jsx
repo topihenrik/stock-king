@@ -1,6 +1,6 @@
 import { Box, ButtonBase, Paper, Skeleton, Typography, Stack } from "@mui/material";
 import { Home, EmojiEvents } from "@mui/icons-material";
-import { baseUri, queryClient } from "../config.js";
+import { baseUri } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import getSymbolFromCurrency from 'currency-symbol-map'
 import { useGameStore } from "../stores/game-store.jsx";
 import {queryKeys} from "../constants.js";
 import PlaceholderLogo from '../../public/placeholder_company_logo.png';
+import {useTranslation} from "react-i18next";
 
 const customNumberFormat = (value, currencyCode) => {
     const symbol = getSymbolFromCurrency(currencyCode) || currencyCode;
@@ -164,6 +165,7 @@ export default function GamePage() {
     const highScore = useGameStore((state) => state.highScore);
     const updateHighScore = useGameStore((state) => state.updateHighScore);
     const gameCurrency = useGameStore((state) => state.gameCurrency);
+    const { t } = useTranslation('common');
     const [companyIndex, setCompanyIndex] = useState(0);
     const leftIndex = companyIndex;
     const rightIndex = companyIndex + 1;
@@ -259,12 +261,20 @@ export default function GamePage() {
                     backgroundColor: "text.primary",
                     borderRadius: "8px"
                 }}>
-                    <Typography variant="h5" sx={{ color: "black", paddingX: {xs: "32px", sm: "62px"}, paddingTop: "16px", paddingBottom: "8px" }}>SCORE</Typography>
+                    <Typography variant="h5" sx={{ color: "black", paddingX: {xs: "32px", sm: "62px"}, paddingTop: "16px", paddingBottom: "8px", textTransform: 'uppercase' }}>
+                        {t('score')}
+                    </Typography>
                     <Typography data-testid="text-score" variant="h3" sx={{ color: "black", padding: "0px 32px 8px 32px" }}>{score}</Typography>
                 </Paper>
             </Box>
             <Typography variant="h4" sx={{ fontSize: {xs: "1.5rem", sm: "2rem"}, color: "text.secondary", textAlign: "center", margin: "160px 32px 32px 32px" }}>
-                Which has the <Box sx={{ display: "inline", color: "green.main" }}>higher</Box> market cap?
+                {t("whichHas")}
+                {" "}
+                <Box sx={{ display: "inline", color: "green.main" }}>
+                    {t("higher")}
+                </Box>
+                {" "}
+                {t("marketCap")}?
             </Typography>
             <Box className="scroller" sx={{
                 display: "flex",
@@ -304,7 +314,9 @@ export default function GamePage() {
                 color: "text.secondary",
                 fontSize: "12px"
             }}>
-                Logos provided by Clearbit
+                {t('logosProvidedBy')}
+                {' '}
+                Clearbit
             </Typography>
         </Box>
     )

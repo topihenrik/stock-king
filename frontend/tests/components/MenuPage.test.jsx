@@ -1,5 +1,4 @@
 import { describe, it, expect } from "vitest";
-import {act} from "@testing-library/react";
 import {setupWithProviders} from "../test-utils.jsx";
 import MenuPage from "../../src/components/MenuPage.jsx";
 import { useGameStore } from "../../src/stores/game-store.jsx";
@@ -10,7 +9,7 @@ describe('MenuPage', () => {
 
         const dropdownButton = getByTestId('category-btn');
 
-        expect(dropdownButton).toHaveTextContent('Choose category');
+        expect(dropdownButton).toHaveTextContent('chooseCategory');
     });
 
     it('Should update text after selecting category from dropdown menu', async () => {
@@ -18,17 +17,29 @@ describe('MenuPage', () => {
 
         const dropdownButton = await findByTestId('category-btn');
 
-        await act(async () => {
-            await user.click(dropdownButton);
-        })
+        await user.click(dropdownButton);
 
         const category1 = await findByTestId('category1');
 
-        await act(async () => {
-            await user.click(category1);
-        });
+        await user.click(category1);
 
         expect(dropdownButton).toHaveTextContent('Category 1');
+    });
+
+    it('Should update language menu text after selecting another language', async () => {
+        const { findByTestId, user } = setupWithProviders(<MenuPage/>);
+
+        const menu = await findByTestId('language-button');
+
+        expect(menu).toHaveTextContent('en');
+
+        await user.click(menu);
+
+        const menuItem1 = await findByTestId('language-menu-item-2');
+
+        await user.click(menuItem1);
+
+        expect(menu).toHaveTextContent('fi');
     });
 
     it('Should go to game view after pressing start game button', async () => {
@@ -36,9 +47,7 @@ describe('MenuPage', () => {
 
         const startGameButton = await findByTestId('start-btn');
 
-        await act(async () => {
-            await user.click(startGameButton)
-        });
+        await user.click(startGameButton)
 
         expect(window.location.pathname).toBe('/game');
     });
@@ -47,16 +56,13 @@ describe('MenuPage', () => {
         const { findByTestId, findByText, user } = setupWithProviders(<MenuPage />);
       
         const dropdownButton = await findByTestId("currency-btn");
-      
-        await act(async () => {
-          await user.click(dropdownButton);
-        });
+
+        await user.click(dropdownButton);
       
         const currencySEK = await findByText("SEK");
 
-        await act(async () => {
-          await user.click(currencySEK);
-        });
+
+        await user.click(currencySEK);
       
         expect(useGameStore.getState().gameCurrency).toBe("SEK");
     });
