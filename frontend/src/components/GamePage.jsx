@@ -11,6 +11,8 @@ import {queryKeys} from "../constants.js";
 import PlaceholderLogo from '../../public/placeholder_company_logo.png';
 import {useTranslation} from "react-i18next";
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 const customNumberFormat = (value, currencyCode) => {
     const symbol = getSymbolFromCurrency(currencyCode) || currencyCode;
     let formattedValue;
@@ -22,7 +24,7 @@ const customNumberFormat = (value, currencyCode) => {
     return `${formattedValue} ${symbol}`;
 };
 
-const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
+const Panel = ({ handleClick, id, companyName, marketCap, imageSrc, hideMarketCap, selectedCorrectly, selectedIncorrectly }) => {
     return (
         <ButtonBase value={id} id={id} data-testid="panel" className="panel" onClick={handleClick} sx={{
             display: "flex",
@@ -34,8 +36,8 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
             marginBottom: "24px",
             backgroundColor: "primary.light",
             borderStyle: 'solid',
-            borderWidth: 1,
-            borderColor: "text.secondary",
+            borderWidth: (selectedCorrectly || selectedIncorrectly) ? 3 : 1,
+            borderColor: selectedCorrectly ? "green.main" : selectedIncorrectly ? "red.main" : "text.secondary",
             borderRadius: "8px",
             boxShadow: "0px 2px 10px rgba(0, 0, 0, 1)",
             '&:hover': {
@@ -75,9 +77,10 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc }) => {
                 <Typography data-testid="market-cap" variant="h1" sx={{
                     fontSize: { xs: "3rem", sm: "4rem", md: "6rem" },
                     textAlign: "center",
-                    textWrap: "wrap"
+                    textWrap: "wrap",
+                    color: selectedCorrectly ? "green.main" : selectedIncorrectly ? "red.main" : "text.primary"
                 }}>
-                    {marketCap}
+                    {hideMarketCap ? "?" : marketCap}
                 </Typography>
             </Box>
         </ButtonBase>
@@ -167,11 +170,18 @@ export default function GamePage() {
     const gameCurrency = useGameStore((state) => state.gameCurrency);
     const { t } = useTranslation('common');
     const [companyIndex, setCompanyIndex] = useState(0);
-    const leftIndex = companyIndex;
-    const rightIndex = companyIndex + 1;
+    const topIndex = companyIndex;
+    const bottomIndex = companyIndex + 1;
     const [prevCompany, setPrevCompanyState] = useState(null);
     const numFetchedCompanies = 20;
     const [usedTickersList, setUsedTickersList] = useState([]);
+
+    // Animation-related states
+    const [correctSelected, setCorrectSelected] = useState(false);
+    const [incorrectSelected, setIncorrectSelected] = useState(false);
+    const [topSelection, setTopSelection] = useState("none");
+    const [bottomSelection, setBottomSelection] = useState("none");
+    const [hideBottomMarketCap, setHideBottomMarketCap] = useState(true);
 
     const setPrevCompany = (company) => {
         return new Promise((resolve) => {
@@ -217,17 +227,35 @@ export default function GamePage() {
         resetScore();
     }, []);
 
-    const handleClick = (event) => {
+    const handleClick = async (event) => {
         const ticker = event.currentTarget.value;
-        const leftCompany = companies[leftIndex];
-        const rightCompany = companies[rightIndex];
-        const selectedCompany = companies.filter(company => company.ticker === ticker)[0];
-        const otherCompany = rightCompany.ticker === selectedCompany.ticker ? leftCompany : rightCompany;
+        const topCompany = companies[topIndex];
+        const bottomCompany = companies[bottomIndex];
+        const selectedCompany = companies.filter(company => company.ticker === ticker)[0];  
+        const otherCompany = bottomCompany.ticker === selectedCompany.ticker ? topCompany : bottomCompany;
         const lastCompany = companies[companies.length - 1];
 
+        setHideBottomMarketCap(false);
+
         if (selectedCompany.market_cap >= otherCompany.market_cap) {
+            // Begin animation
+            setCorrectSelected(true);
+            if (selectedCompany == topCompany) {
+                setTopSelection("correct");
+            } else {
+                setBottomSelection("correct");
+            }
             incrementScore();
             updateHighScore();
+            
+            await delay(2000);
+
+            // Clean up after animation
+            setCorrectSelected(false)
+            setHideBottomMarketCap(true);
+            setTopSelection("none");
+            setBottomSelection("none");
+            
             if (score % numFetchedCompanies !== (numFetchedCompanies - 2)) {
                 setCompanyIndex(companyIndex + 1);
             } else {
@@ -237,6 +265,15 @@ export default function GamePage() {
                 });
             }
         } else {
+            // Begin animation
+            setIncorrectSelected(true);
+            if (selectedCompany == topCompany) {
+                setTopSelection("incorrect");
+            } else {
+                setBottomSelection("incorrect");
+            }
+            await delay(2000);
+
             navigate("/gameover");
         }
     }
@@ -304,7 +341,6 @@ export default function GamePage() {
                 margin: "0px 16px 48px 16px",
                 width: { xs: "95%", sm: "560px", md: "880px", lg: "1040px" },
                 height: "100vh",
-                overflowX: "hidden",
                 overflowY: "hidden",
                 alignItems: "center"
             }}>
@@ -312,19 +348,24 @@ export default function GamePage() {
                     <Box sx={{width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end"}}>
                         <Panel
                             handleClick={handleClick}
-                            id={companies[leftIndex].ticker}
-                            companyName={companies[leftIndex].name}
-                            marketCap={customNumberFormat(companies[leftIndex].market_cap, gameCurrency)}
-                            imageSrc={companies[leftIndex].img_url}
-                            index={leftIndex}
+                            id={companies[topIndex].ticker}
+                            companyName={companies[topIndex].name}
+                            marketCap={customNumberFormat(companies[topIndex].market_cap, gameCurrency)}
+                            imageSrc={companies[topIndex].img_url}
+                            index={topIndex}
+                            selectedCorrectly={topSelection == "correct" ? true : false}
+                            selectedIncorrectly={topSelection == "incorrect" ? true : false}
                         />
                         <Panel
                             handleClick={handleClick}
-                            id={companies[rightIndex].ticker}
-                            companyName={companies[rightIndex].name}
-                            marketCap={customNumberFormat(companies[rightIndex].market_cap, gameCurrency)}
-                            imageSrc={companies[rightIndex].img_url}
-                            index={rightIndex}
+                            id={companies[bottomIndex].ticker}
+                            companyName={companies[bottomIndex].name}
+                            marketCap={customNumberFormat(companies[bottomIndex].market_cap, gameCurrency)}
+                            imageSrc={companies[bottomIndex].img_url}
+                            index={bottomIndex}
+                            hideMarketCap={hideBottomMarketCap}
+                            selectedCorrectly={bottomSelection == "correct" ? true : false}
+                            selectedIncorrectly={bottomSelection == "incorrect" ? true : false}
                         />
                     </Box>
                 )}
@@ -339,6 +380,24 @@ export default function GamePage() {
                 {' '}
                 Clearbit
             </Typography>
+            <Box sx={{
+                zIndex: -100,
+                opacity: correctSelected ? "100%" : "0%",
+                transition: "opacity 0.5s",
+                position: "fixed",
+                minWidth: "100vw",
+                minHeight: "100vh",
+                backgroundImage: 'linear-gradient(to bottom, transparent, 80%, #164529)'
+            }}/>
+            <Box sx={{
+                zIndex: -100,
+                opacity: incorrectSelected ? "100%" : "0%",
+                transition: "opacity 0.5s",
+                position: "fixed",
+                minWidth: "100vw",
+                minHeight: "100vh",
+                backgroundImage: 'linear-gradient(to bottom, transparent, 80%, #4D1025)'
+            }}/>
         </Box>
     )
 }
