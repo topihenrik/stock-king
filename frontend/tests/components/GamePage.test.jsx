@@ -1,5 +1,6 @@
 import {describe, it, expect} from "vitest";
 import {setupWithProviders} from "../test-utils.jsx";
+import {within} from '@testing-library/dom';
 import GamePage from "../../src/components/GamePage.jsx";
 import {useGameStore} from "../../src/stores/game-store.jsx";
 
@@ -70,5 +71,22 @@ describe('GamePage', () => {
 
         const placeholderLogo = await findByAltText('Placeholder logo');
         expect(placeholderLogo).toBeTruthy();
+    });
+
+    it('Should refetch data when current score reaches the threshold', async () => {
+        const {findAllByTestId, user} = setupWithProviders(<GamePage/>);
+
+        useGameStore.setState({ score: 18 });
+
+        const panels = await findAllByTestId("panel");
+        await user.click(panels[0]);
+
+        // The first panel should be the previous second panel
+        const firstPanelText = await within(panels[0]).findByText('Five9, Inc.');
+        expect(firstPanelText).toBeInTheDocument();
+
+        // The second panel should be the first fetched company
+        const secondPanelText = await within(panels[1]).findByText('Archer-Daniels-Midland Company');
+        expect(secondPanelText).toBeInTheDocument();
     });
 })
