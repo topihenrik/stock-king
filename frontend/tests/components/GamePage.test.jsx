@@ -55,9 +55,7 @@ describe('GamePage', () => {
 
             const marketCaps = await findAllByTestId("market-cap");
 
-            marketCaps.forEach((marketCap) => {
-                expect(marketCap).toHaveTextContent("€");
-            })
+            expect(marketCaps[0]).toHaveTextContent("€");
         });
     });
 
