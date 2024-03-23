@@ -171,6 +171,7 @@ export default function GamePage() {
     const rightIndex = companyIndex + 1;
     const [prevCompany, setPrevCompanyState] = useState(null);
     const numFetchedCompanies = 20;
+    const [usedTickersList, setUsedTickersList] = useState([]);
 
     const setPrevCompany = (company) => {
         return new Promise((resolve) => {
@@ -191,7 +192,7 @@ export default function GamePage() {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        excluded_tickers: [],
+                        excluded_tickers: usedTickersList,
                         wanted_categories: [],
                         currency: gameCurrency,
                         count: numFetchedCompanies
@@ -200,6 +201,9 @@ export default function GamePage() {
             ).then((res) => {
                 return res.json()
                     .then((data) => {
+                        const tickers = data.map(company => company.ticker);
+                        setUsedTickersList(prevList => [...prevList, ...tickers]);
+
                         if (prevCompany !== null) {
                             data.unshift(prevCompany);
                         }

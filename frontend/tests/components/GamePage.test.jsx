@@ -82,11 +82,11 @@ describe('GamePage', () => {
         await user.click(panels[0]);
 
         // The first panel should be the previous second panel
-        const firstPanelText = await within(panels[0]).findByText('Five9, Inc.');
+        const firstPanelText = await within(panels[0]).findByText('Jacobs Solutions Inc.');
         expect(firstPanelText).toBeInTheDocument();
 
         // The second panel should be the first fetched company
-        const secondPanelText = await within(panels[1]).findByText('Archer-Daniels-Midland Company');
+        const secondPanelText = await within(panels[1]).findByText('Essex Property Trust, Inc.');
         expect(secondPanelText).toBeInTheDocument();
     });
 })
