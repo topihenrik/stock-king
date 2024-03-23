@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, MenuItem, Button, Box } from '@mui/material';
+import { Menu, MenuItem, Button, Box, keyframes } from '@mui/material';
 import { ArrowDropDown } from '@mui/icons-material';
-import Logo from '../../public/logo.png';
+import Logo from '../../public/logo.svg';
 import { baseUri, queryClient } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import {queryKeys} from "../constants.js";
@@ -23,6 +23,10 @@ export default function MenuPage() {
     const [selectedCurrency, setSelectedCurrency] = useState(gameCurrency);
     const navigate = useNavigate();
     const { t } = useTranslation('common');
+    const logoAnimation = keyframes`
+        0% { transform: translate(0px, -12px); }
+        100% { transform: translate(0px, 12px); }
+    `;
 
     useEffect(() => {
         queryClient.removeQueries({ queryKey: [queryKeys.COMPANIES] });
@@ -100,15 +104,25 @@ export default function MenuPage() {
             boxSizing: 'border-box',
         }}>
             <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", gap: "16px"}}>
-                <Box component="img" src={Logo} sx={{ width: "100%", maxWidth: "200px", height: "auto" }} />
-                <Button variant="contained" data-testid="start-btn" onClick={startGame}>
+                <Box component="img" src={Logo} sx={{ 
+                    width: { xs: "256px", sm: "512px" },  
+                    maxHeight: "512px", 
+                    marginBottom: "96px", 
+                    animation: `${logoAnimation} 2s ease-in-out infinite alternate` 
+                }} />
+                <Button variant="contained" data-testid="start-btn" onClick={startGame} sx={{
+                    minWidth: "270px", minHeight: "64px", fontSize: "2rem"
+                }}>
                     {t('startGame')}
                 </Button>
                 <Button 
                     variant="contained"
                     data-testid="category-btn"
                     onClick={handleCategoryClick}
-                    endIcon={<ArrowDropDown />}>{selectedCategory || t('chooseCategory')}
+                    endIcon={<ArrowDropDown />}
+                    sx={{ minWidth: "200px" }}
+                >
+                    {selectedCategory || t('chooseCategory')}
                 </Button>
                 <Box>
                     <Menu
@@ -132,7 +146,10 @@ export default function MenuPage() {
                         variant="contained"
                         data-testid="currency-btn"
                         onClick={handleCurrencyClick}
-                        endIcon={<ArrowDropDown />}>{selectedCurrency}
+                        endIcon={<ArrowDropDown />}
+                        sx={{ minWidth: "200px" }}
+                    >
+                            {selectedCurrency}
                     </Button>
                     <Menu
                         anchorEl={currencyAnchorEl}
@@ -167,6 +184,7 @@ export default function MenuPage() {
                         variant="contained"
                         onClick={handleLanguageClick}
                         endIcon={<ArrowDropDown />}
+                        sx={{ minWidth: "200px" }}
                     >
                         {selectedLanguage}
                     </Button>
