@@ -8,7 +8,7 @@ def run_before_testing(utils, mock_test_database_tickers, mock_exchangerates_ini
     """
     utils.upsert_stock_data(mock_test_database_tickers)
     utils.upsert_exchange_rates(mock_exchangerates_initial,True)
-
+    
     yield
 
 
@@ -121,3 +121,90 @@ def test_get_all_currencies(client):
     assert data
     for currency in data:
         assert currency in ["EUR", "USD", "PHP", "SEK", "NOK"]
+
+def test_insert_score(client):
+    """
+    Test inserting a new highscore to the database
+    """
+    response = client.post("/api/new_high_score",json={
+        "name":"Testuppimakkara",
+        "score":200,
+        "country":"SOVEREIGN_NATION_OF_TESTOPIA",
+        "count":1
+    })
+    assert response.status_code == 200
+
+    response = client.post(
+        "/api/get_scores",
+        json={
+            "countries": ["SOVEREIGN_NATION_OF_TESTOPIA"],
+            "count" : 1
+        },
+    )
+    assert response.json != []
+    assert len(response.json) <= 1
+    for index, highscore in enumerate(response.json):
+        assert highscore["gamemode"] == "normal"
+        assert highscore["country"] == "SOVEREIGN_NATION_OF_TESTOPIA"
+        assert highscore["score"] == 200
+
+    
+def test_get_scores(utils,client,mock_scores_initial):
+    """
+    Test to get a list of highscores saved in the database.
+    """
+
+    utils.insert_scores(mock_scores_initial)
+    
+    response = client.post(
+        "/api/get_scores",
+        json={
+            "countries": ["FIN", "SWE"]
+        },
+    )
+    assert response.json != []
+    assert len(response.json) <= 50
+    for index, highscore in enumerate(response.json):
+        assert highscore["gamemode"] == "normal"
+        assert highscore["country"] in ["FIN", "SWE"]
+        if(index > 0):
+            assert response.json[index]["score"] <= response.json[index-1]["score"] 
+
+    response = client.post(
+        "/api/get_scores",
+        json={
+        },
+    )
+    assert response.json != []
+    assert len(response.json) <= 50
+    for index, highscore in enumerate(response.json):
+        assert highscore["gamemode"] == "normal"
+        assert highscore["country"] in ["FIN", "SWE", "USA","","SOVEREIGN_NATION_OF_TESTOPIA"]
+        if(index > 0):
+            assert response.json[index]["score"] <= response.json[index-1]["score"] 
+
+    response = client.post(
+        "/api/get_scores",
+        json={
+            "gamemode": "timed",
+        },
+    )
+    assert response.json == []
+    assert len(response.json) <= 0
+
+    response = client.post(
+        "/api/get_scores",
+        json={
+            "count": 25,
+            "gamemode": "normal",
+        },
+    )
+    assert response.json != []
+    assert len(response.json) <= 25
+    for index, highscore in enumerate(response.json):
+        assert highscore["gamemode"] == "normal"
+        if(index > 0):
+            assert response.json[index]["score"] <= response.json[index-1]["score"] 
+
+
+

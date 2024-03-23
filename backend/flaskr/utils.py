@@ -98,7 +98,36 @@ def get_categories_from_database():
             categories = cursor.fetchall()
             categories = [category[0] for category in categories]
             return categories
+            
+def get_scores_from_database(count = 50, countries = [], gamemode = "normal"):
+    """
+    Returns an array of objects representing highscores in the database
+    """
+# Construct SQL query
+    query_string = f"SELECT * FROM scores"
 
+    if len(countries) != 0:
+        query_string += f" WHERE country IN ("
+        for country in countries:
+            if countries[-1] == country:
+                query_string += f"'{country}'"
+            else:
+                query_string += f"'{country}',"
+        query_string += f") AND gamemode = '{gamemode}'"
+    else:
+        query_string += f" WHERE gamemode = '{gamemode}'"
+
+    query_string += f" ORDER BY score DESC, timestamp ASC LIMIT {count};"
+    query = sql.SQL(query_string)
+
+    with connect_to_db() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            leaderboard = cursor.fetchall()
+            highscores = score_db_result_to_dict(leaderboard)
+            return highscores
+        
+        
 
 def get_stock_data(stocks):
     """
@@ -147,6 +176,32 @@ def upsert_stock_data(data):
 
             conn.commit()
 
+def insert_scores(data):
+    """
+    Function to insert a new high score into the "score" table in the database.
+    Takes a list of dicts representing highscores, adds all to database
+    """
+    with connect_to_db() as conn:
+        with conn.cursor() as cursor:
+            for row in data:
+                # Construct SQL query
+                query = sql.SQL(
+                    """
+                    INSERT INTO Scores
+                    VALUES (default,%s, %s, %s, %s, NOW())
+                    """
+                )
+                # Execute the query
+                cursor.execute(
+                    query,
+                    (
+                        row["name"],
+                        row["score"],
+                        row["country"],
+                        row["gamemode"]
+                    ),
+                )
+        conn.commit()
 
 def get_currencies_from_database():
     """
@@ -300,6 +355,21 @@ def company_db_result_to_dict(company_data_from_db):
         dictionary["img_url"] = f"https://logo.clearbit.com/{company[7]}"
         list_of_dicts.append(dictionary)
 
+    return list_of_dicts
+
+def score_db_result_to_dict(score_data_from_db):
+    """
+    Takes a psycopg2 database result of score data (list of tuples) and turns it into a dictionary for easier use
+    """
+    list_of_dicts = []
+    for highscore in score_data_from_db:
+        dictionary = {}
+        dictionary["name"] = highscore[1]
+        dictionary["score"] = highscore[2]
+        dictionary["gamemode"] = highscore[4]
+        dictionary["timestamp"] = highscore[5]
+        dictionary["country"] = highscore[3]
+        list_of_dicts.append(dictionary)
     return list_of_dicts
 
 

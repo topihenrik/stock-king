@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify, send_from_directory
+from flask import Flask, request, Response, render_template, jsonify, send_from_directory
 #from flask_apscheduler import APScheduler
 from flask_cors import CORS
 from flaskr import utils, tickers
@@ -121,6 +121,95 @@ def get_companies():
 
     return companies
 
+@app.post("/api/new_high_score")
+def new_high_score():
+    """
+    Endpoint for adding a new leaderboard highscore.
+    Required parameters:
+    "name": string,
+    "score": integer,
+    Optional parameters:
+    "country": string (ISO 3166-1 Alpha-3 format),
+    "gamemode": predefined strings "normal" OR "timed" defaults to "normal"
+    Returns: Empty response with status code indicating success or failure
+    """
+
+    # Get params from request body
+    raw_data = request.data
+    try:
+        json_data = json.loads(raw_data)
+    except Exception:
+        return Response("Malformed request",status=400)
+    if json_data.get("name") is None or json_data.get("score") is None:
+        return Response("Malformed request",status=400)
+    else:
+        name = json_data.get("name")
+        score = json_data.get("score")
+        country = (json_data.get("country") if json_data.get("country") else "")
+        gamemode = (json_data.get("gamemode") if json_data.get("gamemode") else "normal")
+
+    new_high_score = {
+        "name":name,
+        "score":score,
+        "country":country,
+        "gamemode":gamemode
+    }
+
+    utils.insert_scores([new_high_score])
+    return "success"
+
+@app.post("/api/get_scores")
+def get_scores():
+    """
+    Endpoint for getting leaderboard scores.
+    No required parameters. 
+    Pass an integer parameter 'count' to specify number of scores to get
+    Pass an array of strings as 'country' (Using ISO 3166-1 Alpha-3 format) to specify which countries to get scores from.
+
+    Returns:
+        Array of JSON objects of scores in database.
+        Example:
+            [
+                {
+                    "country": "USA",
+                    "gamemode": "normal",
+                    "name": "ketsuppimakkara",
+                    "score": 522,
+                    "timestamp": "Wed, 20 Mar 2024 20:30:37 GMT"
+                },
+                {
+                    "country": "FIN",
+                    "gamemode": "normal",
+                    "name": "ketsuppimakkara",
+                    "score": 500,
+                    "timestamp": "Wed, 20 Mar 2024 18:32:29 GMT"
+                },
+                {
+                    "country": "FIN",
+                    "gamemode": "normal",
+                    "name": "sinappimakkara",
+                    "score": 500,
+                    "timestamp": "Wed, 20 Mar 2024 18:32:38 GMT"
+                }
+            ]
+    """
+
+    # Get params from request body
+    raw_data = request.data
+    try:
+        json_data = json.loads(raw_data)
+    except Exception:
+        json_data = {}
+
+    countries = (
+        json_data.get("countries") if json_data.get("countries") else []
+    )
+    gamemode = (
+        json_data.get("gamemode") if json_data.get("gamemode") else "normal"
+    )
+    count = int(json_data.get("count") or 50)
+    scores = utils.get_scores_from_database(count,countries,gamemode)
+    return scores
 
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>", methods=["GET"])
