@@ -169,14 +169,18 @@ export default function GamePage() {
     const [companyIndex, setCompanyIndex] = useState(0);
     const leftIndex = companyIndex;
     const rightIndex = companyIndex + 1;
+    const [prevCompany, setPrevCompanyState] = useState(null);
+    const numFetchedCompanies = 20;
+    const [usedTickersList, setUsedTickersList] = useState([]);
 
-    const Currency = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: gameCurrency,
-        notation: 'compact'
-    });
+    const setPrevCompany = (company) => {
+        return new Promise((resolve) => {
+            setPrevCompanyState(company);
+            resolve();
+        });
+    };
 
-    const { isPending, error, data: companies } = useQuery({
+    const { isPending, error, refetch, data: companies } = useQuery({
         refetchOnWindowFocus: false,
         queryKey: [queryKeys.COMPANIES],
         queryFn: () =>
@@ -188,15 +192,24 @@ export default function GamePage() {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        excluded_tickers: [],
+                        excluded_tickers: usedTickersList,
                         wanted_categories: [],
                         currency: gameCurrency,
-                        count: 20
+                        count: numFetchedCompanies
                     })
                 }
-            ).then((res) =>
-                res.json(),
-            ),
+            ).then((res) => {
+                return res.json()
+                    .then((data) => {
+                        const tickers = data.map(company => company.ticker);
+                        setUsedTickersList(prevList => [...prevList, ...tickers]);
+
+                        if (prevCompany !== null) {
+                            data.unshift(prevCompany);
+                        }
+                        return data;
+                    });
+            }),
     });
 
     useEffect(() => {
@@ -210,11 +223,19 @@ export default function GamePage() {
         const rightCompany = companies[rightIndex];
         const selectedCompany = companies.filter(company => company.ticker === ticker)[0];
         const otherCompany = rightCompany.ticker === selectedCompany.ticker ? leftCompany : rightCompany;
+        const lastCompany = companies[companies.length - 1];
 
         if (selectedCompany.market_cap >= otherCompany.market_cap) {
             incrementScore();
             updateHighScore();
-            setCompanyIndex(companyIndex + 1);
+            if (score % numFetchedCompanies !== (numFetchedCompanies - 2)) {
+                setCompanyIndex(companyIndex + 1);
+            } else {
+                setPrevCompany(lastCompany).then(async () => {
+                    await refetch();
+                    setCompanyIndex(0);
+                });
+            }
         } else {
             navigate("/gameover");
         }
