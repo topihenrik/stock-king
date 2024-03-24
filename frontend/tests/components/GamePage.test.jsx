@@ -4,6 +4,8 @@ import {within} from '@testing-library/dom';
 import GamePage from "../../src/components/GamePage.jsx";
 import {useGameStore} from "../../src/stores/game-store.jsx";
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 describe('GamePage', () => {
     it('Should create company panels', async () => {
         const {findAllByTestId} = setupWithProviders(<GamePage/>);
@@ -55,9 +57,7 @@ describe('GamePage', () => {
 
             const marketCaps = await findAllByTestId("market-cap");
 
-            marketCaps.forEach((marketCap) => {
-                expect(marketCap).toHaveTextContent("€");
-            })
+            expect(marketCaps[0]).toHaveTextContent("€");
         });
     });
 
@@ -81,6 +81,8 @@ describe('GamePage', () => {
         const panels = await findAllByTestId("panel");
         await user.click(panels[0]);
 
+        await delay(2000);
+
         // The first panel should be the previous second panel
         const firstPanelText = await within(panels[0]).findByText('Jacobs Solutions Inc.');
         expect(firstPanelText).toBeInTheDocument();
@@ -88,5 +90,5 @@ describe('GamePage', () => {
         // The second panel should be the first fetched company
         const secondPanelText = await within(panels[1]).findByText('Essex Property Trust, Inc.');
         expect(secondPanelText).toBeInTheDocument();
-    });
+    }, 10000);
 })
