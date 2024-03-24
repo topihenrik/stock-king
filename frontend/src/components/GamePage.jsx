@@ -25,6 +25,8 @@ const customNumberFormat = (value, currencyCode) => {
 };
 
 const Panel = ({ handleClick, id, companyName, marketCap, imageSrc, hideAll, hideMarketCap, selectedCorrectly, selectedIncorrectly }) => {
+    const [loaded, setLoaded] = useState(false);
+
     return (
         <ButtonBase value={id} id={id} data-testid="panel" className="panel" onClick={handleClick} sx={{
             
@@ -54,15 +56,16 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc, hideAll, hid
                 opacity: hideAll ? 0.0 : 1.0,
                 transition: "0.4s" 
             }}>
-                <Box component="img" src={imageSrc} alt={companyName}
+                <Box component="img" style={loaded ? {} : { display: "none" }} src={imageSrc} alt={companyName}
                     onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = PlaceholderLogo;
                         e.target.alt = "Placeholder logo"
                     }}
+                    onLoad={() => setLoaded(true)}
                     sx={{
-                        width: { xs: "100px", sm: "150px", md: "200px" },
-                        height: { xs: "100px", sm: "150px", md: "200px" },
+                        minWidth: { xs: "100px", sm: "150px", md: "200px" },
+                        maxHeight: { xs: "100px", sm: "150px", md: "200px" },
                         margin: {xs: "32px", sm: "64px", md: "80px"},
                         borderRadius: "8px"
                 }}></Box>
@@ -271,21 +274,28 @@ export default function GamePage() {
             // Hide panel contents during company switch
             setHidePanelContent(true);
             await delay(400);
+            
+            // Change companies
             if (score % numFetchedCompanies !== (numFetchedCompanies - 2)) {
                 setCompanyIndex(companyIndex + 1);
-            setHideBottomMarketCap(true);
-            await delay(200);
-            setHidePanelContent(false);
-            await delay(400);
 
-            // Enable pointer events again
-            setDisablePointer(false);
+                setHideBottomMarketCap(true);
+                setHidePanelContent(false);
             } else {
                 setPrevCompany(lastCompany).then(async () => {
                     await refetch();
                     setCompanyIndex(0);
+                })
+                .then(async () => {
+                    setHideBottomMarketCap(true);
+                    setHidePanelContent(false);             
                 });
             }
+            await delay(400);
+
+            // Enable pointer events again
+            setDisablePointer(false);
+            
         } else {
             // Begin animation
             setIncorrectSelected(true);        
