@@ -18,8 +18,8 @@ CREATE TABLE Company(
     sector TEXT NOT NULL,
     website TEXT,
     full_time_employees TEXT,
-    revenue_growth DECIMAL (5, 2),
-    earnings_growth DECIMAL (5, 2)
+    revenue_growth FLOAT,
+    earnings_growth FLOAT
 );
 
 DROP TABLE IF EXISTS Scores CASCADE;
