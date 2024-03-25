@@ -353,6 +353,10 @@ def company_db_result_to_dict(company_data_from_db):
         dictionary["sector"] = company[6]
         dictionary["website"] = company[7]
         dictionary["img_url"] = f"https://logo.clearbit.com/{company[7]}"
+        dictionary["full_time_employees"] = company[8]
+        dictionary["revenue_growth"] = company[9]
+        dictionary["earnings_growth"] = company[10]
+
         list_of_dicts.append(dictionary)
 
     return list_of_dicts

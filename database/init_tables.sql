@@ -16,7 +16,10 @@ CREATE TABLE Company(
     currency TEXT NOT NULL,
     date DATE NOT NULL,
     sector TEXT NOT NULL,
-    website TEXT
+    website TEXT,
+    full_time_employees TEXT,
+    revenue_growth FLOAT,
+    earnings_growth FLOAT
 );
 
 DROP TABLE IF EXISTS Scores CASCADE;
