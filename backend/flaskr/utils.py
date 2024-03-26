@@ -6,10 +6,11 @@ import yfinance as yahoo
 from forex_python.converter import CurrencyRates
 from dotenv import load_dotenv, find_dotenv
 from random import sample
-from flaskr import tickers
+from flaskr import tickers, tickers_sorted
 from flask import jsonify
 
 TICKERS = tickers.TICKERS
+TICKERS_EASY = tickers_sorted.TICKERS_EASY
 
 
 def initial_data_update():
@@ -93,17 +94,18 @@ def get_categories_from_database():
     """
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
-            query = sql.SQL('SELECT DISTINCT sector FROM company')
+            query = sql.SQL("SELECT DISTINCT sector FROM company")
             cursor.execute(query)
             categories = cursor.fetchall()
             categories = [category[0] for category in categories]
             return categories
-            
-def get_scores_from_database(count = 50, countries = [], gamemode = "normal"):
+
+
+def get_scores_from_database(count=50, countries=[], gamemode="normal"):
     """
     Returns an array of objects representing highscores in the database
     """
-# Construct SQL query
+    # Construct SQL query
     query_string = f"SELECT * FROM scores"
 
     if len(countries) != 0:
@@ -126,8 +128,7 @@ def get_scores_from_database(count = 50, countries = [], gamemode = "normal"):
             leaderboard = cursor.fetchall()
             highscores = score_db_result_to_dict(leaderboard)
             return highscores
-        
-        
+
 
 def get_stock_data(stocks):
     """
@@ -141,7 +142,7 @@ def get_stock_data(stocks):
     return stock_data
 
 
-def upsert_stock_data(data):
+def upsert_stock_data(data, difficulty):
     """
     Function for upserting stock data into the "company" table in the database.
     """
@@ -151,8 +152,8 @@ def upsert_stock_data(data):
                 # Construct SQL query
                 query = sql.SQL(
                     """
-                    INSERT INTO Company (ticker, name, market_cap, currency, date, sector, website)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO Company (ticker, name, difficulty, market_cap, currency, date, sector, website)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (ticker) DO UPDATE
                     SET market_cap = EXCLUDED.market_cap,
                         date = EXCLUDED.date,
@@ -166,6 +167,7 @@ def upsert_stock_data(data):
                     (
                         row["ticker"],
                         row["name"],
+                        difficulty,
                         row["market_cap"],
                         row["currency"],
                         row["date"],
@@ -175,6 +177,7 @@ def upsert_stock_data(data):
                 )
 
             conn.commit()
+
 
 def insert_scores(data):
     """
@@ -194,14 +197,10 @@ def insert_scores(data):
                 # Execute the query
                 cursor.execute(
                     query,
-                    (
-                        row["name"],
-                        row["score"],
-                        row["country"],
-                        row["gamemode"]
-                    ),
+                    (row["name"], row["score"], row["country"], row["gamemode"]),
                 )
         conn.commit()
+
 
 def get_currencies_from_database():
     """
@@ -224,7 +223,7 @@ def process_currency_data(rates):
                 {
                     "currency": str(rate.info["shortName"]).split("/")[0],
                     "ratio": rate.info["previousClose"],
-                    "date": current_date
+                    "date": current_date,
                 }
             )
         except:
@@ -237,20 +236,24 @@ def get_exchange_rates_from_api():
     """
     Function for getting exchange rates from Forex API.
     """
-    existing_currencies = [currency+"USD=X" for currency in get_currencies_from_database() if currency != "USD"]
+    existing_currencies = [
+        currency + "USD=X"
+        for currency in get_currencies_from_database()
+        if currency != "USD"
+    ]
     rates = []
-    for currency in existing_currencies:   
+    for currency in existing_currencies:
         rates.append(yahoo.Ticker(currency))
     processed_currencies = process_currency_data(rates)
 
     return processed_currencies
 
 
-def upsert_exchange_rates(data, enable = False):
+def upsert_exchange_rates(data, enable=False):
     """
     Function for upserting exchange rates into the "exchange_rate" table in the database.
     """
-    if(enable):
+    if enable:
         current_date = date.today()
         with connect_to_db() as conn:
             with conn.cursor() as cursor:
@@ -271,7 +274,9 @@ def upsert_exchange_rates(data, enable = False):
                 conn.commit()
 
 
-def get_companies_from_database(exclude_tickers=[], wanted_categories=[], count=10):
+def get_companies_from_database(
+    difficulty="easy", exclude_tickers=[], wanted_categories=[], count=10
+):
     """
     Takes a comma-separated string of tickers (Eg. "AAPL,MSFT,KNE") and an integer of how many companies to return
     Connects to database and returns a dictionary containing all company data from 10 companies that don't have one of the excluded tickers
@@ -302,6 +307,7 @@ def get_companies_from_database(exclude_tickers=[], wanted_categories=[], count=
                 query_string += f"'{ticker}',"
 
         query_string += ")"
+        query_string += f" AND difficulty = '{difficulty}'"
 
     if len(exclude_tickers) != 0 and len(wanted_categories) != 0:
         query_string += f" AND sector IN ("
@@ -322,6 +328,7 @@ def get_companies_from_database(exclude_tickers=[], wanted_categories=[], count=
                 query_string += f"'{sector}',"
 
         query_string += ")"
+        query_string += f" AND difficulty = '{difficulty}'"
 
     query_string += f" ORDER BY RANDOM() LIMIT {count};"
 
@@ -347,19 +354,21 @@ def company_db_result_to_dict(company_data_from_db):
         dictionary = {}
         dictionary["ticker"] = company[1]
         dictionary["name"] = company[2]
-        dictionary["market_cap"] = company[3]
-        dictionary["currency"] = company[4]
-        dictionary["date"] = company[5]
-        dictionary["sector"] = company[6]
-        dictionary["website"] = company[7]
-        dictionary["img_url"] = f"https://logo.clearbit.com/{company[7]}"
-        dictionary["full_time_employees"] = company[8]
-        dictionary["revenue_growth"] = company[9]
-        dictionary["earnings_growth"] = company[10]
+        dictionary["difficulty"] = company[3]
+        dictionary["market_cap"] = company[4]
+        dictionary["currency"] = company[5]
+        dictionary["date"] = company[6]
+        dictionary["sector"] = company[7]
+        dictionary["website"] = company[8]
+        dictionary["img_url"] = f"https://logo.clearbit.com/{company[8]}"
+        dictionary["full_time_employees"] = company[9]
+        dictionary["revenue_growth"] = company[10]
+        dictionary["earnings_growth"] = company[11]
 
         list_of_dicts.append(dictionary)
 
     return list_of_dicts
+
 
 def score_db_result_to_dict(score_data_from_db):
     """
@@ -449,13 +458,14 @@ def convert_marketcaps_currencies(companies, game_currency):
 def get_currencies_from_database():
     """
     Returns a JSON array of all existing currencies in the database
-     """
+    """
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
-            query = sql.SQL('SELECT DISTINCT to_currency, from_currency FROM ExchangeRates')
+            query = sql.SQL(
+                "SELECT DISTINCT to_currency, from_currency FROM ExchangeRates"
+            )
             cursor.execute(query)
             currencies = cursor.fetchall()
             currencies = [currency[0] for currency in currencies]
             currencies.append("USD")
             return jsonify(currencies)
-
