@@ -5,7 +5,7 @@ import {queryClient} from "../config.js";
 import {useEffect, useState} from "react";
 import {queryKeys} from "../constants.js";
 import {useTranslation} from "react-i18next";
-import {GameHistory} from "./GameHistory.jsx";
+import GameHistory from "./GameHistory.jsx";
 
 export default function GameOverPage() {
     const navigate = useNavigate();
