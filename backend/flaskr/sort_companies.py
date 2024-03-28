@@ -8,9 +8,9 @@ with open("companyresult.csv") as f:
     sortedlist = sorted(rows, key=operator.itemgetter(1), reverse=True)
 
 with open("tickers_sorted.py", "w") as f:
-    tickers_easy = sortedlist[0:333]
-    tickers_medium = sortedlist[334:666]
-    tickers_hard = sortedlist[667:-1]
+    tickers_easy = sortedlist[0:150]
+    tickers_medium = sortedlist[151:350]
+    tickers_hard = sortedlist[351:-1]
     f.write("TICKERS_EASY = [")
     for ticker in tickers_easy:
         f.write(f'"{ticker[0]}",')

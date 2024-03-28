@@ -6,7 +6,9 @@ def run_before_testing(utils, mock_test_database_tickers, mock_exchangerates_ini
     """
     Upsert the mock data before each test
     """
-    utils.upsert_stock_data(mock_test_database_tickers, "easy")
+    utils.upsert_stock_data(mock_test_database_tickers[0:2], "easy")
+    utils.upsert_stock_data(mock_test_database_tickers[2:6], "medium")
+    utils.upsert_stock_data(mock_test_database_tickers[6:11], "hard")
     utils.upsert_exchange_rates(mock_exchangerates_initial, True)
 
     yield
@@ -99,6 +101,24 @@ def test_get_companies_with_other_content_type(client):
         response.json["msg"]
         == "Please encode your request as application/json or send one without a body and content-type header"
     )
+
+
+def test_get_companies_with_difficulty(client):
+    response = client.post("/api/get_companies", json={"difficulties": ["easy"]})
+
+    assert response.json != []
+    assert len(response.json) == 2
+    for company in response.json:
+        assert company["difficulty"] == "easy"
+
+    response = client.post(
+        "/api/get_companies", json={"difficulties": ["easy", "medium"]}
+    )
+
+    assert response.json != []
+    assert len(response.json) == 6
+    for company in response.json:
+        assert company["difficulty"] in ["easy", "medium"]
 
 
 def test_get_categories(client):

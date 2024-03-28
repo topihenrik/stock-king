@@ -70,9 +70,9 @@ def get_companies():
     None of the params are required when making a request since we have default values for params.
 
     Request params in json format:
-        difficulty:         Wanted difficulty of companies as a string (easy/medium/hard)
-                            Default: "easy"
-                            Example: "hard"
+        difficulties:       Wanted difficulty of companies as an array (easy/medium/hard)
+                            Default: ["easy"]
+                            Example: ["easy", "medium"]
 
         excluded_tickers:   Array of tickers (string) that need to be excluded from the result.
                             Default: []
@@ -119,7 +119,11 @@ def get_companies():
         json_data = json.loads(raw_data)
     except Exception:
         json_data = {}
-    difficulty = json_data.get("difficulty") if json_data.get("difficulty") else "easy"
+    difficulties = (
+        json_data.get("difficulties")
+        if json_data.get("difficulties")
+        else ["easy", "medium", "hard"]
+    )
     exclude_tickers = (
         json_data.get("excluded_tickers") if json_data.get("excluded_tickers") else []
     )
@@ -131,7 +135,7 @@ def get_companies():
 
     # Get company data from database
     companies = utils.get_companies_from_database(
-        difficulty, exclude_tickers, wanted_categories, count
+        difficulties, exclude_tickers, wanted_categories, count
     )
     companies = utils.convert_marketcaps_currencies(companies, currency)
 

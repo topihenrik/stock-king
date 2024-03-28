@@ -275,7 +275,7 @@ def upsert_exchange_rates(data, enable=False):
 
 
 def get_companies_from_database(
-    difficulty="easy", exclude_tickers=[], wanted_categories=[], count=10
+    difficulties=["easy"], exclude_tickers=[], wanted_categories=[], count=10
 ):
     """
     Takes a comma-separated string of tickers (Eg. "AAPL,MSFT,KNE") and an integer of how many companies to return
@@ -284,6 +284,8 @@ def get_companies_from_database(
     Function for getting companies from database
 
     Params:
+            difficulties:       The difficulties that want to be included in the query
+                                (array of difficulty values)
             exclude_tickers:    Companies that needs to be excluded from search
                                 (array of ticker values)
             wanted_categories:   Companies that needs to appear in search.
@@ -296,10 +298,18 @@ def get_companies_from_database(
     """
 
     # Construct SQL query
-    query_string = f"SELECT * FROM Company"
+    query_string = f"SELECT * FROM Company WHERE "
+
+    query_string += "difficulty IN ("
+    for difficulty in difficulties:
+        if difficulties[-1] == difficulty:
+            query_string += f"'{difficulty}'"
+        else:
+            query_string += f"'{difficulty}',"
+    query_string += ")"
 
     if len(exclude_tickers) != 0:
-        query_string += f" WHERE ticker NOT IN ("
+        query_string += f"AND ticker NOT IN ("
         for ticker in exclude_tickers:
             if exclude_tickers[-1] == ticker:
                 query_string += f"'{ticker}'"
@@ -307,7 +317,6 @@ def get_companies_from_database(
                 query_string += f"'{ticker}',"
 
         query_string += ")"
-        query_string += f" AND difficulty = '{difficulty}'"
 
     if len(exclude_tickers) != 0 and len(wanted_categories) != 0:
         query_string += f" AND sector IN ("
@@ -320,7 +329,7 @@ def get_companies_from_database(
         query_string += ")"
 
     if len(exclude_tickers) == 0 and len(wanted_categories) != 0:
-        query_string += f" WHERE sector IN ("
+        query_string += f"AND sector IN ("
         for sector in wanted_categories:
             if wanted_categories[-1] == sector:
                 query_string += f"'{sector}'"
@@ -328,7 +337,6 @@ def get_companies_from_database(
                 query_string += f"'{sector}',"
 
         query_string += ")"
-        query_string += f" AND difficulty = '{difficulty}'"
 
     query_string += f" ORDER BY RANDOM() LIMIT {count};"
 
