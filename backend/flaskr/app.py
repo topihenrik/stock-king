@@ -1,13 +1,22 @@
-from flask import Flask, request, Response, render_template, jsonify, send_from_directory
-#from flask_apscheduler import APScheduler
+from flask import (
+    Flask,
+    request,
+    Response,
+    render_template,
+    jsonify,
+    send_from_directory,
+)
+
+# from flask_apscheduler import APScheduler
 from flask_cors import CORS
-from flaskr import utils, tickers
+from flaskr import utils, tickers, tickers_sorted
 from dotenv import find_dotenv, load_dotenv
 import os
 import json
 
 
 TICKERS = tickers.TICKERS
+
 
 app = Flask(__name__, static_folder="static", template_folder="static")
 CORS(app, resources={r"/*": {"origins": ["*"]}})
@@ -18,15 +27,15 @@ ENV = os.getenv("ENV")
 load_dotenv(find_dotenv(f".env.{ENV}"))
 
 # Initialize scheduler
-#scheduler = APScheduler()
+# scheduler = APScheduler()
 
 # set confuguration for the scheduler
-#scheduler.api_enabled = False  # (default)
-#scheduler.api_prefix = "/scheduler" # (default)
-#scheduler.endpoint_prefix = "scheduler." # (default)
-#scheduler.allowed_hosts = ["*"] # (default)
-#scheduler.init_app(app)
-#scheduler.start()
+# scheduler.api_enabled = False  # (default)
+# scheduler.api_prefix = "/scheduler" # (default)
+# scheduler.endpoint_prefix = "scheduler." # (default)
+# scheduler.allowed_hosts = ["*"] # (default)
+# scheduler.init_app(app)
+# scheduler.start()
 
 # Update stock data
 # NOTICE: Company data should be updated with more sophisticated method in the future
@@ -38,7 +47,7 @@ if ENV != "test":
 def test_function():
     return True
 
-  
+
 @app.get("/api/get_categories")
 def get_categories():
     """
@@ -61,6 +70,10 @@ def get_companies():
     None of the params are required when making a request since we have default values for params.
 
     Request params in json format:
+        difficulties:       Wanted difficulty of companies as an array (easy/medium/hard)
+                            Default: ["easy"]
+                            Example: ["easy", "medium"]
+
         excluded_tickers:   Array of tickers (string) that need to be excluded from the result.
                             Default: []
                             Example: ["APPL", "GOOGL"]
@@ -76,6 +89,8 @@ def get_companies():
         count:              How many companies need to be in the result (int).
                             Default: 10
                             Example: 1
+
+
 
     Returns:
         Array of dictionaries of company data.
@@ -104,6 +119,11 @@ def get_companies():
         json_data = json.loads(raw_data)
     except Exception:
         json_data = {}
+    difficulties = (
+        json_data.get("difficulties")
+        if json_data.get("difficulties")
+        else ["easy", "medium", "hard"]
+    )
     exclude_tickers = (
         json_data.get("excluded_tickers") if json_data.get("excluded_tickers") else []
     )
@@ -115,11 +135,12 @@ def get_companies():
 
     # Get company data from database
     companies = utils.get_companies_from_database(
-        exclude_tickers, wanted_categories, count
+        difficulties, exclude_tickers, wanted_categories, count
     )
     companies = utils.convert_marketcaps_currencies(companies, currency)
 
     return companies
+
 
 @app.post("/api/new_high_score")
 def new_high_score():
@@ -139,30 +160,31 @@ def new_high_score():
     try:
         json_data = json.loads(raw_data)
     except Exception:
-        return Response("Malformed request",status=400)
+        return Response("Malformed request", status=400)
     if json_data.get("name") is None or json_data.get("score") is None:
-        return Response("Malformed request",status=400)
+        return Response("Malformed request", status=400)
     else:
         name = json_data.get("name")
         score = json_data.get("score")
-        country = (json_data.get("country") if json_data.get("country") else "")
-        gamemode = (json_data.get("gamemode") if json_data.get("gamemode") else "normal")
+        country = json_data.get("country") if json_data.get("country") else ""
+        gamemode = json_data.get("gamemode") if json_data.get("gamemode") else "normal"
 
     new_high_score = {
-        "name":name,
-        "score":score,
-        "country":country,
-        "gamemode":gamemode
+        "name": name,
+        "score": score,
+        "country": country,
+        "gamemode": gamemode,
     }
 
     utils.insert_scores([new_high_score])
     return "success"
 
+
 @app.post("/api/get_scores")
 def get_scores():
     """
     Endpoint for getting leaderboard scores.
-    No required parameters. 
+    No required parameters.
     Pass an integer parameter 'count' to specify number of scores to get
     Pass an array of strings as 'country' (Using ISO 3166-1 Alpha-3 format) to specify which countries to get scores from.
 
@@ -201,15 +223,12 @@ def get_scores():
     except Exception:
         json_data = {}
 
-    countries = (
-        json_data.get("countries") if json_data.get("countries") else []
-    )
-    gamemode = (
-        json_data.get("gamemode") if json_data.get("gamemode") else "normal"
-    )
+    countries = json_data.get("countries") if json_data.get("countries") else []
+    gamemode = json_data.get("gamemode") if json_data.get("gamemode") else "normal"
     count = int(json_data.get("count") or 50)
-    scores = utils.get_scores_from_database(count,countries,gamemode)
+    scores = utils.get_scores_from_database(count, countries, gamemode)
     return scores
+
 
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>", methods=["GET"])
@@ -235,11 +254,11 @@ def get_all_currencies():
     return currencies
 
 
-#@scheduler.task("cron", id="update_database", hour=4, minute=0)
-#def update_database():
+# @scheduler.task("cron", id="update_database", hour=4, minute=0)
+# def update_database():
 #    """
 #    This function is run every day at 4:00.
-#    Gets data from Yahoo Finance for all companies defined in TICKERS constant, 
+#    Gets data from Yahoo Finance for all companies defined in TICKERS constant,
 #    then makes an update to database. Processes about 5 companies per second, so cannot be used in real-time.
 #   """
 #    print("Update of database started.")
@@ -250,8 +269,8 @@ def get_all_currencies():
 #        utils.upsert_stock_data(stock_data)
 #    except Exception as err:
 #        print(f"Failed to update market cap data. {type(err)}: {err}")
-#    
-#    try: 
+#
+#    try:
 #       print("Updating exchange rate data.")
 #        exchange_rate_data = utils.get_exchange_rates_from_api()
 #        utils.upsert_exchange_rates(exchange_rate_data)
