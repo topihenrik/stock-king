@@ -1,7 +1,7 @@
 import {describe, it, expect} from "vitest";
 import {setupWithProviders} from "../test-utils.jsx";
 import { localStorageMock } from "../../__mocks__/localStorage.js";
-import GameHistory from "../../src/components/GameHistory.jsx";
+import GameHistoryModal from "../../src/components/GameHistoryModal.jsx";
   
 Object.defineProperty(window, 'localStorage', {
     value: localStorageMock
@@ -16,7 +16,7 @@ describe('GameHistory', () => {
 
         localStorage.setItem('gameHistory', JSON.stringify(gameHist));
 
-        const {findAllByTestId} = setupWithProviders(<GameHistory />);
+        const {findAllByTestId} = setupWithProviders(<GameHistoryModal />);
 
         const dateCells = await findAllByTestId("date-cell");
         expect(dateCells[0].textContent).toBe('27.3.2024');

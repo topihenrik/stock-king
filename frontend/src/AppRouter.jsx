@@ -7,7 +7,7 @@ import GamePage from "./components/GamePage.jsx";
 import MenuPage from "./components/MenuPage.jsx"
 import "./style.css"
 
-export default function App() {
+export default function AppRouter() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
