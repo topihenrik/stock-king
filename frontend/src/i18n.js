@@ -15,7 +15,9 @@ export const resources = {
             highScore: "High score",
             playAgain: "Play again",
             mainMenu: 'Main menu',
-            logosProvidedBy: "Logos provided by"
+            logosProvidedBy: "Logos provided by",
+            yourHistory: "Your history",
+            date: "Date"
         },
     },
     fi: {
@@ -30,7 +32,9 @@ export const resources = {
             highScore: "Ennätys",
             playAgain: "Pelaa uudestaan",
             mainMenu: 'Päävalikko',
-            logosProvidedBy: "Logot tarjoaa"
+            logosProvidedBy: "Logot tarjoaa",
+            yourHistory: "Oma historia",
+            date: "Päivämäärä"
         }
     }
 };

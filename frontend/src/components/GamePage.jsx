@@ -308,6 +308,7 @@ export default function GamePage() {
 
             setIncorrectSelected(false);
             await delay(700);
+            saveGameHistory();
             navigate("/gameover");
         }
     }
@@ -319,6 +320,19 @@ export default function GamePage() {
             </Box>
         )
     }
+
+    const saveGameHistory = () => {
+        const existingGameHistoryJSON = localStorage.getItem("gameHistory");
+        let existingGameHistory = [];
+        if (existingGameHistoryJSON) {
+            existingGameHistory = JSON.parse(existingGameHistoryJSON);
+        }
+    
+        const newGameEntry = { date: new Date().toISOString(), score: score };
+        const updatedGameHistory = [newGameEntry, ...existingGameHistory];
+    
+        localStorage.setItem("gameHistory", JSON.stringify(updatedGameHistory));
+    };
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", width: "100vw", height: "100vh", alignItems: "center", pointerEvents: disablePointer ? "none" : "unset" }}>
