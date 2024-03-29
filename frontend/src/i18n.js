@@ -23,7 +23,9 @@ export const resources = {
             nickname: 'Nickname',
             flag: 'Flag',
             empty: 'Empty',
-            submit: 'Submit'
+            submit: 'Submit',
+            zeroPlayersNotice: "No player has cemented their legacy in to the leaderboard as the stock king. Will you be the first one?",
+            errorOccurredInServices: "An error occurred in our services"
         },
     },
     fi: {
@@ -46,7 +48,9 @@ export const resources = {
             nickname: 'Nimimerkki',
             flag: 'Lippu',
             empty: 'Tyhjä',
-            submit: 'Lähetä'
+            submit: 'Lähetä',
+            zeroPlayersNotice: "Yksikään pelaaja ei ole lujittanut perintöään tulostaulukkoon osakekuninkaana. Oletko sinä ensimmäinen?",
+            errorOccurredInServices: "Palveluissamme tapahtui virhe"
         }
     }
 };

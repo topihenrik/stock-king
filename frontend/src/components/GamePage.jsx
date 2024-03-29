@@ -316,7 +316,7 @@ export default function GamePage() {
     if (error) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: '90vh' }}>
-                <Typography variant="h4" sx={{ marginX: "16px" }}>😢 An error occurred in our services</Typography>
+                <Typography variant="h4" sx={{ marginX: "16px" }}>😢 {t('errorOccurredInServices')}</Typography>
             </Box>
         )
     }

@@ -1,5 +1,6 @@
 import {Box, Paper, Skeleton, Typography} from "@mui/material";
 import FlagIcon from "./FlagIcon.jsx";
+import {useTranslation} from "react-i18next";
 
 function ListItemSkeleton() {
     return <Skeleton variant="rectangular" sx={{width: "100%", height: "64px"}} />;
@@ -55,13 +56,24 @@ function ListItem({position, username, score, country}) {
 }
 
 export default function LeaderboardList({players, loading, error}) {
+    const { t } = useTranslation('common');
 
     if (loading) return <LeaderboardListSkeleton/>;
 
     if (error) {
         return (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <Typography sx={{ marginX: "16px" }}>😢 An error occurred in our services</Typography>
+            <Box sx={{display: "flex", justifyContent: "center", alignItems: "center", padding: '64px'}}>
+                <Typography variant="h6" sx={{ marginX: "16px" }}>😢 {t('errorOccurredInServices')}</Typography>
+            </Box>
+        )
+    }
+
+    if (players.length === 0) {
+        return (
+            <Box sx={{padding: '64px'}}>
+                <Typography variant="h6" sx={{textAlign: 'center'}}>
+                    {t('zeroPlayersNotice')}
+                </Typography>
             </Box>
         )
     }
@@ -78,8 +90,7 @@ export default function LeaderboardList({players, loading, error}) {
             }}
             data-testid="leaderboardlist"
         >
-            {players && players.map((player, index) => <ListItem key={index} position={index + 1} username={player.name}
-                                                                 score={player.score} country={player.country}/>)}
+            {players && players.map((player, index) => <ListItem key={index} position={index + 1} username={player.name} score={player.score} country={player.country}/>)}
         </Box>
     )
 }

@@ -105,9 +105,7 @@ export default function GameOverPage() {
                         country: countryCode,
                     })
                 }
-            ).then((res) => {
-                    navigate("/");
-            });
+            ).then(() => navigate("/"));
         }
     }
 
@@ -213,7 +211,10 @@ export default function GameOverPage() {
                                     sx={{
                                         background: '#48A52E',
                                         padding: '0 32px',
-                                        width: '150px'
+                                        width: '150px',
+                                        "&:hover": {
+                                            background: "#347a20"
+                                        }
                                     }}
                                     onClick={handleScoreSubmit}
                                     data-testid="submit-btn"
