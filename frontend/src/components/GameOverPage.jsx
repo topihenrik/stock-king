@@ -214,6 +214,7 @@ export default function GameOverPage() {
                                         width: '150px'
                                     }}
                                     onClick={handleScoreSubmit}
+                                    data-testid="submit-btn"
                                 >
                                     Submit
                                 </Button>

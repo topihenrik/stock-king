@@ -54,7 +54,11 @@ export default function LeaderboardModal({open, setOpen}) {
                     borderRadius: '16px'
             }}
             >
-                <Typography variant="h4" sx={{margin: '0 32px', textAlign: 'center'}}>
+                <Typography
+                    variant="h4"
+                    sx={{margin: '0 32px', textAlign: 'center'}}
+                    data-testid="leaderboard-header"
+                >
                     Top 10 Leaderboard
                 </Typography>
                 <IconButton
