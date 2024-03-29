@@ -1,5 +1,30 @@
-import {Box, Paper, Typography} from "@mui/material";
+import {Box, Paper, Skeleton, Typography} from "@mui/material";
 import FlagIcon from "./FlagIcon.jsx";
+
+function ListItemSkeleton() {
+    return <Skeleton variant="rectangular" sx={{width: "100%", height: "64px"}} />;
+}
+
+function LeaderboardListSkeleton() {
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                gap: '8px',
+                overflowY: 'auto',
+                maxHeight: '320px'
+            }}
+        >
+            <ListItemSkeleton/>
+            <ListItemSkeleton/>
+            <ListItemSkeleton/>
+            <ListItemSkeleton/>
+            <ListItemSkeleton/>
+        </Box>
+    )
+}
 
 function ListItem({position, username, score, country}) {
     return (
@@ -30,6 +55,17 @@ function ListItem({position, username, score, country}) {
 }
 
 export default function LeaderboardList({players, loading, error}) {
+
+    if (loading) return <LeaderboardListSkeleton/>;
+
+    if (error) {
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Typography sx={{ marginX: "16px" }}>😢 An error occurred in our services</Typography>
+            </Box>
+        )
+    }
+
     return (
         <Box
             sx={{
