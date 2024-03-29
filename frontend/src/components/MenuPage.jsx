@@ -115,9 +115,9 @@ export default function MenuPage() {
         }}>
             <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
                 <Box component="img" src={Logo} sx={{ 
-                    width: { xs: "256px", sm: "512px" },  
+                    width: { xs: "256px", sm: "384px", md: "512px" },
                     maxHeight: "512px", 
-                    marginBottom: "96px", 
+                    marginBottom: {xs: "32px"},
                     animation: `${logoAnimation} 2s ease-in-out infinite alternate` 
                 }} />
                 <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", width: "270px"}}>
