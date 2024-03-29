@@ -15,9 +15,9 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const GameHistoryModal = ({ open, setOpen }) => {
+const GameHistoryModal = ({open, setOpen}) => {
     const gameHistory = JSON.parse(localStorage.getItem("gameHistory")) || [];
-    const { t } = useTranslation('common');
+    const {t} = useTranslation('common');
 
     const handleCloseHistory = () => {
         setOpen(false);
@@ -39,53 +39,46 @@ const GameHistoryModal = ({ open, setOpen }) => {
             aria-describedby="game-history-description"
         >
             <Box sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "primary.semiLight",
-                p: 4,
-                width: "100%",
-                maxWidth: 400,
-                maxHeight: "75%",
-                overflowY: "auto"
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'clamp(300px, 90%, 600px)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                backgroundColor: "primary.semiLight",
+                padding: '32px 24px 48px',
+                gap: '48px',
+                borderRadius: '16px'
             }}>
-                <Box sx={{ position: "relative" }}>
-                    <Box sx={{
-                        position: "sticky",
-                        top: 0,
-                        right: 0,
-                        display: "flex",
-                        justifyContent: "flex-end"
-                    }}>
-                        <IconButton sx={{ backgroundColor: "primary.main"}} onClick={handleCloseHistory}>
-                            <CloseIcon />
-                        </IconButton>
-                    </Box>
-                    <Box sx={{ padding: 2 }}>
-                        <Typography variant="h5" sx={{ marginBottom: 2 }}>
-                            {t('yourHistory')}
-                        </Typography>
-                        <TableContainer component={Paper}>
-                            <Table aria-label="game history table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>{t('date')}</TableCell>
-                                        <TableCell>{t('score')}</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {gameHistory.map((game, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell data-testid="date-cell">{formatDate(game.date)}</TableCell>
-                                            <TableCell data-testid="score-cell">{game.score}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                </Box>
+                <Typography variant="h4">
+                    {t('yourHistory')}
+                </Typography>
+                <IconButton
+                    sx={{position: 'absolute', top: '16px', right: '8px'}}
+                    onClick={handleCloseHistory}
+                >
+                    <CloseIcon fontSize={'large'}/>
+                </IconButton>
+                <TableContainer component={Paper}>
+                    <Table aria-label="game history table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>{t('date')}</TableCell>
+                                <TableCell>{t('score')}</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {gameHistory.map((game, index) => (
+                                <TableRow key={index}>
+                                    <TableCell data-testid="date-cell">{formatDate(game.date)}</TableCell>
+                                    <TableCell data-testid="score-cell">{game.score}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             </Box>
         </Modal>
     );

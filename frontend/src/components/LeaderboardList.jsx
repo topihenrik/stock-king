@@ -34,7 +34,7 @@ export default function LeaderboardList({players, loading, error}) {
             width: '100%',
             gap: '8px',
             overflowY: 'auto',
-            maxHeight: '400px'
+            maxHeight: '320px'
         }}>
             {players && players.map((player, index) => <ListItem key={index} position={index + 1} username={player.name} score={player.score} country={player.country}/>)}
         </Box>

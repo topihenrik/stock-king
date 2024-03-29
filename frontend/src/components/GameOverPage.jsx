@@ -145,10 +145,15 @@ export default function GameOverPage() {
                     {highScore}
                 </Typography>
             </Stack>
-            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: '400px'}}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                width: 'clamp(300px, 90%, 600px)'
+            }}>
                 <Typography
                     variant={"h3"}
-                    sx={{marginBottom: '96px'}}
+                    sx={{margin: '150px 0px 96px'}}
                 >
                     {t('yourScore')}
                     {": "}

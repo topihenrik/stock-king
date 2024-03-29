@@ -1,5 +1,5 @@
 import LeaderboardList from "./LeaderboardList.jsx";
-import {IconButton, Modal, Paper, Typography} from "@mui/material";
+import {Box, IconButton, Modal, Paper, Typography} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import {useQuery} from "@tanstack/react-query";
 import {GAMEMODE_NORMAL, queryKeys} from "../constants.js";
@@ -38,13 +38,13 @@ export default function LeaderboardModal({open, setOpen}) {
             open={open}
             onClose={handleClose}
         >
-            <Paper
+            <Box
                 sx={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: '600px',
+                    width: 'clamp(300px, 90%, 600px)',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -54,7 +54,7 @@ export default function LeaderboardModal({open, setOpen}) {
                     borderRadius: '16px'
             }}
             >
-                <Typography variant="h4">
+                <Typography variant="h4" sx={{margin: '0 32px', textAlign: 'center'}}>
                     Top 10 Leaderboard
                 </Typography>
                 <IconButton
@@ -64,7 +64,7 @@ export default function LeaderboardModal({open, setOpen}) {
                     <CloseIcon fontSize={'large'}/>
                 </IconButton>
                 <LeaderboardList players={players} loading={isPending} error={error}/>
-            </Paper>
+            </Box>
         </Modal>
     )
 }
