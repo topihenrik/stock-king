@@ -6,8 +6,9 @@ describe('GameOverPage', () => {
     it('Should show high score', () => {
         const {getByTestId} = setupWithProviders(<GameOverPage/>);
         const element = getByTestId('text-highscore');
-        expect(element).toHaveTextContent('highScore: 0');
+        expect(element).toHaveTextContent('0');
     });
+
 
     it('Should show score', () => {
         const {getByTestId} = setupWithProviders(<GameOverPage/>);

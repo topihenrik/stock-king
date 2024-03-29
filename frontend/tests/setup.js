@@ -5,6 +5,7 @@ import {http, HttpResponse} from "msw";
 import {companies} from "./mock-data/companies.js";
 import {exchangeRates} from './mock-data/exchangeRates.js';
 import {setupServer} from "msw/node";
+import {players} from "./mock-data/players.js";
 
 vi.mock("zustand");
 vi.mock('i18next');
@@ -51,11 +52,18 @@ export const restHandlers = [
 
         return HttpResponse.json(currenciesList)
     }),
+
+    http.post('http://localhost:5000/api/get_scores', () => {
+        return HttpResponse.json(players);
+    })
 ];
 
 const server = setupServer(...restHandlers);
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+beforeAll(() => {
+    global.IS_REACT_ACT_ENVIRONMENT = false;
+    server.listen({ onUnhandledRequest: 'error' })
+})
 
 afterAll(() => server.close())
 

@@ -154,6 +154,7 @@ export default function GameOverPage() {
                 <Typography
                     variant={"h3"}
                     sx={{margin: '150px 0px 96px'}}
+                    data-testid="text-score"
                 >
                     {t('yourScore')}
                     {": "}

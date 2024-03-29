@@ -14,9 +14,10 @@ describe('GameHistory', () => {
             { date: "2024-03-26T11:47:28.224Z", score: 11 },
         ];
 
+
         localStorage.setItem('gameHistory', JSON.stringify(gameHist));
 
-        const {findAllByTestId} = setupWithProviders(<GameHistoryModal />);
+        const {findAllByTestId} = setupWithProviders(<GameHistoryModal open={true} setOpen={() => {}} />);
 
         const dateCells = await findAllByTestId("date-cell");
         expect(dateCells[0].textContent).toBe('27.3.2024');
