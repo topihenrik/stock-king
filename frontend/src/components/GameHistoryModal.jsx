@@ -61,8 +61,14 @@ const GameHistoryModal = ({open, setOpen}) => {
                 >
                     <CloseIcon fontSize={'large'}/>
                 </IconButton>
-                <TableContainer component={Paper}>
-                    <Table aria-label="game history table">
+                <TableContainer
+                    component={Paper}
+                    sx={{
+                        overflowY: 'auto',
+                        maxHeight: '320px'
+                    }}
+                >
+                    <Table stickyHeader aria-label="game history table">
                         <TableHead>
                             <TableRow>
                                 <TableCell>{t('date')}</TableCell>

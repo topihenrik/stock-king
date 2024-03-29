@@ -239,7 +239,7 @@ export default function MenuPage() {
                         sx={{width: '100%'}}
                         variant="contained"
                     >
-                        Leaderboard
+                        {t('leaderboard')}
                     </Button>
                     <Button
                         sx={{width: '100%'}}

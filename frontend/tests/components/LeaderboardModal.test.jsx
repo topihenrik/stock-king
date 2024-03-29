@@ -15,6 +15,6 @@ describe('LeaderboardModal', () => {
             expect(playerElement).not.toBeNull();
         }
 
-        expect(headerElement).toHaveTextContent('Top 10 Leaderboard');
+        expect(headerElement).toHaveTextContent('top10Leaderboard');
     });
 });

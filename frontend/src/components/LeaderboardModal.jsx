@@ -1,12 +1,13 @@
 import LeaderboardList from "./LeaderboardList.jsx";
-import {Box, IconButton, Modal, Paper, Typography} from "@mui/material";
+import {Box, IconButton, Modal, Typography} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import {useQuery} from "@tanstack/react-query";
 import {GAMEMODE_NORMAL, queryKeys} from "../constants.js";
 import {baseUri} from "../config.js";
+import {useTranslation} from "react-i18next";
 
 export default function LeaderboardModal({open, setOpen}) {
-
+    const { t } = useTranslation('common');
     const { isPending, error, data: players } = useQuery({
         refetchOnWindowFocus: false,
         queryKey: [queryKeys.PLAYERS],
@@ -59,7 +60,7 @@ export default function LeaderboardModal({open, setOpen}) {
                     sx={{margin: '0 32px', textAlign: 'center'}}
                     data-testid="leaderboard-header"
                 >
-                    Top 10 Leaderboard
+                    {t('top10Leaderboard')}
                 </Typography>
                 <IconButton
                     sx={{ position: 'absolute', top: '16px', right: '8px'}}

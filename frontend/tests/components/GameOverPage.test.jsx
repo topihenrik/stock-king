@@ -16,16 +16,17 @@ describe('GameOverPage', () => {
         expect(element).toHaveTextContent('yourScore: 0');
     });
 
+
     it('Should show leaderboard if score is higher than 0', async () => {
         useScoreStore.setState({ score: 18 });
         const {findByTestId} = setupWithProviders(<GameOverPage/>);
         const element = await findByTestId('submit-btn');
-        expect(element).toHaveTextContent("Submit");
+        expect(element).toHaveTextContent("submit");
     });
 
     it('Should not show leaderboard if score is 0', async () => {
         const {queryByText} = setupWithProviders(<GameOverPage/>);
-        const element = queryByText('Submit');
+        const element = queryByText("submit");
         expect(element).toBeNull();
     });
 })

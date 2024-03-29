@@ -89,7 +89,7 @@ export default function GameOverPage() {
 
     const handleScoreSubmit = () => {
         if (nickname.length >= 2) {
-            const countryCode= country === "None" ? "" : country;
+            const countryCode= country === "Empty" ? "" : country;
 
             fetch(
                 `${baseUri}/new_high_score`,
@@ -166,7 +166,7 @@ export default function GameOverPage() {
                             <LeaderboardList players={players} loading={isPending} error={error}/>
                             <Box sx={{display: 'flex', width: '100%', gap: '8px', marginTop: '24px'}}>
                                 <TextField
-                                    placeholder={"Nickname"}
+                                    placeholder={t('nickname')}
                                     onChange={({target}) => setNickname(target.value)}
                                     value={nickname}
                                     sx={{
@@ -189,7 +189,7 @@ export default function GameOverPage() {
                                                 }
                                             }}
                                         >
-                                            Flag
+                                            {t('flag')}
                                         </InputLabel>
                                         <Select
                                             labelId="country-select-label"
@@ -201,7 +201,9 @@ export default function GameOverPage() {
                                                 sx: {maxHeight: '400px'}
                                             }}
                                         >
-                                            <MenuItem value="None">None</MenuItem>
+                                            <MenuItem value="Empty">
+                                                {t('empty')}
+                                            </MenuItem>
                                             {flagCodes.map(renderFlagMenuItem)}
                                         </Select>
                                     </FormControl>
@@ -216,7 +218,7 @@ export default function GameOverPage() {
                                     onClick={handleScoreSubmit}
                                     data-testid="submit-btn"
                                 >
-                                    Submit
+                                    {t('submit')}
                                 </Button>
                             </Box>
                         </>
@@ -232,7 +234,7 @@ export default function GameOverPage() {
                     }}
                     onClick={handleRestartGame}
                 >
-                    Play Again
+                    {t('playAgain')}
                 </Button>
             </Box>
         </Box>

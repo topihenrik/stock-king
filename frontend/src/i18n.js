@@ -17,7 +17,13 @@ export const resources = {
             mainMenu: 'Main menu',
             logosProvidedBy: "Logos provided by",
             yourHistory: "Your history",
-            date: "Date"
+            date: "Date",
+            leaderboard: "Leaderboard",
+            top10Leaderboard: "Top 10 Leaderboard",
+            nickname: 'Nickname',
+            flag: 'Flag',
+            empty: 'Empty',
+            submit: 'Submit'
         },
     },
     fi: {
@@ -34,7 +40,13 @@ export const resources = {
             mainMenu: 'Päävalikko',
             logosProvidedBy: "Logot tarjoaa",
             yourHistory: "Oma historia",
-            date: "Päivämäärä"
+            date: "Päivämäärä",
+            leaderboard: "Tulostaulu",
+            top10Leaderboard: "Top 10 tulostaulukko",
+            nickname: 'Nimimerkki',
+            flag: 'Lippu',
+            empty: 'Tyhjä',
+            submit: 'Lähetä'
         }
     }
 };
