@@ -6,15 +6,15 @@ import Logo from '../../public/logo.svg';
 import { baseUri, queryClient } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import {queryKeys} from "../constants.js";
-import { useGameStore } from "../stores/game-store.jsx";
 import { useTranslation } from 'react-i18next';
-import {useLanguageStore} from "../stores/language-store.jsx";
 import LeaderboardModal from "./LeaderboardModal.jsx";
 import GameHistoryModal from "./GameHistoryModal.jsx";
+import {useLanguageStore} from "../stores/language-store.jsx";
+import {useCurrencyStore} from "../stores/currency-store.jsx";
 
 export default function MenuPage() {
-    const gameCurrency = useGameStore((state) => state.gameCurrency);
-    const changeGameCurrency = useGameStore((state) => state.changeGameCurrency);
+    const gameCurrency = useCurrencyStore((state) => state.gameCurrency);
+    const changeGameCurrency = useCurrencyStore((state) => state.changeGameCurrency);
     const selectedLanguage = useLanguageStore((state) => state.language);
     const setSelectedLanguage = useLanguageStore((state) => state.changeLanguage);
     const [categoryAnchorEl, setCategoryAnchorEl] = useState(null);
@@ -48,9 +48,7 @@ export default function MenuPage() {
                         "Content-Type": "application/json",
                     },
                 }
-            ).then((res) =>
-                res.json(),
-            ),
+            ).then((res) => res.json())
     });
 
     const startGame = () => {

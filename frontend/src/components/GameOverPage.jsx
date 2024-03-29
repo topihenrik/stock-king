@@ -11,7 +11,6 @@ import {
     Typography
 } from "@mui/material";
 import {Link, useNavigate} from "react-router-dom";
-import { useGameStore } from "../stores/game-store.jsx";
 import {baseUri, queryClient} from "../config.js";
 import {useEffect, useState} from "react";
 import {GAMEMODE_NORMAL, queryKeys} from "../constants.js";
@@ -21,6 +20,7 @@ import LeaderboardList from "./LeaderboardList.jsx";
 import {useQuery} from "@tanstack/react-query";
 import flagCodes from "../data/flagcodes.json";
 import FlagIcon from "./FlagIcon.jsx";
+import {useScoreStore} from "../stores/score-store.jsx";
 
 const renderFlagMenuItem = (code) => {
     return(
@@ -38,8 +38,8 @@ const renderFlagMenuItem = (code) => {
 
 export default function GameOverPage() {
     const navigate = useNavigate();
-    const score = useGameStore((state) => state.score);
-    const highScore = useGameStore((state) => state.highScore);
+    const score = useScoreStore((state) => state.score);
+    const highScore = useScoreStore((state) => state.highScore);
     const { t } = useTranslation('common');
     const [country, setCountry] = useState('');
     const [nickname, setNickname] = useState('');
@@ -65,9 +65,7 @@ export default function GameOverPage() {
                         gamemode: GAMEMODE_NORMAL,
                     })
                 }
-            ).then((res) =>
-                res.json(),
-            ),
+            ).then((res) => res.json())
     });
 
     if (players && score !== 0) {

@@ -6,10 +6,11 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import numeral from 'numeral';
 import getSymbolFromCurrency from 'currency-symbol-map'
-import { useGameStore } from "../stores/game-store.jsx";
 import {queryKeys} from "../constants.js";
 import PlaceholderLogo from '../../public/placeholder_company_logo.png';
 import {useTranslation} from "react-i18next";
+import {useScoreStore} from "../stores/score-store.jsx";
+import {useCurrencyStore} from "../stores/currency-store.jsx";
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -29,7 +30,6 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc, hideAll, hid
 
     return (
         <ButtonBase value={id} id={id} data-testid="panel" className="panel" onClick={handleClick} sx={{
-            
             width: { xs: "100%", sm: "560px", md: "880px", lg: "1040px" },
             height: { xs: "45%", sm: "400px", md: "480px", lg: "560px" },
             marginBottom: "24px",
@@ -175,19 +175,19 @@ const PanelSkeletons = () => (
 
 export default function GamePage() {
     const navigate = useNavigate();
-    const score = useGameStore((state) => state.score);
-    const incrementScore = useGameStore((state) => state.incrementScore);
-    const resetScore = useGameStore((state) => state.resetScore);
-    const highScore = useGameStore((state) => state.highScore);
-    const updateHighScore = useGameStore((state) => state.updateHighScore);
-    const gameCurrency = useGameStore((state) => state.gameCurrency);
+    const score = useScoreStore((state) => state.score);
+    const incrementScore = useScoreStore((state) => state.incrementScore);
+    const resetScore = useScoreStore((state) => state.resetScore);
+    const highScore = useScoreStore((state) => state.highScore);
+    const updateHighScore = useScoreStore((state) => state.updateHighScore);
+    const gameCurrency = useCurrencyStore((state) => state.gameCurrency);
     const { t } = useTranslation('common');
     const [companyIndex, setCompanyIndex] = useState(0);
+    const [prevCompany, setPrevCompanyState] = useState(null);
+    const [usedTickersList, setUsedTickersList] = useState([]);
     const topIndex = companyIndex;
     const bottomIndex = companyIndex + 1;
-    const [prevCompany, setPrevCompanyState] = useState(null);
     const numFetchedCompanies = 20;
-    const [usedTickersList, setUsedTickersList] = useState([]);
 
     // Animation-related variables
     const [hidePanelContent, setHidePanelContent] = useState(false);
