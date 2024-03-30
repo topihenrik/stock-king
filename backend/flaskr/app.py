@@ -117,7 +117,7 @@ def get_companies():
     companies = utils.get_companies_from_database(
         exclude_tickers, wanted_categories, count
     )
-    companies = utils.convert_marketcaps_currencies(companies, currency)
+    companies = utils.convert_marketcaps_currencies_updated(companies, currency)
 
     return companies
 

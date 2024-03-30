@@ -212,7 +212,6 @@ def get_currencies_from_database():
             cursor.execute("SELECT DISTINCT currency FROM Company;")
             currencies = cursor.fetchall()
             currencies = [currency[0].upper() for currency in currencies]
-            currencies.extend([["GBP", "RUB", "AUD", "SGD"]])
     return currencies
 
 
@@ -236,15 +235,22 @@ def process_currency_data(rates):
 
 def get_exchange_rates_from_api():
     """
-    Function for getting exchange rates from Forex API.
+    Function for getting exchange rates from Yahoo! Finance API.
     """
-    existing_currencies = [currency+"USD=X" for currency in get_currencies_from_database() if currency != "USD"]
+    existing_currencies = [currency+"USD=X" for currency in add_all_currencies if currency != "USD"]
     rates = []
     for currency in existing_currencies:   
         rates.append(yahoo.Ticker(currency))
     processed_currencies = process_currency_data(rates)
 
     return processed_currencies
+
+def add_all_currencies():
+    existing_currencies = get_currencies_from_database()
+    existing_currencies.extend(["RUB", "GBP", "AUD", "SGD"])
+    all_currencies = existing_currencies
+    return all_currencies
+    
     
 def upsert_exchange_rates(data, enable = False):
     """
@@ -440,12 +446,39 @@ def convert_marketcaps_currencies(companies, game_currency):
                     converted_market_cap = round(
                         company.get("market_cap") / (exchange_rate.get("ratio"))
                     )
-                    company.update({"market_cap": converted_market_cap})
-                    company.update({"currency": game_currency})
-                    break
+            company.update({"market_cap": converted_market_cap})
+            company.update({"currency": game_currency})
+                    
     return companies
 
-
+def convert_marketcaps_currencies_updated(companies, game_currency):
+    """
+    Takes a dictionary containing all game data on companies and a string representation of desired currency eg. 'EUR' or 'USD'
+    Gets exchange rate data from database and replaces the market cap into the desired currency
+    Returns a list of tuples containing all game data on companies with updated market cap and currency information
+    Uses triangulation to first convert to USD and then to the desired currency
+    """
+    exchange_rates = get_exchange_rates_from_database()
+    for company in companies:
+        reporting_currency = company.get("currency")
+        if(reporting_currency != game_currency):
+            for exchange_rate in exchange_rates:
+                if(
+                    exchange_rate.get("from_currency") == reporting_currency
+                    and exchange_rate.get("to_currency") == "USD"
+                    ):
+                        to_usd = exchange_rate.get("ratio")
+                        market_cap_usd = round(company.get("market_cap") * to_usd)
+                if(
+                    exchange_rate.get("from_currency") == "USD"
+                    and exchange_rate.get("to_currency") == game_currency
+                ):
+                    from_usd = exchange_rate.get("ratio")
+                    converted_market_cap = round(market_cap_usd * from_usd)
+            company.update({"market_cap": converted_market_cap})
+            company.update({"currency": game_currency})
+    return companies
+    
 def get_currencies_from_database():
     """
     Returns a JSON array of all existing currencies in the database
@@ -457,6 +490,5 @@ def get_currencies_from_database():
             currencies = cursor.fetchall()
             currencies = [currency[0] for currency in currencies]
             currencies.append("USD")
-            currencies.extend([["GBP", "RUB", "AUD", "SGD"]])
             return jsonify(currencies)
 
