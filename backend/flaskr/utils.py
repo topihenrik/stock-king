@@ -212,6 +212,7 @@ def get_currencies_from_database():
             cursor.execute("SELECT DISTINCT currency FROM Company;")
             currencies = cursor.fetchall()
             currencies = [currency[0].upper() for currency in currencies]
+            currencies.extend([["GBP", "RUB", "AUD", "SGD"]])
     return currencies
 
 
@@ -244,8 +245,7 @@ def get_exchange_rates_from_api():
     processed_currencies = process_currency_data(rates)
 
     return processed_currencies
-
-
+    
 def upsert_exchange_rates(data, enable = False):
     """
     Function for upserting exchange rates into the "exchange_rate" table in the database.
@@ -267,7 +267,7 @@ def upsert_exchange_rates(data, enable = False):
                     """
                     )
                     # Execute the query
-                    cursor.execute(query, (currency, "USD", rate, current_date))
+                    cursor.execute(query, (currency, "USD", rate, current_date)) 
                 conn.commit()
 
 
@@ -457,5 +457,6 @@ def get_currencies_from_database():
             currencies = cursor.fetchall()
             currencies = [currency[0] for currency in currencies]
             currencies.append("USD")
+            currencies.extend([["GBP", "RUB", "AUD", "SGD"]])
             return jsonify(currencies)
 
