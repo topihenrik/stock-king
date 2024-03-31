@@ -1,3 +1,5 @@
+CREATE TYPE difficulty as ENUM ('easy', 'medium', 'hard');
+
 DROP TABLE IF EXISTS ExchangeRates CASCADE;
 CREATE TABLE ExchangeRates(
     from_currency TEXT NOT NULL,
@@ -12,6 +14,7 @@ CREATE TABLE Company(
     cid INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     ticker TEXT UNIQUE NOT NULL,
     name TEXT NOT NULL,
+    difficulty difficulty NOT NULL,
     market_cap BIGINT NOT NULL,
     currency TEXT NOT NULL,
     date DATE NOT NULL,
