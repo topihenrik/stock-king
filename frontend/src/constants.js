@@ -10,4 +10,6 @@ export const difficulty = {
     HARD: "hard"
 }
 
+export const NUMBER_OF_COMPANIES_FETCHED = 10;
+
 export const GAMEMODE_NORMAL = "normal";

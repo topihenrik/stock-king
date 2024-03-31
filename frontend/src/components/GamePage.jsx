@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import numeral from 'numeral';
 import getSymbolFromCurrency from 'currency-symbol-map'
-import {difficulty, queryKeys} from "../constants.js";
+import {difficulty, NUMBER_OF_COMPANIES_FETCHED, queryKeys} from "../constants.js";
 import PlaceholderLogo from '../../public/placeholder_company_logo.png';
 import {useTranslation} from "react-i18next";
 import {useScoreStore} from "../stores/score-store.jsx";
@@ -187,7 +187,7 @@ export default function GamePage() {
     const [currentDifficulty, setCurrentDifficulty] = useState(difficulty.EASY);
     const topIndex = companyIndex;
     const bottomIndex = companyIndex + 1;
-    const numFetchedCompanies = 10;
+    const numFetchedCompanies = NUMBER_OF_COMPANIES_FETCHED;
 
     // Animation-related variables
     const [hidePanelContent, setHidePanelContent] = useState(false);
@@ -222,8 +222,6 @@ export default function GamePage() {
                     .then((data) => {
                         const tickers = data.map(company => company.ticker);
                         setUsedTickersList(prevList => [...prevList, ...tickers]);
-
-                        console.log('currentDifficulty: ', currentDifficulty);
 
                         if (companies) {
                             data.unshift(companies[companies.length - 1]);
