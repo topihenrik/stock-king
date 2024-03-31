@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {setupWithProviders} from "../test-utils.jsx";
 import MenuPage from "../../src/components/MenuPage.jsx";
-import { useGameStore } from "../../src/stores/game-store.jsx";
+import { useCurrencyStore } from "../../src/stores/currency-store.jsx";
 
 describe('MenuPage', () => {
     it('Should show correct text on dropdown menu', async () => {
@@ -10,6 +10,7 @@ describe('MenuPage', () => {
         const dropdownButton = getByTestId('category-btn');
 
         expect(dropdownButton).toHaveTextContent('chooseCategory');
+
     });
 
     it('Should update text after selecting category from dropdown menu', async () => {
@@ -64,7 +65,7 @@ describe('MenuPage', () => {
 
         await user.click(currencySEK);
       
-        expect(useGameStore.getState().gameCurrency).toBe("SEK");
+        expect(useCurrencyStore.getState().gameCurrency).toBe("SEK");
     });
 
 })

@@ -17,7 +17,15 @@ export const resources = {
             mainMenu: 'Main menu',
             logosProvidedBy: "Logos provided by",
             yourHistory: "Your history",
-            date: "Date"
+            date: "Date",
+            leaderboard: "Leaderboard",
+            top10Leaderboard: "Top 10 Leaderboard",
+            nickname: 'Nickname',
+            flag: 'Flag',
+            empty: 'Empty',
+            submit: 'Submit',
+            zeroPlayersNotice: "No player has cemented their legacy in to the leaderboard as the stock king. Will you be the first one?",
+            errorOccurredInServices: "An error occurred in our services"
         },
     },
     fi: {
@@ -34,7 +42,15 @@ export const resources = {
             mainMenu: 'Päävalikko',
             logosProvidedBy: "Logot tarjoaa",
             yourHistory: "Oma historia",
-            date: "Päivämäärä"
+            date: "Päivämäärä",
+            leaderboard: "Tulostaulu",
+            top10Leaderboard: "Top 10 tulostaulukko",
+            nickname: 'Nimimerkki',
+            flag: 'Lippu',
+            empty: 'Tyhjä',
+            submit: 'Lähetä',
+            zeroPlayersNotice: "Yksikään pelaaja ei ole lujittanut perintöään tulostaulukkoon osakekuninkaana. Oletko sinä ensimmäinen?",
+            errorOccurredInServices: "Palveluissamme tapahtui virhe"
         }
     }
 };

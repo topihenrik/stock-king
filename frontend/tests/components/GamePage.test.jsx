@@ -2,7 +2,8 @@ import {describe, it, expect} from "vitest";
 import {setupWithProviders} from "../test-utils.jsx";
 import {within} from '@testing-library/dom';
 import GamePage from "../../src/components/GamePage.jsx";
-import {useGameStore} from "../../src/stores/game-store.jsx";
+import {useCurrencyStore} from "../../src/stores/currency-store.jsx";
+import {useScoreStore} from "../../src/stores/score-store.jsx";
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -13,6 +14,7 @@ describe('GamePage', () => {
         const panels = await findAllByTestId('panel');
 
         expect(panels.length).toBe(2);
+
     });
 
     it('Should show the correct initial value for high score', () => {
@@ -49,7 +51,7 @@ describe('GamePage', () => {
 
     describe('Currency', async () => {
         beforeEach(() => {
-            useGameStore.setState({gameCurrency: "EUR"});
+            useCurrencyStore.setState({gameCurrency: "EUR"});
         });
 
         it("Should display correct currency based on game currency", async () => {
@@ -76,7 +78,7 @@ describe('GamePage', () => {
     it('Should refetch data when current score reaches the threshold', async () => {
         const {findAllByTestId, user} = setupWithProviders(<GamePage/>);
 
-        useGameStore.setState({ score: 18 });
+        useScoreStore.setState({ score: 18 });
 
         const panels = await findAllByTestId("panel");
         await user.click(panels[0]);
