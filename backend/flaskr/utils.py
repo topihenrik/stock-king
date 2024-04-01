@@ -11,7 +11,8 @@ from flask import jsonify
 
 TICKERS = tickers.TICKERS
 TICKERS_EASY = tickers_sorted.TICKERS_EASY
-
+TICKERS_MEDIUM = tickers_sorted.TICKERS_MEDIUM
+TICKERS_HARD = tickers_sorted.TICKERS_HARD
 
 def initial_data_update():
     load_dotenv(find_dotenv())
@@ -20,13 +21,37 @@ def initial_data_update():
         # Disabled fetching all the tickers
         # string_tickers = " ".join(TICKERS)
         # upsert_stock_data(get_stock_data(string_tickers))
-        random_tickers = sample(TICKERS, 30)
-        string_tickers = " ".join(random_tickers)
-        upsert_stock_data(get_stock_data(string_tickers))
+        random_easy_tickers = sample(TICKERS_EASY, 50)
+        string_easy_tickers = " ".join(random_easy_tickers)
+        upsert_stock_data(get_stock_data(string_easy_tickers), "easy")
+
+        random_medium_tickers = sample(TICKERS_MEDIUM, 30)
+        string_medium_tickers = " ".join(random_medium_tickers)
+        upsert_stock_data(get_stock_data(string_medium_tickers), "medium")
+
+        random_hard_tickers = sample(TICKERS_HARD, 30)
+        string_hard_tickers = " ".join(random_hard_tickers)
+        upsert_stock_data(get_stock_data(string_hard_tickers), "hard")
+
+
+        #random_tickers = sample(TICKERS, 30)
+        #string_tickers = " ".join(random_tickers)
+        #upsert_stock_data(get_stock_data(string_tickers))
     else:
-        random_tickers = sample(TICKERS, 30)
-        string_tickers = " ".join(random_tickers)
-        upsert_stock_data(get_stock_data(string_tickers))
+        random_easy_tickers = sample(TICKERS_EASY, 50)
+        string_easy_tickers = " ".join(random_easy_tickers)
+        upsert_stock_data(get_stock_data(string_easy_tickers), "easy")
+
+        random_medium_tickers = sample(TICKERS_MEDIUM, 30)
+        string_medium_tickers = " ".join(random_medium_tickers)
+        upsert_stock_data(get_stock_data(string_medium_tickers), "medium")
+
+        random_hard_tickers = sample(TICKERS_HARD, 30)
+        string_hard_tickers = " ".join(random_hard_tickers)
+        upsert_stock_data(get_stock_data(string_hard_tickers), "hard")
+        #random_tickers = sample(TICKERS, 30)
+        #string_tickers = " ".join(random_tickers)
+        #upsert_stock_data(get_stock_data(string_tickers))
 
 
 def connect_to_db():
