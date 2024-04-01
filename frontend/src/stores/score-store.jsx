@@ -4,6 +4,7 @@ export const useScoreStore = create((set) => ({
     score: 0,
     highScore: localStorage.getItem("highScore") || 0,
     incrementScore: () => set((state) => ({ score: state.score + 1 })),
+    decrementScore: () => set((state) => ({ score: state.score - 1 })),
     resetScore: () => set((state) => ({ score: 0 })),
     updateHighScore: () => {
         set((state) => {
