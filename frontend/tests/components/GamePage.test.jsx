@@ -2,7 +2,9 @@ import {describe, it, expect} from "vitest";
 import {setupWithProviders} from "../test-utils.jsx";
 import {within} from '@testing-library/dom';
 import GamePage from "../../src/components/GamePage.jsx";
-import {useGameStore} from "../../src/stores/game-store.jsx";
+import {useCurrencyStore} from "../../src/stores/currency-store.jsx";
+import {useScoreStore} from "../../src/stores/score-store.jsx";
+import {companies} from "../mock-data/companies.js";
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -13,6 +15,7 @@ describe('GamePage', () => {
         const panels = await findAllByTestId('panel');
 
         expect(panels.length).toBe(2);
+
     });
 
     it('Should show the correct initial value for high score', () => {
@@ -49,7 +52,7 @@ describe('GamePage', () => {
 
     describe('Currency', async () => {
         beforeEach(() => {
-            useGameStore.setState({gameCurrency: "EUR"});
+            useCurrencyStore.setState({gameCurrency: "EUR"});
         });
 
         it("Should display correct currency based on game currency", async () => {
@@ -64,7 +67,7 @@ describe('GamePage', () => {
     it('Should render placeholder logo when image URL is invalid', async () => {
         const {findByAltText} = setupWithProviders(<GamePage/>);
 
-        const img = await findByAltText('Archer-Daniels-Midland Company');
+        const img = await findByAltText('RBC Bearings Incorporated');
 
         // Separately trigger an onError event, as vitest cannot verify the validity of URLs
         img.dispatchEvent(new Event('error'));
@@ -73,10 +76,10 @@ describe('GamePage', () => {
         expect(placeholderLogo).toBeTruthy();
     });
 
-    it('Should refetch data when current score reaches the threshold', async () => {
+    it('Should refetch data and change difficulty when current score reaches the threshold', async () => {
         const {findAllByTestId, user} = setupWithProviders(<GamePage/>);
 
-        useGameStore.setState({ score: 18 });
+        useScoreStore.setState({ score: 8 });
 
         const panels = await findAllByTestId("panel");
         await user.click(panels[0]);
@@ -84,11 +87,11 @@ describe('GamePage', () => {
         await delay(2000);
 
         // The first panel should be the previous second panel
-        const firstPanelText = await within(panels[0]).findByText('Jacobs Solutions Inc.');
+        const firstPanelText = await within(panels[0]).findByText(companies.easy[0].name);
         expect(firstPanelText).toBeInTheDocument();
 
         // The second panel should be the first fetched company
-        const secondPanelText = await within(panels[1]).findByText('Essex Property Trust, Inc.');
+        const secondPanelText = await within(panels[1]).findByText(companies.medium[0].name);
         expect(secondPanelText).toBeInTheDocument();
     }, 10000);
 })

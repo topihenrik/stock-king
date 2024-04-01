@@ -6,10 +6,11 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import numeral from 'numeral';
 import getSymbolFromCurrency from 'currency-symbol-map'
-import { useGameStore } from "../stores/game-store.jsx";
-import {queryKeys} from "../constants.js";
+import {difficulty, NUMBER_OF_COMPANIES_FETCHED, queryKeys} from "../constants.js";
 import PlaceholderLogo from '../../public/placeholder_company_logo.png';
 import {useTranslation} from "react-i18next";
+import {useScoreStore} from "../stores/score-store.jsx";
+import {useCurrencyStore} from "../stores/currency-store.jsx";
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -29,7 +30,6 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc, hideAll, hid
 
     return (
         <ButtonBase value={id} id={id} data-testid="panel" className="panel" onClick={handleClick} sx={{
-            
             width: { xs: "100%", sm: "560px", md: "880px", lg: "1040px" },
             height: { xs: "45%", sm: "400px", md: "480px", lg: "560px" },
             marginBottom: "24px",
@@ -175,19 +175,19 @@ const PanelSkeletons = () => (
 
 export default function GamePage() {
     const navigate = useNavigate();
-    const score = useGameStore((state) => state.score);
-    const incrementScore = useGameStore((state) => state.incrementScore);
-    const resetScore = useGameStore((state) => state.resetScore);
-    const highScore = useGameStore((state) => state.highScore);
-    const updateHighScore = useGameStore((state) => state.updateHighScore);
-    const gameCurrency = useGameStore((state) => state.gameCurrency);
+    const score = useScoreStore((state) => state.score);
+    const incrementScore = useScoreStore((state) => state.incrementScore);
+    const resetScore = useScoreStore((state) => state.resetScore);
+    const highScore = useScoreStore((state) => state.highScore);
+    const updateHighScore = useScoreStore((state) => state.updateHighScore);
+    const gameCurrency = useCurrencyStore((state) => state.gameCurrency);
     const { t } = useTranslation('common');
     const [companyIndex, setCompanyIndex] = useState(0);
+    const [usedTickersList, setUsedTickersList] = useState([]);
+    const [currentDifficulty, setCurrentDifficulty] = useState(difficulty.EASY);
     const topIndex = companyIndex;
     const bottomIndex = companyIndex + 1;
-    const [prevCompany, setPrevCompanyState] = useState(null);
-    const numFetchedCompanies = 20;
-    const [usedTickersList, setUsedTickersList] = useState([]);
+    const numFetchedCompanies = NUMBER_OF_COMPANIES_FETCHED;
 
     // Animation-related variables
     const [hidePanelContent, setHidePanelContent] = useState(false);
@@ -197,13 +197,6 @@ export default function GamePage() {
     const [bottomSelection, setBottomSelection] = useState("none");
     const [hideBottomMarketCap, setHideBottomMarketCap] = useState(true);
     const [disablePointer, setDisablePointer] = useState(false);
-
-    const setPrevCompany = (company) => {
-        return new Promise((resolve) => {
-            setPrevCompanyState(company);
-            resolve();
-        });
-    };
 
     const { isPending, error, refetch, data: companies } = useQuery({
         refetchOnWindowFocus: false,
@@ -220,7 +213,8 @@ export default function GamePage() {
                         excluded_tickers: usedTickersList,
                         wanted_categories: [],
                         currency: gameCurrency,
-                        count: numFetchedCompanies
+                        count: numFetchedCompanies,
+                        difficulties: [currentDifficulty]
                     })
                 }
             ).then((res) => {
@@ -229,9 +223,16 @@ export default function GamePage() {
                         const tickers = data.map(company => company.ticker);
                         setUsedTickersList(prevList => [...prevList, ...tickers]);
 
-                        if (prevCompany !== null) {
-                            data.unshift(prevCompany);
+                        if (companies) {
+                            data.unshift(companies[companies.length - 1]);
                         }
+
+                        if (currentDifficulty === difficulty.EASY) {
+                            setCurrentDifficulty(difficulty.MEDIUM);
+                        } else if (currentDifficulty === difficulty.MEDIUM) {
+                            setCurrentDifficulty(difficulty.HARD)
+                        }
+
                         return data;
                     });
             }),
@@ -248,7 +249,6 @@ export default function GamePage() {
         const bottomCompany = companies[bottomIndex];
         const selectedCompany = companies.filter(company => company.ticker === ticker)[0];  
         const otherCompany = bottomCompany.ticker === selectedCompany.ticker ? topCompany : bottomCompany;
-        const lastCompany = companies[companies.length - 1];
 
         setHideBottomMarketCap(false);
         setDisablePointer(true);
@@ -282,11 +282,8 @@ export default function GamePage() {
                 setHideBottomMarketCap(true);
                 setHidePanelContent(false);
             } else {
-                setPrevCompany(lastCompany).then(async () => {
-                    await refetch();
+                refetch().then(async () => {
                     setCompanyIndex(0);
-                })
-                .then(async () => {
                     setHideBottomMarketCap(true);
                     setHidePanelContent(false);             
                 });
@@ -316,7 +313,7 @@ export default function GamePage() {
     if (error) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: '90vh' }}>
-                <Typography variant="h4" sx={{ marginX: "16px" }}>😢 An error occurred in our services</Typography>
+                <Typography variant="h4" sx={{ marginX: "16px" }}>😢 {t('errorOccurredInServices')}</Typography>
             </Box>
         )
     }

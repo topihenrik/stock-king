@@ -151,6 +151,7 @@ def mock_test_database_tickers():
 
     return tickers_data
 
+
 @pytest.fixture()
 def mock_scores_initial():
     score_data = [
@@ -159,37 +160,37 @@ def mock_scores_initial():
             "gamemode": "normal",
             "name": "ketsuppimakkara",
             "score": 500,
-            "timestamp": "Wed, 20 Mar 2024 18:32:29 GMT"
+            "timestamp": "Wed, 20 Mar 2024 18:32:29 GMT",
         },
         {
             "country": "FIN",
             "gamemode": "normal",
             "name": "sinappimakkara",
             "score": 500,
-            "timestamp": "Wed, 20 Mar 2024 18:32:38 GMT"
+            "timestamp": "Wed, 20 Mar 2024 18:32:38 GMT",
         },
         {
             "country": "SWE",
             "gamemode": "normal",
             "name": "Velcromakkara",
             "score": 45,
-            "timestamp": "Wed, 20 Mar 2024 18:36:47 GMT"
+            "timestamp": "Wed, 20 Mar 2024 18:36:47 GMT",
         },
         {
             "country": "USA",
             "gamemode": "normal",
             "name": "äyskärimaisteri420",
             "score": 40,
-            "timestamp": "Wed, 20 Mar 2024 18:33:20 GMT"
+            "timestamp": "Wed, 20 Mar 2024 18:33:20 GMT",
         },
-                {
+        {
             "country": "",
             "gamemode": "normal",
             "name": "burgerikeisari",
             "score": 20,
-            "timestamp": "Wed, 20 Mar 2024 18:33:20 GMT"
-        }
-]
+            "timestamp": "Wed, 20 Mar 2024 18:33:20 GMT",
+        },
+    ]
     return score_data
 
 
@@ -209,11 +210,18 @@ def mock_tickers_updated():
 
     return tickers_data
 
+
 @pytest.fixture()
 def mock_exchangerates_initial():
-    return [{"currency":"EUR","ratio": 1.0669999999999999811141,"date": date(2023,5,20)}]
+    return [
+        {
+            "currency": "EUR",
+            "ratio": 1.0669999999999999811141,
+            "date": date(2023, 5, 20),
+        }
+    ]
 
 
 @pytest.fixture()
 def mock_exchangerates_updated():
-    return [{"currency":"EUR","ratio": 1,"date": date(2023,5,20)}]
+    return [{"currency": "EUR", "ratio": 1, "date": date(2023, 5, 20)}]

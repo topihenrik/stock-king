@@ -1,9 +1,8 @@
 import { create } from "zustand";
 
-export const useGameStore = create((set) => ({
+export const useScoreStore = create((set) => ({
     score: 0,
     highScore: localStorage.getItem("highScore") || 0,
-    gameCurrency: "USD",
     incrementScore: () => set((state) => ({ score: state.score + 1 })),
     resetScore: () => set((state) => ({ score: 0 })),
     updateHighScore: () => {
@@ -13,5 +12,4 @@ export const useGameStore = create((set) => ({
             return { highScore: newHighScore };
         });
     },
-    changeGameCurrency: (currency) => set((state) => ({ gameCurrency: currency}))
 }));

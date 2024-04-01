@@ -1,14 +1,14 @@
 import {describe, it, expect} from "vitest";
 import {setupWithProviders} from "../test-utils.jsx";
 import { localStorageMock } from "../../__mocks__/localStorage.js";
-import GameHistory from "../../src/components/GameHistory.jsx";
+import GameHistoryModal from "../../src/components/GameHistoryModal.jsx";
   
 Object.defineProperty(window, 'localStorage', {
     value: localStorageMock
 });
 
-describe('GameHistory', () => {
-    it('should render game history table with correct data', async () => {
+describe('GameHistoryModal', () => {
+    it('Should render game history table with correct data', async () => {
         const gameHist = [
             { date: "2024-03-27T19:59:08.224Z", score: 0 },
             { date: "2024-03-26T11:47:28.224Z", score: 11 },
@@ -16,7 +16,7 @@ describe('GameHistory', () => {
 
         localStorage.setItem('gameHistory', JSON.stringify(gameHist));
 
-        const {findAllByTestId} = setupWithProviders(<GameHistory />);
+        const {findAllByTestId} = setupWithProviders(<GameHistoryModal open={true} setOpen={() => {}} />);
 
         const dateCells = await findAllByTestId("date-cell");
         expect(dateCells[0].textContent).toBe('27.3.2024');

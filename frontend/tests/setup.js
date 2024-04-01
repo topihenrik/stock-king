@@ -5,6 +5,8 @@ import {http, HttpResponse} from "msw";
 import {companies} from "./mock-data/companies.js";
 import {exchangeRates} from './mock-data/exchangeRates.js';
 import {setupServer} from "msw/node";
+import {players} from "./mock-data/players.js";
+import {difficulty} from "../src/constants.js";
 
 vi.mock("zustand");
 vi.mock('i18next');
@@ -15,10 +17,23 @@ expect.extend(matchers);
 
 export const restHandlers = [
     http.post('http://localhost:5000/api/get_companies', async ({ request }) => {
-        const { excluded_tickers, wanted_categories, currency, count } = await request.json();
+        const { excluded_tickers, wanted_categories, currency, count, difficulties } = await request.json();
+
+        let response = [];
+        switch (difficulties[0]) {
+            case difficulty.EASY:
+                response = companies.easy.filter(company => !excluded_tickers.includes(company.ticker));
+                break;
+            case difficulty.MEDIUM:
+                response = companies.medium.filter(company => !excluded_tickers.includes(company.ticker));
+                break;
+            case difficulty.HARD:
+                response = companies.hard.filter(company => !excluded_tickers.includes(company.ticker));
+                break;
+        }
 
         // Construct the response based on the request parameters
-        let response = companies.filter(company => !excluded_tickers.includes(company.ticker));
+        // let response = companies.filter(company => !excluded_tickers.includes(company.ticker));
         
         if (!(wanted_categories.length === 0)) {
             response = response.filter(response => wanted_categories.includes(response.sector))
@@ -51,11 +66,18 @@ export const restHandlers = [
 
         return HttpResponse.json(currenciesList)
     }),
+
+    http.post('http://localhost:5000/api/get_scores', () => {
+        return HttpResponse.json(players);
+    })
 ];
 
 const server = setupServer(...restHandlers);
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+beforeAll(() => {
+    global.IS_REACT_ACT_ENVIRONMENT = false;
+    server.listen({ onUnhandledRequest: 'error' })
+})
 
 afterAll(() => server.close())
 
