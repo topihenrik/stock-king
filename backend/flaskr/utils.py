@@ -477,6 +477,7 @@ def convert_marketcaps_currencies_updated(companies, game_currency):
     Returns a list of tuples containing all game data on companies with updated market cap and currency information
     """
     exchange_rates = get_exchange_rates_from_database()
+    converted_market_cap = 0
     for company in companies:
         reporting_currency = company.get("currency")
         if(reporting_currency != game_currency):
