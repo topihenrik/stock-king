@@ -78,7 +78,6 @@ def connect_to_db():
             database=os.getenv("DB_DATABASE"),
         )
 
-        print("Connected to Database")
         return connection
 
     except (Exception, Error) as error:
@@ -226,8 +225,7 @@ def insert_scores(data):
                 )
         conn.commit()
 
-
-def get_currencies_from_database():
+def get_database_currencies():
     """
     Function to get all currencies from the database.
     """
@@ -261,11 +259,8 @@ def get_exchange_rates_from_api():
     """
     Function for getting exchange rates from Forex API.
     """
-    existing_currencies = [
-        currency + "USD=X"
-        for currency in get_currencies_from_database()
-        if currency != "USD"
-    ]
+    database_currencies = get_database_currencies()
+    existing_currencies = [currency+"USD=X" for currency in database_currencies if currency != "USD"]
     rates = []
     for currency in existing_currencies:
         rates.append(yahoo.Ticker(currency))
@@ -274,7 +269,7 @@ def get_exchange_rates_from_api():
     return processed_currencies
 
 
-def upsert_exchange_rates(data, enable=False):
+def upsert_exchange_rates(data, enable = True):
     """
     Function for upserting exchange rates into the "exchange_rate" table in the database.
     """
