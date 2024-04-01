@@ -15,7 +15,9 @@ import json
 from random import sample
 
 
-TICKERS = tickers.TICKERS
+TICKERS_EASY = tickers_sorted.TICKERS_EASY
+TICKERS_MEDIUM = tickers_sorted.TICKERS_MEDIUM
+TICKERS_HARD = tickers_sorted.TICKERS_HARD
 
 
 app = Flask(__name__, static_folder="static", template_folder="static")
@@ -254,29 +256,46 @@ def get_all_currencies():
     return currencies
 
 
-#@scheduler.task("cron", id="update_database", hour=20, minute=32)
-@scheduler.task("interval", id="update_database", seconds=10)
+@scheduler.task("cron", id="update_database", hour=17, minute=55)
 def update_database():
     """
-    This function is run every day at 4:00.
+    This function is run every day at 4:00. (currently 17:55 for checking in meeting)
     Gets data from Yahoo Finance for all companies defined in TICKERS constant, 
     then makes an update to database. Processes about 5 companies per second, so cannot be used in real-time.
    """
+    print("###########################")
     print("Update of database started.")
     with app.app_context():
         try:
-            print("Updating MARKET CAP data.")
-            string_tickers = " ".join(TICKERS)
-            stock_data = utils.get_stock_data(string_tickers)
-            utils.upsert_stock_data(utils.get_stock_data(stock_data))
-            print("Updated MARKET CAP data successfully!")
+            print("###########################")
+            print("Updating EASY TICKERS data.")
+            easy_tickers = " ".join(TICKERS_EASY)
+            utils.upsert_stock_data(utils.get_stock_data(easy_tickers), "easy")
+            print("Successfully updated EASY TICKERS data!")
+            print("###########################\n")
+
+            print("###########################")
+            print("Updating MEDIUM TICKERS data.")
+            medium_tickers = " ".join(TICKERS_MEDIUM)
+            utils.upsert_stock_data(utils.get_stock_data(medium_tickers), "medium")
+            print("Successfully updated MEDIUM TICKERS data!")
+            print("###########################\n")
+
+            print("###########################")
+            print("Updating HARD TICKERS data.")
+            hard_tickers = " ".join(TICKERS_HARD)
+            utils.upsert_stock_data(utils.get_stock_data(hard_tickers), "hard")
+            print("Successfully updated HARD TICKERS data!")
+            print("###########################\n")
         except Exception as err:
             print(f"Failed to update MARKET CAP data. {type(err)}: {err}")
         
-        try: 
+        try:
+            print("###########################")
             print("Updating EXCHANGE RATE data.")
             exchange_rate_data = utils.get_exchange_rates_from_api()
             utils.upsert_exchange_rates(exchange_rate_data)
             print("Updated EXCHANGE RATE data successfully!")
+            print("###########################\n")
         except Exception as err:
             print(f"Failed to update EXCHANGE RATE data. {type(err)}: {err}")
