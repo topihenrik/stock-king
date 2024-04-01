@@ -453,10 +453,10 @@ def convert_marketcaps_currencies(companies, game_currency):
 
 def convert_marketcaps_currencies_updated(companies, game_currency):
     """
-    Takes a dictionary containing all game data on companies and a string representation of desired currency eg. 'EUR' or 'USD'
-    Gets exchange rate data from database and replaces the market cap into the desired currency
+    Takes a dictionary containing all game data on companies and a string representation of desired currency 
+    Gets exchange rate from the database, follows two-step conversion--first converts market cap to USD and then to the desired currency
+    Replaces company market cap with the desired currency
     Returns a list of tuples containing all game data on companies with updated market cap and currency information
-    Uses triangulation to first convert to USD and then to the desired currency
     """
     exchange_rates = get_exchange_rates_from_database()
     for company in companies:
