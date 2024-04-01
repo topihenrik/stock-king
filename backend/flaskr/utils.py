@@ -9,7 +9,6 @@ from random import sample
 from flaskr import tickers, tickers_sorted
 from flask import jsonify
 
-TICKERS = tickers.TICKERS
 TICKERS_EASY = tickers_sorted.TICKERS_EASY
 TICKERS_MEDIUM = tickers_sorted.TICKERS_MEDIUM
 TICKERS_HARD = tickers_sorted.TICKERS_HARD
@@ -17,10 +16,7 @@ TICKERS_HARD = tickers_sorted.TICKERS_HARD
 def initial_data_update():
     load_dotenv(find_dotenv())
     env = os.getenv("ENV")
-    if env != "dev":
-        # Disabled fetching all the tickers
-        # string_tickers = " ".join(TICKERS)
-        # upsert_stock_data(get_stock_data(string_tickers))
+    if env == "dev":
         random_easy_tickers = sample(TICKERS_EASY, 50)
         string_easy_tickers = " ".join(random_easy_tickers)
         upsert_stock_data(get_stock_data(string_easy_tickers), "easy")
@@ -33,25 +29,6 @@ def initial_data_update():
         string_hard_tickers = " ".join(random_hard_tickers)
         upsert_stock_data(get_stock_data(string_hard_tickers), "hard")
 
-
-        #random_tickers = sample(TICKERS, 30)
-        #string_tickers = " ".join(random_tickers)
-        #upsert_stock_data(get_stock_data(string_tickers))
-    else:
-        random_easy_tickers = sample(TICKERS_EASY, 50)
-        string_easy_tickers = " ".join(random_easy_tickers)
-        upsert_stock_data(get_stock_data(string_easy_tickers), "easy")
-
-        random_medium_tickers = sample(TICKERS_MEDIUM, 30)
-        string_medium_tickers = " ".join(random_medium_tickers)
-        upsert_stock_data(get_stock_data(string_medium_tickers), "medium")
-
-        random_hard_tickers = sample(TICKERS_HARD, 30)
-        string_hard_tickers = " ".join(random_hard_tickers)
-        upsert_stock_data(get_stock_data(string_hard_tickers), "hard")
-        #random_tickers = sample(TICKERS, 30)
-        #string_tickers = " ".join(random_tickers)
-        #upsert_stock_data(get_stock_data(string_tickers))
 
 
 def connect_to_db():
@@ -78,7 +55,6 @@ def connect_to_db():
             database=os.getenv("DB_DATABASE"),
         )
 
-        print("Connected to Database")
         return connection
 
     except (Exception, Error) as error:
@@ -226,8 +202,7 @@ def insert_scores(data):
                 )
         conn.commit()
 
-
-def get_currencies_from_database():
+def get_database_currencies():
     """
     Function to get all currencies from the database.
     """
@@ -261,11 +236,8 @@ def get_exchange_rates_from_api():
     """
     Function for getting exchange rates from Forex API.
     """
-    existing_currencies = [
-        currency + "USD=X"
-        for currency in get_currencies_from_database()
-        if currency != "USD"
-    ]
+    database_currencies = get_database_currencies()
+    existing_currencies = [currency+"USD=X" for currency in database_currencies if currency != "USD"]
     rates = []
     for currency in existing_currencies:
         rates.append(yahoo.Ticker(currency))
@@ -274,7 +246,7 @@ def get_exchange_rates_from_api():
     return processed_currencies
 
 
-def upsert_exchange_rates(data, enable=False):
+def upsert_exchange_rates(data, enable = True):
     """
     Function for upserting exchange rates into the "exchange_rate" table in the database.
     """
