@@ -247,11 +247,15 @@ def get_exchange_rates_from_api():
 
 def add_all_currencies():
     existing_currencies = get_currencies_from_database()
-    existing_currencies.extend(["RUB", "GBP", "AUD", "SGD"])
     all_currencies = existing_currencies
+    new_currencies = ["RUB", "GBP", "EUR", "AUD", "SGD"]
+    for currency in new_currencies:
+        if currency in all_currencies:
+            continue
+        else:
+            all_currencies.append(currency)
     return all_currencies
-    
-    
+   
 def upsert_exchange_rates(data, enable = False):
     """
     Function for upserting exchange rates into the "exchange_rate" table in the database.
