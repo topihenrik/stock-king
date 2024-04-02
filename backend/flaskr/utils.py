@@ -483,17 +483,26 @@ def convert_marketcaps_currencies_updated(companies, game_currency):
         if(reporting_currency != game_currency):
             for exchange_rate in exchange_rates:
                 if(
-                    exchange_rate.get("from_currency") == reporting_currency
-                    and exchange_rate.get("to_currency") == "USD"
+                    (exchange_rate.get("from_currency") == reporting_currency
+                    and exchange_rate.get("to_currency") == "USD") and (reporting_currency != "USD")
                     ):
+                        
                         to_usd = exchange_rate.get("ratio")
                         market_cap_usd = round(company.get("market_cap") * to_usd)
+
+                elif ((exchange_rate.get("to_currency") == reporting_currency and exchange_rate.get("from_currency") == "USD") and reporting_currency != "USD"):
+                        market_cap_usd = round(company.get("market_cap")/exchange_rate.get("ratio"))
                 if(
-                    exchange_rate.get("from_currency") == "USD"
-                    and exchange_rate.get("to_currency") == game_currency
+                    (exchange_rate.get("from_currency") == "USD"
+                    and exchange_rate.get("to_currency") == game_currency) and (game_currency != "USD")
                 ):
+                    
                     from_usd = exchange_rate.get("ratio")
                     converted_market_cap = round(market_cap_usd * from_usd)
+                 
+                elif ((exchange_rate.get("to_currency") == game_currency and exchange_rate.get("from_currency") == "USD") and game_currency != "USD"):
+                       converted_market_cap = round(company.get("market_cap")/exchange_rate.get("ratio"))
+            
             company.update({"market_cap": converted_market_cap})
             company.update({"currency": game_currency})
     return companies
