@@ -94,4 +94,22 @@ describe('GamePage', () => {
         const secondPanelText = await within(panels[1]).findByText(companies.medium[0].name);
         expect(secondPanelText).toBeInTheDocument();
     }, 10000);
+
+    it('Should count any selection as correct when formatted market caps are identical', async () => {
+        const {findAllByTestId, findByTestId, user} = setupWithProviders(<GamePage/>);
+
+        const panels = await findAllByTestId("panel");
+        const scoreText = await findByTestId("text-score");
+
+        // Market caps for the first three companies are identical when formatted
+        // Technically correct selection
+        await user.click(panels[0]);
+
+        await delay(2000);
+
+        // Technically incorrect selection
+        await user.click(panels[1]);
+
+        expect(scoreText).toHaveTextContent('2');
+    }, 5000);
 })
