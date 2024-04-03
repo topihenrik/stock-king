@@ -54,7 +54,7 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc, hideAll, hid
                 width: "100%", 
                 height: "100%", 
                 opacity: hideAll ? 0.0 : 1.0,
-                transition: "0.4s" 
+                transition: "0.25s" 
             }}>
                 <Box component="img" style={loaded ? {} : { display: "none" }} src={imageSrc} alt={companyName}
                     onError={(e) => {
@@ -264,7 +264,7 @@ export default function GamePage() {
             incrementScore();
             updateHighScore();
             
-            await delay(2000);
+            await delay(1100);
 
             // Reset variables
             setCorrectSelected(false)    
@@ -273,7 +273,7 @@ export default function GamePage() {
 
             // Hide panel contents during company switch
             setHidePanelContent(true);
-            await delay(400);
+            await delay(250);
             
             // Change companies
             if (score % numFetchedCompanies !== (numFetchedCompanies - 2)) {
@@ -288,7 +288,7 @@ export default function GamePage() {
                     setHidePanelContent(false);             
                 });
             }
-            await delay(400);
+            await delay(250);
 
             // Enable pointer events again
             setDisablePointer(false);
@@ -301,10 +301,10 @@ export default function GamePage() {
             } else {
                 setBottomSelection("incorrect");
             }
-            await delay(1800);
+            await delay(900);
 
             setIncorrectSelected(false);
-            await delay(700);
+            await delay(500);
             saveGameHistory();
             navigate("/gameover");
         }
