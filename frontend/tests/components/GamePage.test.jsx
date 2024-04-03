@@ -84,7 +84,7 @@ describe('GamePage', () => {
         const panels = await findAllByTestId("panel");
         await user.click(panels[0]);
 
-        await delay(2000);
+        await delay(1100);
 
         // The first panel should be the previous second panel
         const firstPanelText = await within(panels[0]).findByText(companies.easy[0].name);
