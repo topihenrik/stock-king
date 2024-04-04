@@ -6,16 +6,18 @@ from flask import (
     jsonify,
     send_from_directory,
 )
-
-# from flask_apscheduler import APScheduler
+from flask_apscheduler import APScheduler
 from flask_cors import CORS
 from flaskr import utils, tickers, tickers_sorted
 from dotenv import find_dotenv, load_dotenv
 import os
 import json
+from random import sample
 
 
-TICKERS = tickers.TICKERS
+TICKERS_EASY = tickers_sorted.TICKERS_EASY
+TICKERS_MEDIUM = tickers_sorted.TICKERS_MEDIUM
+TICKERS_HARD = tickers_sorted.TICKERS_HARD
 
 
 app = Flask(__name__, static_folder="static", template_folder="static")
@@ -27,15 +29,15 @@ ENV = os.getenv("ENV")
 load_dotenv(find_dotenv(f".env.{ENV}"))
 
 # Initialize scheduler
-# scheduler = APScheduler()
+scheduler = APScheduler()
 
 # set confuguration for the scheduler
-# scheduler.api_enabled = False  # (default)
-# scheduler.api_prefix = "/scheduler" # (default)
-# scheduler.endpoint_prefix = "scheduler." # (default)
-# scheduler.allowed_hosts = ["*"] # (default)
-# scheduler.init_app(app)
-# scheduler.start()
+scheduler.api_enabled = False  # (default)
+scheduler.api_prefix = "/scheduler" # (default)
+scheduler.endpoint_prefix = "scheduler." # (default)
+scheduler.allowed_hosts = ["*"] # (default)
+scheduler.init_app(app)
+scheduler.start()
 
 # Update stock data
 # NOTICE: Company data should be updated with more sophisticated method in the future
@@ -254,25 +256,46 @@ def get_all_currencies():
     return currencies
 
 
-# @scheduler.task("cron", id="update_database", hour=4, minute=0)
-# def update_database():
-#    """
-#    This function is run every day at 4:00.
-#    Gets data from Yahoo Finance for all companies defined in TICKERS constant,
-#    then makes an update to database. Processes about 5 companies per second, so cannot be used in real-time.
-#   """
-#    print("Update of database started.")
-#    try:
-#        print("Updating market cap data.")
-#        string_tickers = " ".join(TICKERS)
-#        stock_data = utils.get_stock_data(string_tickers)
-#        utils.upsert_stock_data(stock_data)
-#    except Exception as err:
-#        print(f"Failed to update market cap data. {type(err)}: {err}")
-#
-#    try:
-#       print("Updating exchange rate data.")
-#        exchange_rate_data = utils.get_exchange_rates_from_api()
-#        utils.upsert_exchange_rates(exchange_rate_data)
-#    except Exception as err:
-#        print(f"Failed to update exchange rate data. {type(err)}: {err}")
+@scheduler.task("cron", id="update_database", hour=15, minute=50)
+def update_database():
+    """
+    This function is run every day at 4:00. (currently 17:55 for checking in meeting)
+    Gets data from Yahoo Finance for all companies defined in TICKERS constant, 
+    then makes an update to database. Processes about 5 companies per second, so cannot be used in real-time.
+   """
+    print("###########################")
+    print("Update of database started.")
+    with app.app_context():
+        try:
+            print("###########################")
+            print("Updating EASY TICKERS data.")
+            easy_tickers = " ".join(TICKERS_EASY)
+            utils.upsert_stock_data(utils.get_stock_data(easy_tickers), "easy")
+            print("Successfully updated EASY TICKERS data!")
+            print("###########################\n")
+
+            print("###########################")
+            print("Updating MEDIUM TICKERS data.")
+            medium_tickers = " ".join(TICKERS_MEDIUM)
+            utils.upsert_stock_data(utils.get_stock_data(medium_tickers), "medium")
+            print("Successfully updated MEDIUM TICKERS data!")
+            print("###########################\n")
+
+            print("###########################")
+            print("Updating HARD TICKERS data.")
+            hard_tickers = " ".join(TICKERS_HARD)
+            utils.upsert_stock_data(utils.get_stock_data(hard_tickers), "hard")
+            print("Successfully updated HARD TICKERS data!")
+            print("###########################\n")
+        except Exception as err:
+            print(f"Failed to update MARKET CAP data. {type(err)}: {err}")
+        
+        try:
+            print("###########################")
+            print("Updating EXCHANGE RATE data.")
+            exchange_rate_data = utils.get_exchange_rates_from_api()
+            utils.upsert_exchange_rates(exchange_rate_data)
+            print("Updated EXCHANGE RATE data successfully!")
+            print("###########################\n")
+        except Exception as err:
+            print(f"Failed to update EXCHANGE RATE data. {type(err)}: {err}")

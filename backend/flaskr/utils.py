@@ -9,7 +9,6 @@ from random import sample
 from flaskr import tickers, tickers_sorted
 from flask import jsonify
 
-TICKERS = tickers.TICKERS
 TICKERS_EASY = tickers_sorted.TICKERS_EASY
 TICKERS_MEDIUM = tickers_sorted.TICKERS_MEDIUM
 TICKERS_HARD = tickers_sorted.TICKERS_HARD
@@ -17,10 +16,7 @@ TICKERS_HARD = tickers_sorted.TICKERS_HARD
 def initial_data_update():
     load_dotenv(find_dotenv())
     env = os.getenv("ENV")
-    if env != "dev":
-        # Disabled fetching all the tickers
-        # string_tickers = " ".join(TICKERS)
-        # upsert_stock_data(get_stock_data(string_tickers))
+    if env == "dev":
         random_easy_tickers = sample(TICKERS_EASY, 50)
         string_easy_tickers = " ".join(random_easy_tickers)
         upsert_stock_data(get_stock_data(string_easy_tickers), "easy")
@@ -33,25 +29,6 @@ def initial_data_update():
         string_hard_tickers = " ".join(random_hard_tickers)
         upsert_stock_data(get_stock_data(string_hard_tickers), "hard")
 
-
-        #random_tickers = sample(TICKERS, 30)
-        #string_tickers = " ".join(random_tickers)
-        #upsert_stock_data(get_stock_data(string_tickers))
-    else:
-        random_easy_tickers = sample(TICKERS_EASY, 50)
-        string_easy_tickers = " ".join(random_easy_tickers)
-        upsert_stock_data(get_stock_data(string_easy_tickers), "easy")
-
-        random_medium_tickers = sample(TICKERS_MEDIUM, 30)
-        string_medium_tickers = " ".join(random_medium_tickers)
-        upsert_stock_data(get_stock_data(string_medium_tickers), "medium")
-
-        random_hard_tickers = sample(TICKERS_HARD, 30)
-        string_hard_tickers = " ".join(random_hard_tickers)
-        upsert_stock_data(get_stock_data(string_hard_tickers), "hard")
-        #random_tickers = sample(TICKERS, 30)
-        #string_tickers = " ".join(random_tickers)
-        #upsert_stock_data(get_stock_data(string_tickers))
 
 
 def connect_to_db():
@@ -78,7 +55,6 @@ def connect_to_db():
             database=os.getenv("DB_DATABASE"),
         )
 
-        print("Connected to Database")
         return connection
 
     except (Exception, Error) as error:
@@ -131,25 +107,18 @@ def get_scores_from_database(count=50, countries=[], gamemode="normal"):
     Returns an array of objects representing highscores in the database
     """
     # Construct SQL query
-    query_string = f"SELECT * FROM scores"
 
-    if len(countries) != 0:
-        query_string += f" WHERE country IN ("
-        for country in countries:
-            if countries[-1] == country:
-                query_string += f"'{country}'"
-            else:
-                query_string += f"'{country}',"
-        query_string += f") AND gamemode = '{gamemode}'"
-    else:
-        query_string += f" WHERE gamemode = '{gamemode}'"
-
-    query_string += f" ORDER BY score DESC, timestamp ASC LIMIT {count};"
-    query = sql.SQL(query_string)
+    query = sql.SQL("SELECT * FROM scores WHERE sid IS NOT NULL AND ({country} IS NULL OR country = ANY ({country})) AND ({gamemode} IS NULL OR gamemode = {gamemode}) ORDER BY score DESC, timestamp ASC LIMIT {limit}").format(
+        country=sql.Placeholder(),
+        gamemode=sql.Placeholder(),
+        limit=sql.Placeholder()
+    )
+    if(len(countries) == 0):
+        countries = None
 
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
-            cursor.execute(query)
+            cursor.execute(query, (countries,countries,gamemode,gamemode,count))
             leaderboard = cursor.fetchall()
             highscores = score_db_result_to_dict(leaderboard)
             return highscores
@@ -226,8 +195,7 @@ def insert_scores(data):
                 )
         conn.commit()
 
-
-def get_currencies_from_database():
+def get_database_currencies():
     """
     Function to get all currencies from the database.
     """
@@ -261,11 +229,8 @@ def get_exchange_rates_from_api():
     """
     Function for getting exchange rates from Forex API.
     """
-    existing_currencies = [
-        currency + "USD=X"
-        for currency in get_currencies_from_database()
-        if currency != "USD"
-    ]
+    database_currencies = get_database_currencies()
+    existing_currencies = [currency+"USD=X" for currency in database_currencies if currency != "USD"]
     rates = []
     for currency in existing_currencies:
         rates.append(yahoo.Ticker(currency))
@@ -274,7 +239,7 @@ def get_exchange_rates_from_api():
     return processed_currencies
 
 
-def upsert_exchange_rates(data, enable=False):
+def upsert_exchange_rates(data, enable = True):
     """
     Function for upserting exchange rates into the "exchange_rate" table in the database.
     """
@@ -321,56 +286,25 @@ def get_companies_from_database(
     Returns:
             Array of dictionaries of company data
     """
-
-    # Construct SQL query
-    query_string = f"SELECT * FROM Company WHERE "
-
-    query_string += "difficulty IN ("
-    for difficulty in difficulties:
-        if difficulties[-1] == difficulty:
-            query_string += f"'{difficulty}'"
-        else:
-            query_string += f"'{difficulty}',"
-    query_string += ")"
-
-    if len(exclude_tickers) != 0:
-        query_string += f"AND ticker NOT IN ("
-        for ticker in exclude_tickers:
-            if exclude_tickers[-1] == ticker:
-                query_string += f"'{ticker}'"
-            else:
-                query_string += f"'{ticker}',"
-
-        query_string += ")"
-
-    if len(exclude_tickers) != 0 and len(wanted_categories) != 0:
-        query_string += f" AND sector IN ("
-        for sector in wanted_categories:
-            if wanted_categories[-1] == sector:
-                query_string += f"'{sector}'"
-            else:
-                query_string += f"'{sector}',"
-
-        query_string += ")"
-
-    if len(exclude_tickers) == 0 and len(wanted_categories) != 0:
-        query_string += f"AND sector IN ("
-        for sector in wanted_categories:
-            if wanted_categories[-1] == sector:
-                query_string += f"'{sector}'"
-            else:
-                query_string += f"'{sector}',"
-
-        query_string += ")"
-
-    query_string += f" ORDER BY RANDOM() LIMIT {count};"
-
-    query = sql.SQL(query_string)
+    #Construct SQL Query
+    
+    query = sql.SQL("SELECT * FROM company WHERE cid IS NOT NULL AND ({difficulty} IS NULL OR difficulty::text = ANY ({difficulty})) AND ({wanted_categories} IS NULL OR sector = ANY ({wanted_categories})) AND ({exclude_tickers} IS NULL OR ticker <> ALL ({exclude_tickers})) ORDER BY RANDOM()  LIMIT {limit}").format(
+        difficulty=sql.Placeholder(),
+        wanted_categories=sql.Placeholder(),
+        exclude_tickers=sql.Placeholder(),
+        limit=sql.Placeholder()
+    )
+    if(len(difficulties) == 0):
+        difficulties = None
+    if(len(wanted_categories) == 0):
+        wanted_categories = None
+    if(len(exclude_tickers) == 0):
+        exclude_tickers = None
 
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
-            cursor.execute(query)
-
+            cursor.execute(query, (difficulties,difficulties,wanted_categories,wanted_categories,exclude_tickers,exclude_tickers,count))
+            print(cursor.query)
             db_result = cursor.fetchall()
 
     list_of_company_dicts = company_db_result_to_dict(db_result)

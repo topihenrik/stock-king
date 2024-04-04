@@ -58,30 +58,30 @@ const Panel = ({
             transition: "0.2s",
             overflow: "hidden"
         }}>
-            <Box sx={{ 
+            <Box sx={{
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "left",
                 alignItems: "center",
-                width: "100%", 
-                height: "100%", 
+                width: "100%",
+                height: "100%",
                 opacity: hideAll ? 0.0 : 1.0,
-                transition: "0.4s" 
+                transition: "0.25s"
             }}>
-                <Box component="img" style={loaded ? {} : { display: "none" }} src={imageSrc} alt={companyName}
-                    onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = PlaceholderLogo;
-                        e.target.alt = "Placeholder logo"
-                    }}
-                    onLoad={() => setLoaded(true)}
-                    sx={{
-                        minWidth: { xs: "100px", sm: "150px", md: "200px" },
-                        maxHeight: { xs: "100px", sm: "150px", md: "200px" },
-                        margin: {xs: "32px", sm: "64px", md: "80px"},
-                        borderRadius: "8px"
-                }}></Box>
-                <Box sx={{ 
+                <Box component="img" style={loaded ? {} : { visibility: "hidden" }} src={imageSrc} alt={companyName}
+                     onError={(e) => {
+                         e.target.onerror = null;
+                         e.target.src = PlaceholderLogo;
+                         e.target.alt = "Placeholder logo"
+                     }}
+                     onLoad={() => setLoaded(true)}
+                     sx={{
+                         minWidth: { xs: "100px", sm: "150px", md: "200px" },
+                         maxHeight: { xs: "100px", sm: "150px", md: "200px" },
+                         margin: {xs: "32px", sm: "64px", md: "80px"},
+                         borderRadius: "8px"
+                     }}></Box>
+                <Box sx={{
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
@@ -121,7 +121,7 @@ const Panel = ({
                         {hideMarketCap ? "?" : marketCap}
                     </Typography>
                 </Box>
-            </Box>          
+            </Box>
         </ButtonBase>
     )
 }
@@ -276,14 +276,20 @@ export default function GamePage() {
         const ticker = event.currentTarget.value;
         const topCompany = companies[topIndex];
         const bottomCompany = companies[bottomIndex];
-        const selectedCompany = companies.filter(company => company.ticker === ticker)[0];  
+        const selectedCompany = companies.filter(company => company.ticker === ticker)[0];
         const otherCompany = bottomCompany.ticker === selectedCompany.ticker ? topCompany : bottomCompany;
+
+        // If the formatted market caps show the same value, the selection counts as being correct
+        const correct = (
+            selectedCompany.market_cap >= otherCompany.market_cap 
+            || customNumberFormat(selectedCompany.market_cap, gameCurrency) == customNumberFormat(otherCompany.market_cap, gameCurrency)
+        );
 
         setHideBottomMarketCap(false);
         setDisablePointer(true);
         setShowEmployeeCount(false);
 
-        if (selectedCompany.market_cap >= otherCompany.market_cap) {
+        if (correct) {
             // Begin animation
             setCorrectSelected(true);
             if (selectedCompany == topCompany) {
@@ -293,18 +299,18 @@ export default function GamePage() {
             }
             incrementScore();
             updateHighScore();
-            
-            await delay(2000);
+
+            await delay(1100);
 
             // Reset variables
-            setCorrectSelected(false)    
+            setCorrectSelected(false)
             setTopSelection("none");
             setBottomSelection("none");
 
             // Hide panel contents during company switch
             setHidePanelContent(true);
-            await delay(400);
-            
+            await delay(250);
+
             // Change companies
             if (score % numFetchedCompanies !== (numFetchedCompanies - 2)) {
                 setCompanyIndex(companyIndex + 1);
@@ -315,31 +321,31 @@ export default function GamePage() {
                 refetch().then(async () => {
                     setCompanyIndex(0);
                     setHideBottomMarketCap(true);
-                    setHidePanelContent(false);             
+                    setHidePanelContent(false);
                 });
             }
-            await delay(400);
+            await delay(250);
 
             // Enable pointer events again
             setDisablePointer(false);
-            
+
         } else {
             // Begin animation
-            setIncorrectSelected(true);        
+            setIncorrectSelected(true);
             if (selectedCompany == topCompany) {
                 setTopSelection("incorrect");
             } else {
                 setBottomSelection("incorrect");
             }
-            await delay(1800);
+            await delay(900);
 
             setIncorrectSelected(false);
-            await delay(700);
+            await delay(500);
             saveGameHistory();
             navigate("/gameover");
         }
     }
-    
+
     if (error) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: '90vh' }}>
@@ -354,10 +360,10 @@ export default function GamePage() {
         if (existingGameHistoryJSON) {
             existingGameHistory = JSON.parse(existingGameHistoryJSON);
         }
-    
+
         const newGameEntry = { date: new Date().toISOString(), score: score };
         const updatedGameHistory = [newGameEntry, ...existingGameHistory];
-    
+
         localStorage.setItem("gameHistory", JSON.stringify(updatedGameHistory));
     };
 
@@ -485,7 +491,7 @@ export default function GamePage() {
             </Box>
 
             <Typography component={Link} to="https://clearbit.com" sx={{
-                position: "static",            
+                position: "static",
                 marginBottom: "16px",
                 color: "text.secondary",
                 fontSize: "12px"

@@ -4,6 +4,7 @@ import datetime
 
 @pytest.fixture(autouse=True)
 def run_before_testing(utils):
+    
 
     with utils.connect_to_db() as conn:
         with conn.cursor() as cursor:

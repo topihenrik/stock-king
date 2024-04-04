@@ -84,7 +84,7 @@ describe('GamePage', () => {
         const panels = await findAllByTestId("panel");
         await user.click(panels[0]);
 
-        await delay(2000);
+        await delay(1100);
 
         // The first panel should be the previous second panel
         const firstPanelText = await within(panels[0]).findByText(companies.easy[0].name);
@@ -118,4 +118,22 @@ describe('GamePage', () => {
         const hintCount = await findByTestId('hint-count');
         expect(hintCount).toHaveTextContent(2);
     });
+
+    it('Should count any selection as correct when formatted market caps are identical', async () => {
+        const {findAllByTestId, findByTestId, user} = setupWithProviders(<GamePage/>);
+
+        const panels = await findAllByTestId("panel");
+        const scoreText = await findByTestId("text-score");
+
+        // Market caps for the first three companies are identical when formatted
+        // Technically correct selection
+        await user.click(panels[0]);
+
+        await delay(2000);
+
+        // Technically incorrect selection
+        await user.click(panels[1]);
+
+        expect(scoreText).toHaveTextContent('2');
+    }, 5000);
 })
