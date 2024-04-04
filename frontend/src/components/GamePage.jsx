@@ -407,7 +407,7 @@ export default function GamePage() {
                 bottom: "20px",
                 left: "20px",
                 padding: "12px",
-                backgroundColor: showEmployeeCount || hintsAvailable === 0  ? "primary.semiLight" : "yellow.main",
+                backgroundColor: showEmployeeCount || hintsAvailable === 0  ? "primary.semiLight" : "orange.main",
                 borderRadius: "50%",
                 boxShadow: "0px 2px 5px rgba(0, 0, 0, 1)",
                 textShadow: "1px 1px 3px rgba(0, 0, 0, 0.7)",
@@ -416,8 +416,8 @@ export default function GamePage() {
                     transition: "0.2s",
                 }
             }}>
-                <Lightbulb fontSize="medium" sx={{ filter: "drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7))"}} />
-                <Typography data-testid="hint-count" variant="subtitle1" sx={{ color: "text.primary", marginLeft: 1 }}>
+                <Lightbulb sx={{ filter: "drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7))", fontSize: {xs: "1.25rem", sm: "2rem"}}} />
+                <Typography data-testid="hint-count" variant="h4" sx={{ color: "text.primary", fontSize: {xs: "1.25rem", sm: "2rem"}, marginLeft: 1 }}>
                     {hintsAvailable}
                 </Typography>
             </ButtonBase>

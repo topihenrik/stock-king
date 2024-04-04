@@ -30,8 +30,8 @@ export const theme = createTheme({
         red: {
             main: "#B8233A"
         },
-        yellow: {
-            main: "#FFC700"
+        orange: {
+            main: "#FC7B00"
         },
         text: {
             primary: "#F1F1F1",
