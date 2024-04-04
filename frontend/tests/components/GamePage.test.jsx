@@ -94,4 +94,28 @@ describe('GamePage', () => {
         const secondPanelText = await within(panels[1]).findByText(companies.medium[0].name);
         expect(secondPanelText).toBeInTheDocument();
     }, 10000);
+
+    it('Should show hint when lightbulb button is pressed', async () => {
+        const {findByTestId, findAllByTestId, user} = setupWithProviders(<GamePage />);
+
+        const lightbulbButton = await findByTestId('button-lightbulb');
+        await user.click(lightbulbButton);
+
+        const hintTexts = await findAllByTestId('hint-text');
+        expect(hintTexts[0]).toHaveTextContent('5092');
+        expect(hintTexts[1]).toHaveTextContent('5330');
+    });
+
+    it('Should decrement hint count when lightbulb button is pressed', async () => {
+        const {findByTestId, user} = setupWithProviders(<GamePage />);
+
+        const initialHintCount = await findByTestId('hint-count');
+        expect(initialHintCount).toHaveTextContent(3);
+
+        const lightbulbButton = await findByTestId('button-lightbulb');
+        await user.click(lightbulbButton);
+
+        const hintCount = await findByTestId('hint-count');
+        expect(hintCount).toHaveTextContent(2);
+    });
 })

@@ -1,5 +1,5 @@
 import { Box, ButtonBase, Paper, Skeleton, Typography, Stack } from "@mui/material";
-import { Home, EmojiEvents, Lightbulb } from "@mui/icons-material";
+import { Home, EmojiEvents, Lightbulb, People } from "@mui/icons-material";
 import { baseUri } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
@@ -25,7 +25,19 @@ const customNumberFormat = (value, currencyCode) => {
     return `${formattedValue} ${symbol}`;
 };
 
-const Panel = ({ handleClick, id, companyName, marketCap, imageSrc, hideAll, hideMarketCap, selectedCorrectly, selectedIncorrectly, showEmployeeCount, employeeCount }) => {
+const Panel = ({
+    handleClick,
+    id,
+    companyName,
+    marketCap,
+    imageSrc,
+    hideAll,
+    hideMarketCap,
+    selectedCorrectly,
+    selectedIncorrectly,
+    showEmployeeCount,
+    employeeCount
+}) => {
     const [loaded, setLoaded] = useState(false);
 
     return (
@@ -78,20 +90,29 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc, hideAll, hid
                     width: "100%"
                 }}>
                     <Typography variant="h3" sx={{
-                        fontSize: { xs: "1.75rem", sm: "2rem", md: "3rem" },
+                        fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
                         textAlign: "center",
-                        marginBottom: "1rem",
+                        marginBottom: {xs: "0.75rem", md: "1rem" },
                         color: "text.secondary"
                     }}>
                         {companyName}
                     </Typography>
                     {showEmployeeCount && (
                         <Typography variant="subtitle1" sx={{ color: "text.secondary", textAlign: "center" }}>
-                            Number of employees: {employeeCount}
+                        <Stack direction="row" spacing={1} alignItems="center">
+                            <People />
+                            <Typography data-testid="hint-text" variant="subtitle1" sx={{
+                                fontSize: { xs: "1rem", sm: "1.25rem" },
+                                color: "text.secondary",
+                                textAlign: "center"
+                            }}>
+                                {employeeCount}
+                            </Typography>
+                        </Stack>
                         </Typography>
                     )}
                     <Typography data-testid="market-cap" variant="h1" sx={{
-                        fontSize: { xs: "3rem", sm: "4rem", md: "6rem" },
+                        fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4.5rem" },
                         textAlign: "center",
                         textWrap: "wrap",
                         color: selectedCorrectly ? "green.main" : selectedIncorrectly ? "red.main" : "text.primary",
@@ -195,6 +216,7 @@ export default function GamePage() {
     const bottomIndex = companyIndex + 1;
     const numFetchedCompanies = NUMBER_OF_COMPANIES_FETCHED;
     const [showEmployeeCount, setShowEmployeeCount] = useState(false);
+    const [hintsAvailable, setHintsAvailable] = useState(3);
 
     // Animation-related variables
     const [hidePanelContent, setHidePanelContent] = useState(false);
@@ -340,13 +362,13 @@ export default function GamePage() {
     };
 
     const showHint = () => {
-        if(showEmployeeCount) {
+        if(showEmployeeCount || hintsAvailable === 0) {
             return;
         }
-        if (score > 0) {
+        else {
+            // Use hint
             setShowEmployeeCount(true);
-            decrementScore(-1);
-            setHintClicked(true);
+            setHintsAvailable(prev => prev - 1); 
         }
     };
 
@@ -375,12 +397,12 @@ export default function GamePage() {
                 </Typography>
             </Stack>
 
-            <ButtonBase data-testid="button-lightbulb" sx={{
+            <ButtonBase data-testid="button-lightbulb" onClick={showHint} sx={{
                 position: "fixed",
                 bottom: "20px",
                 left: "20px",
                 padding: "12px",
-                backgroundColor: score === 0 ? "primary.semiLight" : showEmployeeCount ? "primary.semiLight" : "yellow.main",
+                backgroundColor: showEmployeeCount || hintsAvailable === 0  ? "primary.semiLight" : "yellow.main",
                 borderRadius: "50%",
                 boxShadow: "0px 2px 5px rgba(0, 0, 0, 1)",
                 '&:hover': {
@@ -388,7 +410,10 @@ export default function GamePage() {
                     transition: "0.2s",
                 }
             }}>
-                <Lightbulb fontSize="medium" onClick={showHint} />
+                <Lightbulb fontSize="medium" />
+                <Typography data-testid="hint-count" variant="subtitle1" sx={{ color: "text.primary", marginLeft: 1 }}>
+                    {hintsAvailable}
+                </Typography>
             </ButtonBase>
 
             <Box className="score-wrapper" sx={{ display: "flex", width: "100vw", justifyContent: "center" }}>
@@ -439,7 +464,7 @@ export default function GamePage() {
                             selectedCorrectly={topSelection == "correct" ? true : false}
                             selectedIncorrectly={topSelection == "incorrect" ? true : false}
                             showEmployeeCount={showEmployeeCount}
-                            employeeCount={companies[topIndex].market_cap}
+                            employeeCount={companies[topIndex].full_time_employees}
                         />
                         <Panel
                             handleClick={handleClick}
@@ -453,7 +478,7 @@ export default function GamePage() {
                             selectedCorrectly={bottomSelection == "correct" ? true : false}
                             selectedIncorrectly={bottomSelection == "incorrect" ? true : false}
                             showEmployeeCount={showEmployeeCount}
-                            employeeCount={companies[bottomIndex].market_cap}
+                            employeeCount={companies[bottomIndex].full_time_employees}
                         />
                     </Box>
                 )}
