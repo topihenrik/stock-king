@@ -410,12 +410,13 @@ export default function GamePage() {
                 backgroundColor: showEmployeeCount || hintsAvailable === 0  ? "primary.semiLight" : "yellow.main",
                 borderRadius: "50%",
                 boxShadow: "0px 2px 5px rgba(0, 0, 0, 1)",
+                textShadow: "1px 1px 3px rgba(0, 0, 0, 0.7)",
                 '&:hover': {
                     opacity: 0.85,
                     transition: "0.2s",
                 }
             }}>
-                <Lightbulb fontSize="medium" />
+                <Lightbulb fontSize="medium" sx={{ filter: "drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7))"}} />
                 <Typography data-testid="hint-count" variant="subtitle1" sx={{ color: "text.primary", marginLeft: 1 }}>
                     {hintsAvailable}
                 </Typography>
