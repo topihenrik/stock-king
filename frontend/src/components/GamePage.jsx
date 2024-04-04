@@ -203,7 +203,6 @@ export default function GamePage() {
     const navigate = useNavigate();
     const score = useScoreStore((state) => state.score);
     const incrementScore = useScoreStore((state) => state.incrementScore);
-    const decrementScore = useScoreStore((state) => state.decrementScore);
     const resetScore = useScoreStore((state) => state.resetScore);
     const highScore = useScoreStore((state) => state.highScore);
     const updateHighScore = useScoreStore((state) => state.updateHighScore);
