@@ -250,10 +250,16 @@ export default function GamePage() {
         const selectedCompany = companies.filter(company => company.ticker === ticker)[0];
         const otherCompany = bottomCompany.ticker === selectedCompany.ticker ? topCompany : bottomCompany;
 
+        // If the formatted market caps show the same value, the selection counts as being correct
+        const correct = (
+            selectedCompany.market_cap >= otherCompany.market_cap 
+            || customNumberFormat(selectedCompany.market_cap, gameCurrency) == customNumberFormat(otherCompany.market_cap, gameCurrency)
+        );
+
         setHideBottomMarketCap(false);
         setDisablePointer(true);
 
-        if (selectedCompany.market_cap >= otherCompany.market_cap) {
+        if (correct) {
             // Begin animation
             setCorrectSelected(true);
             if (selectedCompany == topCompany) {
