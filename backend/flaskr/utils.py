@@ -80,6 +80,9 @@ def process_stock_data(tickers):
                     "date": current_date,
                     "sector": ticker.info["sector"],
                     "website": ticker.info["website"],
+                    "full_time_employees": ticker.info["fullTimeEmployees"],
+                    "revenue_growth": ticker.info["annualRevenueGrowth"] * 100,
+                    "earnings_growth": ticker.info["quarterlyEarningsGrowth"][-1] * 100,
                 }
             )
         except:
@@ -107,18 +110,25 @@ def get_scores_from_database(count=50, countries=[], gamemode="normal"):
     Returns an array of objects representing highscores in the database
     """
     # Construct SQL query
+    query_string = f"SELECT * FROM scores"
 
-    query = sql.SQL("SELECT * FROM scores WHERE sid IS NOT NULL AND ({country} IS NULL OR country = ANY ({country})) AND ({gamemode} IS NULL OR gamemode = {gamemode}) ORDER BY score DESC, timestamp ASC LIMIT {limit}").format(
-        country=sql.Placeholder(),
-        gamemode=sql.Placeholder(),
-        limit=sql.Placeholder()
-    )
-    if(len(countries) == 0):
-        countries = None
+    if len(countries) != 0:
+        query_string += f" WHERE country IN ("
+        for country in countries:
+            if countries[-1] == country:
+                query_string += f"'{country}'"
+            else:
+                query_string += f"'{country}',"
+        query_string += f") AND gamemode = '{gamemode}'"
+    else:
+        query_string += f" WHERE gamemode = '{gamemode}'"
+
+    query_string += f" ORDER BY score DESC, timestamp ASC LIMIT {count};"
+    query = sql.SQL(query_string)
 
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
-            cursor.execute(query, (countries,countries,gamemode,gamemode,count))
+            cursor.execute(query)
             leaderboard = cursor.fetchall()
             highscores = score_db_result_to_dict(leaderboard)
             return highscores
@@ -152,7 +162,10 @@ def upsert_stock_data(data, difficulty):
                     SET market_cap = EXCLUDED.market_cap,
                         date = EXCLUDED.date,
                         currency = EXCLUDED.currency,
-                        website = EXCLUDED.website;
+                        website = EXCLUDED.website,
+                        full_time_employees  = EXCLUDED.full_time_employees,
+                        revenue_growth = EXCLUDED.revenue_growth,
+                        earnings_growth = EXCLUDED.earnings_growth;
                 """
                 )
                 # Execute the query
@@ -227,10 +240,9 @@ def process_currency_data(rates):
 
 def get_exchange_rates_from_api():
     """
-    Function for getting exchange rates from Forex API.
+    Function for getting exchange rates from Yahoo! Finance API.
     """
-    database_currencies = get_database_currencies()
-    existing_currencies = [currency+"USD=X" for currency in database_currencies if currency != "USD"]
+    existing_currencies = [currency+"USD=X" for currency in add_all_currencies() if currency != "USD"]
     rates = []
     for currency in existing_currencies:
         rates.append(yahoo.Ticker(currency))
@@ -239,6 +251,17 @@ def get_exchange_rates_from_api():
     return processed_currencies
 
 
+def add_all_currencies():
+    existing_currencies = get_currencies_from_database()
+    all_currencies = existing_currencies
+    new_currencies = ["RUB", "GBP", "EUR", "AUD", "SGD"]
+    for currency in new_currencies:
+        if currency in all_currencies:
+            continue
+        else:
+            all_currencies.append(currency)
+    return all_currencies
+   
 def upsert_exchange_rates(data, enable = True):
     """
     Function for upserting exchange rates into the "exchange_rate" table in the database.
@@ -260,7 +283,7 @@ def upsert_exchange_rates(data, enable = True):
                     """
                     )
                     # Execute the query
-                    cursor.execute(query, (currency, "USD", rate, current_date))
+                    cursor.execute(query, (currency, "USD", rate, current_date)) 
                 conn.commit()
 
 
@@ -286,25 +309,56 @@ def get_companies_from_database(
     Returns:
             Array of dictionaries of company data
     """
-    #Construct SQL Query
-    
-    query = sql.SQL("SELECT * FROM company WHERE cid IS NOT NULL AND ({difficulty} IS NULL OR difficulty::text = ANY ({difficulty})) AND ({wanted_categories} IS NULL OR sector = ANY ({wanted_categories})) AND ({exclude_tickers} IS NULL OR ticker <> ALL ({exclude_tickers})) ORDER BY RANDOM()  LIMIT {limit}").format(
-        difficulty=sql.Placeholder(),
-        wanted_categories=sql.Placeholder(),
-        exclude_tickers=sql.Placeholder(),
-        limit=sql.Placeholder()
-    )
-    if(len(difficulties) == 0):
-        difficulties = None
-    if(len(wanted_categories) == 0):
-        wanted_categories = None
-    if(len(exclude_tickers) == 0):
-        exclude_tickers = None
+
+    # Construct SQL query
+    query_string = f"SELECT * FROM Company WHERE "
+
+    query_string += "difficulty IN ("
+    for difficulty in difficulties:
+        if difficulties[-1] == difficulty:
+            query_string += f"'{difficulty}'"
+        else:
+            query_string += f"'{difficulty}',"
+    query_string += ")"
+
+    if len(exclude_tickers) != 0:
+        query_string += f"AND ticker NOT IN ("
+        for ticker in exclude_tickers:
+            if exclude_tickers[-1] == ticker:
+                query_string += f"'{ticker}'"
+            else:
+                query_string += f"'{ticker}',"
+
+        query_string += ")"
+
+    if len(exclude_tickers) != 0 and len(wanted_categories) != 0:
+        query_string += f" AND sector IN ("
+        for sector in wanted_categories:
+            if wanted_categories[-1] == sector:
+                query_string += f"'{sector}'"
+            else:
+                query_string += f"'{sector}',"
+
+        query_string += ")"
+
+    if len(exclude_tickers) == 0 and len(wanted_categories) != 0:
+        query_string += f"AND sector IN ("
+        for sector in wanted_categories:
+            if wanted_categories[-1] == sector:
+                query_string += f"'{sector}'"
+            else:
+                query_string += f"'{sector}',"
+
+        query_string += ")"
+
+    query_string += f" ORDER BY RANDOM() LIMIT {count};"
+
+    query = sql.SQL(query_string)
 
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
-            cursor.execute(query, (difficulties,difficulties,wanted_categories,wanted_categories,exclude_tickers,exclude_tickers,count))
-            print(cursor.query)
+            cursor.execute(query)
+
             db_result = cursor.fetchall()
 
     list_of_company_dicts = company_db_result_to_dict(db_result)
@@ -416,12 +470,13 @@ def convert_marketcaps_currencies(companies, game_currency):
                     converted_market_cap = round(
                         company.get("market_cap") / (exchange_rate.get("ratio"))
                     )
-                    company.update({"market_cap": converted_market_cap})
-                    company.update({"currency": game_currency})
-                    break
+            company.update({"market_cap": converted_market_cap})
+            company.update({"currency": game_currency})
+                    
     return companies
 
 
+    
 def get_currencies_from_database():
     """
     Returns a JSON array of all existing currencies in the database
@@ -436,3 +491,68 @@ def get_currencies_from_database():
             currencies = [currency[0] for currency in currencies]
             currencies.append("USD")
             return jsonify(currencies)
+
+def convert_marketcaps_currencies_updated(companies, game_currency):
+    """
+    Takes a dictionary containing all game data on companies and a string representation of desired currency 
+    Gets exchange rate from the database, follows two-step conversion--first converts market cap to USD and then to the desired currency
+    Replaces company market cap with the desired currency
+    Returns a list of tuples containing all game data on companies with updated market cap and currency information
+    """
+    exchange_rates = get_exchange_rates_from_database()
+    converted_market_cap = 0
+    for company in companies:
+        reporting_currency = company.get("currency")
+        if(reporting_currency != game_currency):
+            
+            market_cap_usd = round(company.get("market_cap") * get_exchange_rate(exchange_rates, reporting_currency, "USD"))
+            converted_market_cap = round(market_cap_usd * get_exchange_rate(exchange_rates, "USD", game_currency))
+            company.update({"market_cap": converted_market_cap})
+            company.update({"currency":game_currency})
+
+
+def get_exchange_rate(exchange_rates, from_currency, to_currency):
+    '''returns the exchange rate for the required conversion'''
+    
+    for exchange_rate in exchange_rates:
+        if (exchange_rate["from_currency"] == from_currency and exchange_rate["to_currency"] == to_currency):
+             return exchange_rate["ratio"]
+    return None #why does it return a None? Why can't it find a from-to currency match??
+
+def convert_marketcaps_currencies_updated_DEPRECATED(companies, game_currency):
+    """
+    Takes a dictionary containing all game data on companies and a string representation of desired currency 
+    Gets exchange rate from the database, follows two-step conversion--first converts market cap to USD and then to the desired currency
+    Replaces company market cap with the desired currency
+    Returns a list of tuples containing all game data on companies with updated market cap and currency information
+    """
+    exchange_rates = get_exchange_rates_from_database()
+    converted_market_cap = 0
+    for company in companies:
+        reporting_currency = company.get("currency")
+        if(reporting_currency != game_currency):
+            for exchange_rate in exchange_rates:
+                if(
+                    (exchange_rate.get("from_currency") == reporting_currency
+                    and exchange_rate.get("to_currency") == "USD") and (reporting_currency != "USD")
+                    ):
+                        
+                        to_usd = exchange_rate.get("ratio")
+                        market_cap_usd = round(company.get("market_cap") * to_usd)
+
+                elif ((exchange_rate.get("to_currency") == reporting_currency and exchange_rate.get("from_currency") == "USD") and reporting_currency != "USD"):
+                        market_cap_usd = round(company.get("market_cap")/exchange_rate.get("ratio"))
+                if(
+                    (exchange_rate.get("from_currency") == "USD"
+                    and exchange_rate.get("to_currency") == game_currency) and (game_currency != "USD")
+                ):
+                    
+                    from_usd = exchange_rate.get("ratio")
+                    converted_market_cap = round(market_cap_usd * from_usd)
+                
+                elif ((exchange_rate.get("to_currency") == game_currency and exchange_rate.get("from_currency") == "USD") and game_currency != "USD"):
+                       converted_market_cap = round(company.get("market_cap")/exchange_rate.get("ratio"))
+            
+            company.update({"market_cap": converted_market_cap})
+            company.update({"currency": game_currency})
+    return companies
