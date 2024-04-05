@@ -48,6 +48,7 @@ def mock_tickers_initial():
             "date": date(2024, 2, 15),
             "sector": "Technology",
             "website": "https://www.apple.com/",
+            "full_time_employees": 123,
         }
     ]
 
@@ -215,6 +216,7 @@ def mock_tickers_updated():
             "date": date(2024, 2, 16),
             "sector": "Technology",
             "website": "https://www.appleapple.com/",
+            "full_time_employees": 321,
         }
     ]
 
