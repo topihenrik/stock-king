@@ -80,14 +80,17 @@ def process_stock_data(tickers):
                     "date": current_date,
                     "sector": ticker.info["sector"],
                     "website": ticker.info["website"],
-                    "full_time_employees": ticker.info["fullTimeEmployees"],
+                    "full_time_employees": ticker.info.get("fullTimeEmployees", "Employee count unavailable")
                 }
             )
         except:
             print(f"Failed to get company data on {ticker.ticker}")
             continue
 
+
     return stock_data
+
+
 
 
 def get_categories_from_database():
