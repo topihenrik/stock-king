@@ -156,8 +156,8 @@ def upsert_stock_data(data, difficulty):
                 # Construct SQL query
                 query = sql.SQL(
                     """
-                    INSERT INTO Company (ticker, name, difficulty, market_cap, currency, date, sector, website)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO Company (ticker, name, difficulty, market_cap, currency, date, sector, website, full_time_employees, revenue_growth, earnings_growth)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (ticker) DO UPDATE
                     SET market_cap = EXCLUDED.market_cap,
                         date = EXCLUDED.date,
