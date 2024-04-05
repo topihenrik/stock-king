@@ -1,5 +1,5 @@
 import { Box, ButtonBase, Paper, Skeleton, Typography, Stack } from "@mui/material";
-import { Home, EmojiEvents } from "@mui/icons-material";
+import { Home, EmojiEvents, Lightbulb, People } from "@mui/icons-material";
 import { baseUri } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
@@ -25,7 +25,19 @@ const customNumberFormat = (value, currencyCode) => {
     return `${formattedValue} ${symbol}`;
 };
 
-const Panel = ({ handleClick, id, companyName, marketCap, imageSrc, hideAll, hideMarketCap, selectedCorrectly, selectedIncorrectly }) => {
+const Panel = ({
+    handleClick,
+    id,
+    companyName,
+    marketCap,
+    imageSrc,
+    hideAll,
+    hideMarketCap,
+    selectedCorrectly,
+    selectedIncorrectly,
+    showEmployeeCount,
+    employeeCount
+}) => {
     const [loaded, setLoaded] = useState(false);
 
     return (
@@ -78,15 +90,29 @@ const Panel = ({ handleClick, id, companyName, marketCap, imageSrc, hideAll, hid
                     width: "100%"
                 }}>
                     <Typography variant="h3" sx={{
-                        fontSize: { xs: "1.75rem", sm: "2rem", md: "3rem" },
+                        fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
                         textAlign: "center",
-                        marginBottom: "1rem",
+                        marginBottom: {xs: "0.75rem", md: "1rem" },
                         color: "text.secondary"
                     }}>
                         {companyName}
                     </Typography>
+                    {showEmployeeCount && (
+                        <Typography variant="subtitle1" sx={{ color: "text.secondary", textAlign: "center" }}>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                            <People />
+                            <Typography data-testid="hint-text" variant="subtitle1" sx={{
+                                fontSize: { xs: "1rem", sm: "1.25rem" },
+                                color: "text.secondary",
+                                textAlign: "center"
+                            }}>
+                                {employeeCount}
+                            </Typography>
+                        </Stack>
+                        </Typography>
+                    )}
                     <Typography data-testid="market-cap" variant="h1" sx={{
-                        fontSize: { xs: "3rem", sm: "4rem", md: "6rem" },
+                        fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4.5rem" },
                         textAlign: "center",
                         textWrap: "wrap",
                         color: selectedCorrectly ? "green.main" : selectedIncorrectly ? "red.main" : "text.primary",
@@ -188,6 +214,8 @@ export default function GamePage() {
     const topIndex = companyIndex;
     const bottomIndex = companyIndex + 1;
     const numFetchedCompanies = NUMBER_OF_COMPANIES_FETCHED;
+    const [showEmployeeCount, setShowEmployeeCount] = useState(false);
+    const [hintsAvailable, setHintsAvailable] = useState(3);
 
     // Animation-related variables
     const [hidePanelContent, setHidePanelContent] = useState(false);
@@ -258,6 +286,7 @@ export default function GamePage() {
 
         setHideBottomMarketCap(false);
         setDisablePointer(true);
+        setShowEmployeeCount(false);
 
         if (correct) {
             // Begin animation
@@ -337,6 +366,17 @@ export default function GamePage() {
         localStorage.setItem("gameHistory", JSON.stringify(updatedGameHistory));
     };
 
+    const showHint = () => {
+        if(showEmployeeCount || hintsAvailable === 0) {
+            return;
+        }
+        else {
+            // Use hint
+            setShowEmployeeCount(true);
+            setHintsAvailable(prev => prev - 1); 
+        }
+    };
+
     return (
         <Box sx={{ display: "flex", flexDirection: "column", width: "100vw", height: "100vh", alignItems: "center", pointerEvents: disablePointer ? "none" : "unset" }}>
             <ButtonBase data-testid="button-home" component={Link} to="/" sx={{
@@ -354,12 +394,33 @@ export default function GamePage() {
             }}>
                 <Home fontSize="large" />
             </ButtonBase>
+
             <Stack direction="row" alignItems="center" gap={1} sx={{ position: "fixed", top: 32, right: 32 }}>
                 <EmojiEvents fontSize="large" sx={{ color: "text.secondary" }} />
                 <Typography data-testid="text-highscore" variant="h4" sx={{ color: "text.secondary", textShadow: "0px 2px 5px rgba(0, 0, 0, 1)" }}>
                     {highScore}
                 </Typography>
             </Stack>
+
+            <ButtonBase data-testid="button-lightbulb" onClick={showHint} sx={{
+                position: "fixed",
+                bottom: "20px",
+                left: "20px",
+                padding: "12px",
+                backgroundColor: showEmployeeCount || hintsAvailable === 0  ? "primary.semiLight" : "orange.main",
+                borderRadius: "50%",
+                boxShadow: "0px 2px 5px rgba(0, 0, 0, 1)",
+                textShadow: "1px 1px 3px rgba(0, 0, 0, 0.7)",
+                '&:hover': {
+                    opacity: 0.85,
+                    transition: "0.2s",
+                }
+            }}>
+                <Lightbulb sx={{ filter: "drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7))", fontSize: {xs: "1.25rem", sm: "2rem"}}} />
+                <Typography data-testid="hint-count" variant="h4" sx={{ color: "text.primary", fontSize: {xs: "1.25rem", sm: "2rem"}, marginLeft: 1 }}>
+                    {hintsAvailable}
+                </Typography>
+            </ButtonBase>
 
             <Box className="score-wrapper" sx={{ display: "flex", width: "100vw", justifyContent: "center" }}>
                 <Paper elevation={4} sx={{
@@ -376,6 +437,7 @@ export default function GamePage() {
                     <Typography data-testid="text-score" variant="h3" sx={{ color: "black", padding: "0px 32px 8px 32px" }}>{score}</Typography>
                 </Paper>
             </Box>
+
             <Typography variant="h4" sx={{ fontSize: {xs: "1.5rem", sm: "2rem"}, color: "text.secondary", textAlign: "center", margin: "160px 32px 32px 32px" }}>
                 {t("whichHas")}
                 {" "}
@@ -407,6 +469,8 @@ export default function GamePage() {
                             hideAll={hidePanelContent}
                             selectedCorrectly={topSelection == "correct" ? true : false}
                             selectedIncorrectly={topSelection == "incorrect" ? true : false}
+                            showEmployeeCount={showEmployeeCount}
+                            employeeCount={companies[topIndex].full_time_employees}
                         />
                         <Panel
                             handleClick={handleClick}
@@ -419,10 +483,13 @@ export default function GamePage() {
                             hideMarketCap={hideBottomMarketCap}
                             selectedCorrectly={bottomSelection == "correct" ? true : false}
                             selectedIncorrectly={bottomSelection == "incorrect" ? true : false}
+                            showEmployeeCount={showEmployeeCount}
+                            employeeCount={companies[bottomIndex].full_time_employees}
                         />
                     </Box>
                 )}
             </Box>
+
             <Typography component={Link} to="https://clearbit.com" sx={{
                 position: "static",
                 marginBottom: "16px",
@@ -433,6 +500,7 @@ export default function GamePage() {
                 {' '}
                 Clearbit
             </Typography>
+
             <Box sx={{
                 zIndex: -100,
                 opacity: correctSelected ? "100%" : "0%",
