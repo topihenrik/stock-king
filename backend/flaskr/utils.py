@@ -81,8 +81,6 @@ def process_stock_data(tickers):
                     "sector": ticker.info["sector"],
                     "website": ticker.info["website"],
                     "full_time_employees": ticker.info["fullTimeEmployees"],
-                    "revenue_growth": ticker.info["annualRevenueGrowth"] * 100,
-                    "earningsGrowth": ticker.info["quarterlyEarningsGrowth"][-1] * 100,
                 }
             )
         except:
@@ -149,16 +147,14 @@ def upsert_stock_data(data, difficulty):
                 # Construct SQL query
                 query = sql.SQL(
                     """
-                    INSERT INTO Company (ticker, name, difficulty, market_cap, currency, date, sector, website, full_time_employees, revenue_growth, earnings_growth)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO Company (ticker, name, difficulty, market_cap, currency, date, sector, website, full_time_employees)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (ticker) DO UPDATE
                     SET market_cap = EXCLUDED.market_cap,
                         date = EXCLUDED.date,
                         currency = EXCLUDED.currency,
                         website = EXCLUDED.website,
-                        full_time_employees = EXCLUDED.full_time_employees,
-                        revenue_growth = EXCLUDED.revenue_growth,
-                        earnings_growth = EXCLUDED.earnings_growth;
+                        full_time_employees = EXCLUDED.full_time_employees;
                 """
                 )
                 # Execute the query
@@ -174,8 +170,6 @@ def upsert_stock_data(data, difficulty):
                         row["sector"],
                         row["website"],
                         row["full_time_employees"],
-                        row["revenue_growth"],
-                        row["earningsGrowth"],
                     ),
                 )
 
@@ -338,8 +332,6 @@ def company_db_result_to_dict(company_data_from_db):
         dictionary["website"] = company[8]
         dictionary["img_url"] = f"https://logo.clearbit.com/{company[8]}"
         dictionary["full_time_employees"] = company[9]
-        dictionary["revenue_growth"] = company[10]
-        dictionary["earnings_growth"] = company[11]
 
         list_of_dicts.append(dictionary)
 
