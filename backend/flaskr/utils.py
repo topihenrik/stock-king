@@ -180,6 +180,9 @@ def upsert_stock_data(data, difficulty):
                         row["date"],
                         row["sector"],
                         row["website"],
+                        row["full_time_employees"],
+                        row["revenue_growth"],
+                        row["earnings_growth"],
                     ),
                 )
 
