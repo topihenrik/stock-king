@@ -80,6 +80,9 @@ def process_stock_data(tickers):
                     "date": current_date,
                     "sector": ticker.info["sector"],
                     "website": ticker.info["website"],
+                    "full_time_employees": ticker.info["fullTimeEmployees"],
+                    "revenue_growth": ticker.info["annualRevenueGrowth"] * 100,
+                    "earningsGrowth": ticker.info["quarterlyEarningsGrowth"][-1] * 100,
                 }
             )
         except:
@@ -146,13 +149,16 @@ def upsert_stock_data(data, difficulty):
                 # Construct SQL query
                 query = sql.SQL(
                     """
-                    INSERT INTO Company (ticker, name, difficulty, market_cap, currency, date, sector, website)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO Company (ticker, name, difficulty, market_cap, currency, date, sector, website, full_time_employees, revenue_growth, earnings_growth)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (ticker) DO UPDATE
                     SET market_cap = EXCLUDED.market_cap,
                         date = EXCLUDED.date,
                         currency = EXCLUDED.currency,
-                        website = EXCLUDED.website;
+                        website = EXCLUDED.website,
+                        full_time_employees = EXCLUDED.full_time_employees,
+                        revenue_growth = EXCLUDED.revenue_growth,
+                        earnings_growth = EXCLUDED.earnings_growth;
                 """
                 )
                 # Execute the query
@@ -167,6 +173,9 @@ def upsert_stock_data(data, difficulty):
                         row["date"],
                         row["sector"],
                         row["website"],
+                        row["full_time_employees"],
+                        row["revenue_growth"],
+                        row["earningsGrowth"],
                     ),
                 )
 
