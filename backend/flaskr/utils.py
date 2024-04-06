@@ -510,6 +510,8 @@ def get_exchange_rate(exchange_rates, from_currency, to_currency):
     for exchange_rate in exchange_rates:
         if exchange_rate["from_currency"] == from_currency and exchange_rate["to_currency"] == to_currency:
              return exchange_rate["ratio"]
+        elif exchange_rate["to_currency"] == from_currency and exchange_rate["to_currency"] == from_currency:
+            return 1/exchange_rate["ratio"]
     return None
 
 def convert_marketcaps_currencies_updated_DEPRECATED(companies, game_currency):
