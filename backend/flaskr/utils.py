@@ -498,7 +498,10 @@ def convert_marketcaps_currencies_updated(companies, game_currency):
         if(reporting_currency != game_currency):
             
             market_cap_usd = round(company.get("market_cap") * get_exchange_rate(exchange_rates, reporting_currency, "USD"))
-            converted_market_cap = round(market_cap_usd * get_exchange_rate(exchange_rates, "USD", game_currency))
+            if(game_currency != "USD"):
+                converted_market_cap = round(market_cap_usd * get_exchange_rate(exchange_rates, "USD", game_currency))
+            else:
+                converted_market_cap = market_cap_usd
             company.update({"market_cap": converted_market_cap})
             company.update({"currency":game_currency})
     return companies
