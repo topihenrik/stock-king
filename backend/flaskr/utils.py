@@ -503,6 +503,7 @@ def convert_marketcaps_currencies_updated(companies, game_currency):
             converted_market_cap = round(market_cap_usd * get_exchange_rate(exchange_rates, "USD", game_currency))
             company.update({"market_cap": converted_market_cap})
             company.update({"currency":game_currency})
+    return companies
 
 
 def get_exchange_rate(exchange_rates, from_currency, to_currency):
@@ -512,7 +513,7 @@ def get_exchange_rate(exchange_rates, from_currency, to_currency):
              return exchange_rate["ratio"]
         elif exchange_rate["to_currency"] == from_currency and exchange_rate["to_currency"] == from_currency:
             return 1/exchange_rate["ratio"]
-    return 0
+    return None
 
 def convert_marketcaps_currencies_updated_DEPRECATED(companies, game_currency):
     """
