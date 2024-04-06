@@ -250,10 +250,8 @@ def add_all_currencies():
     all_currencies = existing_currencies
     new_currencies = ["RUB", "GBP", "EUR", "AUD", "SGD"]
     for currency in new_currencies:
-        if currency in all_currencies:
-            continue
-        else:
-            all_currencies.append(currency)
+        if currency not in all_currencies:
+            all_currencies.append(currency)        
     return all_currencies
    
 def upsert_exchange_rates(data, enable = True):
@@ -511,7 +509,7 @@ def get_exchange_rate(exchange_rates, from_currency, to_currency):
     for exchange_rate in exchange_rates:
         if exchange_rate["from_currency"] == from_currency and exchange_rate["to_currency"] == to_currency:
              return exchange_rate["ratio"]
-        elif exchange_rate["to_currency"] == from_currency and exchange_rate["to_currency"] == from_currency:
+        elif exchange_rate["to_currency"] == from_currency and exchange_rate["from_currency"] == to_currency:
             return 1/exchange_rate["ratio"]
     return 0
 
