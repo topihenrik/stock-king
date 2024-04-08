@@ -356,13 +356,17 @@ export default function GamePage() {
     }
 
     const saveGameHistory = () => {
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const currentDate = new Date();
+        const localDateTime = currentDate.toLocaleString('en-US', { timeZone: userTimeZone });
+
         const existingGameHistoryJSON = localStorage.getItem("gameHistory");
         let existingGameHistory = [];
         if (existingGameHistoryJSON) {
             existingGameHistory = JSON.parse(existingGameHistoryJSON);
         }
 
-        const newGameEntry = { date: new Date().toISOString(), category: category, score: score };
+        const newGameEntry = { date: localDateTime, category: category, score: score };
         const updatedGameHistory = [newGameEntry, ...existingGameHistory];
 
         localStorage.setItem("gameHistory", JSON.stringify(updatedGameHistory));
