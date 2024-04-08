@@ -21,6 +21,7 @@ import {useQuery} from "@tanstack/react-query";
 import flagCodes from "../data/flagcodes.json";
 import FlagIcon from "./FlagIcon.jsx";
 import {useScoreStore} from "../stores/score-store.jsx";
+import {useCategoryStore} from "../stores/category-store.jsx";
 
 const renderFlagMenuItem = (code) => {
     return(
@@ -40,6 +41,7 @@ export default function GameOverPage() {
     const navigate = useNavigate();
     const score = useScoreStore((state) => state.score);
     const highScore = useScoreStore((state) => state.highScore);
+    const category = useCategoryStore((state) => state.category);
     const { t } = useTranslation('common');
     const [country, setCountry] = useState('');
     const [nickname, setNickname] = useState('');
@@ -69,12 +71,14 @@ export default function GameOverPage() {
     });
 
     if (players && score !== 0) {
-        if (players.length < 10) {
-            showSubmit = true;
-        } else {
-            const lowestScore = players.reduce((lowestScore, player) => player.score < lowestScore ? player.score : lowestScore, 999);
-            if (score > lowestScore) {
+        if (category === "all") {
+            if (players.length < 10) {
                 showSubmit = true;
+            } else {
+                const lowestScore = players.reduce((lowestScore, player) => player.score < lowestScore ? player.score : lowestScore, 999);
+                if (score > lowestScore) {
+                    showSubmit = true;
+                }
             }
         }
     }

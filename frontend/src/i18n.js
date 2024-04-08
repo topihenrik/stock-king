@@ -25,13 +25,17 @@ export const resources = {
             empty: 'Empty',
             submit: 'Submit',
             zeroPlayersNotice: "No player has cemented their legacy in to the leaderboard as the stock king. Will you be the first one?",
-            errorOccurredInServices: "An error occurred in our services"
+            errorOccurredInServices: "An error occurred in our services",
+            loading: "Loading...",
+            error: "Error",
+            allCategories: "All categories"
         },
     },
     fi: {
         common: {
             startGame: "Aloita peli",
             chooseCategory: "Valitse kategoria",
+            category: "Kategoria",
             whichHas: "Kummalla on ",
             higher: 'korkeampi',
             marketCap: 'markkina-arvo',
@@ -50,7 +54,10 @@ export const resources = {
             empty: 'Tyhjä',
             submit: 'Lähetä',
             zeroPlayersNotice: "Yksikään pelaaja ei ole lujittanut perintöään tulostaulukkoon osakekuninkaana. Oletko sinä ensimmäinen?",
-            errorOccurredInServices: "Palveluissamme tapahtui virhe"
+            errorOccurredInServices: "Palveluissamme tapahtui virhe",
+            loading: "Ladataan...",
+            error: "Virhe",
+            allCategories: "Kaikki kategoriat"
         }
     }
 };

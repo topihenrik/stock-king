@@ -11,6 +11,7 @@ import PlaceholderLogo from '../../public/placeholder_company_logo.png';
 import {useTranslation} from "react-i18next";
 import {useScoreStore} from "../stores/score-store.jsx";
 import {useCurrencyStore} from "../stores/currency-store.jsx";
+import {useCategoryStore} from "../stores/category-store.jsx";
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -207,6 +208,7 @@ export default function GamePage() {
     const highScore = useScoreStore((state) => state.highScore);
     const updateHighScore = useScoreStore((state) => state.updateHighScore);
     const gameCurrency = useCurrencyStore((state) => state.gameCurrency);
+    const category = useCategoryStore((state) => state.category);
     const { t } = useTranslation('common');
     const [companyIndex, setCompanyIndex] = useState(0);
     const [usedTickersList, setUsedTickersList] = useState([]);
@@ -239,10 +241,10 @@ export default function GamePage() {
                     },
                     body: JSON.stringify({
                         excluded_tickers: usedTickersList,
-                        wanted_categories: [],
+                        wanted_categories: category === "All categories" ? [] : [category],
                         currency: gameCurrency,
                         count: numFetchedCompanies,
-                        difficulties: [currentDifficulty]
+                        difficulties: category === "All categories" ? [currentDifficulty] : [] 
                     })
                 }
             ).then((res) => {
@@ -360,7 +362,7 @@ export default function GamePage() {
             existingGameHistory = JSON.parse(existingGameHistoryJSON);
         }
 
-        const newGameEntry = { date: new Date().toISOString(), score: score };
+        const newGameEntry = { date: new Date().toISOString(), category: category, score: score };
         const updatedGameHistory = [newGameEntry, ...existingGameHistory];
 
         localStorage.setItem("gameHistory", JSON.stringify(updatedGameHistory));

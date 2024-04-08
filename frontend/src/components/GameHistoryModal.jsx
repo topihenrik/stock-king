@@ -72,6 +72,7 @@ const GameHistoryModal = ({open, setOpen}) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>{t('date')}</TableCell>
+                                <TableCell>{t('category')}</TableCell>
                                 <TableCell>{t('score')}</TableCell>
                             </TableRow>
                         </TableHead>
@@ -79,6 +80,7 @@ const GameHistoryModal = ({open, setOpen}) => {
                             {gameHistory.map((game, index) => (
                                 <TableRow key={index}>
                                     <TableCell data-testid="date-cell">{formatDate(game.date)}</TableCell>
+                                    <TableCell data-testid="category-cell">{game.category}</TableCell>
                                     <TableCell data-testid="score-cell">{game.score}</TableCell>
                                 </TableRow>
                             ))}
