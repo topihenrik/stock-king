@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import {setupWithProviders} from "../test-utils.jsx";
-import { getByTestId, waitFor } from '@testing-library/react';
 import MenuPage from "../../src/components/MenuPage.jsx";
 import { useCurrencyStore } from "../../src/stores/currency-store.jsx";
 
