@@ -256,7 +256,7 @@ def get_all_currencies():
     return currencies
 
 
-@scheduler.task("cron", id="update_database", hour=15, minute=50)
+@scheduler.task("cron", id="update_database", hour=4, minute=0)
 def update_database():
     """
     This function is run every day at 4:00. (currently 17:55 for checking in meeting)
