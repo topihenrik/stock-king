@@ -28,7 +28,18 @@ export const resources = {
             errorOccurredInServices: "An error occurred in our services",
             loading: "Loading...",
             error: "Error",
-            allCategories: "All categories"
+            "All categories": "All categories",
+            "Real Estate": "Real Estate",
+            Healthcare: "Healthcare",
+            "Basic Materials": "Basic Materials",
+            Energy: "Energy",
+            Industrials: "Industrials",
+            "Consumer Cyclical": "Consumer cyclical",
+            Utilities: "Utilities",
+            "Consumer Defensive": "Consumer Defensive",
+            "Financial Services": "Financial Services",
+            Technology: "Technology",
+            "Communication Services": "Communication services"
         },
     },
     fi: {
@@ -57,7 +68,18 @@ export const resources = {
             errorOccurredInServices: "Palveluissamme tapahtui virhe",
             loading: "Ladataan...",
             error: "Virhe",
-            allCategories: "Kaikki kategoriat"
+            "All categories": "Kaikki kategoriat",
+            "Real Estate": "Kiinteistöala",
+            Healthcare: "Terveydenhuolto",
+            "Basic Materials": "Materiaalit",
+            Energy: "Energia",
+            Industrials: "Teollisuus",
+            "Consumer Cyclical": "Sykliset kuluttajatuotteet",
+            Utilities: "Hyödykkeet",
+            "Consumer Defensive": "Defensiiviset kuluttajatuotteet",
+            "Financial Services": "Rahoituspalvelut",
+            Technology: "Technologia",
+            "Communication Services": "Viestintä"
         }
     }
 };

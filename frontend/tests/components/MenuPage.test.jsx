@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {setupWithProviders} from "../test-utils.jsx";
+import { getByTestId, waitFor } from '@testing-library/react';
 import MenuPage from "../../src/components/MenuPage.jsx";
 import { useCurrencyStore } from "../../src/stores/currency-store.jsx";
 
@@ -9,23 +10,24 @@ describe('MenuPage', () => {
 
         const dropdownButton = getByTestId('category-btn');
 
-        expect(dropdownButton).toHaveTextContent('chooseCategory');
+        expect(dropdownButton).toHaveTextContent('All categories');
 
     });
 
     it('Should update text after selecting category from dropdown menu', async () => {
-        const { findByTestId, user } = setupWithProviders(<MenuPage/>);
-
-        const dropdownButton = await findByTestId('category-btn');
+        const { findByTestId, findByText, user } = setupWithProviders(<MenuPage />);
+        
+        const dropdownButton = await findByTestId("category-btn");
 
         await user.click(dropdownButton);
+      
+        const communicationServices = await findByText("Communication Services");
 
-        const category1 = await findByTestId('category1');
-
-        await user.click(category1);
-
-        expect(dropdownButton).toHaveTextContent('Category 1');
+        await user.click(communicationServices);
+      
+        expect(dropdownButton).toHaveTextContent("Communication Services");
     });
+    
 
     it('Should update language menu text after selecting another language', async () => {
         const { findByTestId, user } = setupWithProviders(<MenuPage/>);
@@ -61,7 +63,6 @@ describe('MenuPage', () => {
         await user.click(dropdownButton);
       
         const currencySEK = await findByText("SEK");
-
 
         await user.click(currencySEK);
       

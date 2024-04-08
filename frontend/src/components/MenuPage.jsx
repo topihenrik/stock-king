@@ -160,17 +160,17 @@ export default function MenuPage() {
                                 }}
                             >
                                 {categoriesPending ? (
-                                    <MenuItem disabled>t(loading)</MenuItem>
+                                    <MenuItem disabled data-testid="categories-loading">{t('loading')}</MenuItem>
                                 ) : categoryError ? (
-                                    <MenuItem disabled>t(error)</MenuItem>
+                                    <MenuItem disabled data-testid="categories-error">{t('error')}</MenuItem>
                                 ) : (
                                     [
-                                        <MenuItem key="All categories" onClick={() => handleCategorySelect("All categories")}>
-                                            {t('allCategories')}
+                                        <MenuItem key="all-categories" onClick={() => handleCategorySelect("All categories")}>
+                                            {t('All categories')}
                                         </MenuItem>,
                                         ...categories.map((category) => (
                                             <MenuItem key={category} onClick={() => handleCategorySelect(category)}>
-                                                {category}
+                                                {t(category)}
                                             </MenuItem>
                                         ))
                                     ]
@@ -199,9 +199,9 @@ export default function MenuPage() {
                                 }}
                             >
                                 {currenciesPending ? (
-                                    <MenuItem disabled>t(loading)</MenuItem>
+                                    <MenuItem disabled>{t('loading')}</MenuItem>
                                 ) : currencyError ? (
-                                    <MenuItem disabled>t(error)</MenuItem>
+                                    <MenuItem disabled>{t('error')}</MenuItem>
                                 ) : (
                                     currencies.map((currency) => (
                                         <MenuItem key={currency} onClick={() => handleCurrencySelect(currency)}>{currency}</MenuItem>
@@ -263,7 +263,7 @@ export default function MenuPage() {
                         endIcon={<ArrowDropDown />}
                         sx={{ width: '100%' }}
                     >
-                        {selectedCategory || t('chooseCategory')}
+                        {t(selectedCategory) || t('chooseCategory')}
                     </Button>
                     <Button
                         onClick={handleLeaderboardOpen}
