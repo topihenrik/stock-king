@@ -429,46 +429,6 @@ def exchange_rate_db_result_to_dict(list_of_exchange_rates):
 
     return list_of_dicts
 
-
-def convert_marketcaps_currencies(companies, game_currency):
-    """
-    Takes a dictionary containing all game data on companies and a string representation of desired currency eg. 'EUR' or 'USD'
-    Gets exchange rate data from database and replaces the market cap into the desired currency
-    Returns a list of tuples containing all game data on companies with updated market cap and currency information
-    """
-    exchange_rates = get_exchange_rates_from_database()
-    for company in companies:
-        reporting_currency = company.get("currency")
-        if reporting_currency != game_currency:
-            for exchange_rate in exchange_rates:
-
-                # If from_currency is the same currency as the company's reporting currency, multiply their market cap by the ratio
-                if (
-                    exchange_rate.get("from_currency") == reporting_currency
-                    and exchange_rate.get("to_currency") == game_currency
-                ):
-                    converted_market_cap = round(
-                        company.get("market_cap") * (exchange_rate.get("ratio"))
-                    )
-                    company.update({"market_cap": converted_market_cap})
-                    company.update({"currency": game_currency})
-                    break
-
-                # If to_currency is the same currency as the company's reporting currency, divide their market cap by the ratio
-                if (
-                    exchange_rate.get("to_currency") == reporting_currency
-                    and exchange_rate.get("from_currency") == game_currency
-                ):
-                    converted_market_cap = round(
-                        company.get("market_cap") / (exchange_rate.get("ratio"))
-                    )
-            company.update({"market_cap": converted_market_cap})
-            company.update({"currency": game_currency})
-                    
-    return companies
-
-
-    
 def get_currencies_from_database():
     """
     Returns a JSON array of all existing currencies in the database
@@ -484,7 +444,7 @@ def get_currencies_from_database():
             currencies.append("USD")
             return jsonify(currencies)
 
-def convert_marketcaps_currencies_updated(companies, game_currency):
+def convert_marketcaps_currencies(companies, game_currency):
     """
     Takes a dictionary containing all game data on companies and a string representation of desired currency 
     Gets exchange rate from the database, follows two-step conversion--first converts market cap to USD and then to the desired currency
@@ -505,8 +465,6 @@ def convert_marketcaps_currencies_updated(companies, game_currency):
             company.update({"market_cap": converted_market_cap})
             company.update({"currency":game_currency})
     return companies
-
-
 def get_exchange_rate(exchange_rates, from_currency, to_currency):
     
     for exchange_rate in exchange_rates:
@@ -516,40 +474,3 @@ def get_exchange_rate(exchange_rates, from_currency, to_currency):
             return 1/exchange_rate["ratio"]
     return None
 
-def convert_marketcaps_currencies_updated_DEPRECATED(companies, game_currency):
-    """
-    Takes a dictionary containing all game data on companies and a string representation of desired currency 
-    Gets exchange rate from the database, follows two-step conversion--first converts market cap to USD and then to the desired currency
-    Replaces company market cap with the desired currency
-    Returns a list of tuples containing all game data on companies with updated market cap and currency information
-    """
-    exchange_rates = get_exchange_rates_from_database()
-    converted_market_cap = 0
-    for company in companies:
-        reporting_currency = company.get("currency")
-        if(reporting_currency != game_currency):
-            for exchange_rate in exchange_rates:
-                if(
-                    (exchange_rate.get("from_currency") == reporting_currency
-                    and exchange_rate.get("to_currency") == "USD") and (reporting_currency != "USD")
-                    ):
-                        
-                        to_usd = exchange_rate.get("ratio")
-                        market_cap_usd = round(company.get("market_cap") * to_usd)
-
-                elif ((exchange_rate.get("to_currency") == reporting_currency and exchange_rate.get("from_currency") == "USD") and reporting_currency != "USD"):
-                        market_cap_usd = round(company.get("market_cap")/exchange_rate.get("ratio"))
-                if(
-                    (exchange_rate.get("from_currency") == "USD"
-                    and exchange_rate.get("to_currency") == game_currency) and (game_currency != "USD")
-                ):
-                    
-                    from_usd = exchange_rate.get("ratio")
-                    converted_market_cap = round(market_cap_usd * from_usd)
-                
-                elif ((exchange_rate.get("to_currency") == game_currency and exchange_rate.get("from_currency") == "USD") and game_currency != "USD"):
-                       converted_market_cap = round(company.get("market_cap")/exchange_rate.get("ratio"))
-            
-            company.update({"market_cap": converted_market_cap})
-            company.update({"currency": game_currency})
-    return companies
