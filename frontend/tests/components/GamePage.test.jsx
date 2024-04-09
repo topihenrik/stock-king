@@ -4,6 +4,7 @@ import {within} from '@testing-library/dom';
 import GamePage from "../../src/components/GamePage.jsx";
 import {useCurrencyStore} from "../../src/stores/currency-store.jsx";
 import {useScoreStore} from "../../src/stores/score-store.jsx";
+import { useCategoryStore } from "../../src/stores/category-store.jsx";
 import {companies} from "../mock-data/companies.js";
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -136,4 +137,22 @@ describe('GamePage', () => {
 
         expect(scoreText).toHaveTextContent('2');
     }, 5000);
+
+    describe('Category', async () => {
+        beforeEach(() => {
+            useCategoryStore.setState({category: "Financial Services"});
+        });
+
+        it('Should fetch companies from the correct category', async () => {
+            const {findAllByTestId} = setupWithProviders(<GamePage/>);
+
+            const panels = await findAllByTestId('panel');
+
+            const firstPanelText = await within(panels[0]).findByText('Affiliated Managers Group, Inc.');
+            expect(firstPanelText).toBeInTheDocument();
+
+            const secondPanelText = await within(panels[1]).findByText('U.S. Bancorp');
+            expect(secondPanelText).toBeInTheDocument();
+        });
+    });
 })
