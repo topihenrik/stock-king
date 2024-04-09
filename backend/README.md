@@ -19,7 +19,7 @@ DB_USER="stocking"
 DB_PASSWORD=""
 DB_HOST="localhost"
 DB_PORT="5432"
-DB_DATABASE="StocKing"
+DB_DATABASE="stocking"
 ```
 
 `.env.test`
@@ -28,7 +28,7 @@ DB_USER="stockingtest"
 DB_PASSWORD=""
 DB_HOST="localhost"
 DB_PORT="5432"
-DB_DATABASE="StocKingTest"
+DB_DATABASE="stockingtest"
 ```
 ## Windows
 
@@ -46,9 +46,9 @@ Install packages
 
 Set environment variables
     For dev:
-        set "ENV=dev" & set "DB_USER=stocking" & set "DB_PASSWORD=" & set "DB_HOST=localhost" & set "DB_PORT=5432" & set "DB_DATABASE=StocKing"
+        set "ENV=dev" & set "DB_USER=stocking" & set "DB_PASSWORD=" & set "DB_HOST=localhost" & set "DB_PORT=5432" & set "DB_DATABASE=stocking"
     For test:
-        set "ENV=dev" & set "DB_USER=stockingtest" & set "DB_PASSWORD=" & set "DB_HOST=localhost" & set "DB_PORT=5432" & set "DB_DATABASE=StocKingTest"
+        set "ENV=dev" & set "DB_USER=stockingtest" & set "DB_PASSWORD=" & set "DB_HOST=localhost" & set "DB_PORT=5432" & set "DB_DATABASE=stockingtest"
 
 ## Linux
 

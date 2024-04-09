@@ -239,7 +239,7 @@ def get_exchange_rates_from_api():
 
 
 def add_all_currencies():
-    existing_currencies = get_currencies_from_database()
+    existing_currencies = get_database_currencies()
     all_currencies = existing_currencies
     new_currencies = ["RUB", "GBP", "EUR", "AUD", "SGD"]
     for currency in new_currencies:

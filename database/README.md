@@ -1,5 +1,10 @@
 # Database
 
+### Prerequisites
+
+- Installation of Postgres
+- Allow all local connections to postgres even without a password ([Here's](https://stackoverflow.com/a/55039419) a guide to refer to. Only editing the `pg_hba.conf` and restarting the Postgresql service should be necessary. For Unix systems the file should be located in `/etc/postgresql/${version}/main/`)
+
 To setup the database: 
 
 ### Linux
@@ -7,7 +12,7 @@ To setup the database:
 1. activate a virtual environment and install the requirements (if you've already activated the virtual env within backend folder, the script should work, in which case skip straight to step 2)
     ```
     python3 -m venv env
-    env/bin/activate
+    source env/bin/activate
     pip install -r requirements.txt
     ```
 
@@ -46,6 +51,3 @@ If changes are made to database and production database needs to be reinitialize
     psql postgres://postgres:<password>@localhost:5433/stock_king -a -f init_tables.sql
     ```
     
-## Prerequisites
-
-- Installation of Postgres
