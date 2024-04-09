@@ -1,4 +1,4 @@
-[
+export const categories = [
     "Real Estate",
     "Healthcare",
     "Basic Materials",
