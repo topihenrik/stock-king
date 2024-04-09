@@ -7,6 +7,7 @@ import {exchangeRates} from './mock-data/exchangeRates.js';
 import {setupServer} from "msw/node";
 import {players} from "./mock-data/players.js";
 import {difficulty} from "../src/constants.js";
+import {categories} from "./mock-data/categories.js";
 
 vi.mock("zustand");
 vi.mock('i18next');
@@ -69,6 +70,10 @@ export const restHandlers = [
 
     http.post('http://localhost:5000/api/get_scores', () => {
         return HttpResponse.json(players);
+    }),
+
+    http.get('http://localhost:5000/api/get_categories', () => {
+        return HttpResponse.json(categories);
     })
 ];
 

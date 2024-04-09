@@ -25,13 +25,28 @@ export const resources = {
             empty: 'Empty',
             submit: 'Submit',
             zeroPlayersNotice: "No player has cemented their legacy in to the leaderboard as the stock king. Will you be the first one?",
-            errorOccurredInServices: "An error occurred in our services"
+            errorOccurredInServices: "An error occurred in our services",
+            loading: "Loading...",
+            error: "Error",
+            "All categories": "All categories",
+            "Real Estate": "Real Estate",
+            Healthcare: "Healthcare",
+            "Basic Materials": "Basic Materials",
+            Energy: "Energy",
+            Industrials: "Industrials",
+            "Consumer Cyclical": "Consumer cyclical",
+            Utilities: "Utilities",
+            "Consumer Defensive": "Consumer Defensive",
+            "Financial Services": "Financial Services",
+            Technology: "Technology",
+            "Communication Services": "Communication services"
         },
     },
     fi: {
         common: {
             startGame: "Aloita peli",
             chooseCategory: "Valitse kategoria",
+            category: "Kategoria",
             whichHas: "Kummalla on ",
             higher: 'korkeampi',
             marketCap: 'markkina-arvo',
@@ -50,7 +65,21 @@ export const resources = {
             empty: 'Tyhjä',
             submit: 'Lähetä',
             zeroPlayersNotice: "Yksikään pelaaja ei ole lujittanut perintöään tulostaulukkoon osakekuninkaana. Oletko sinä ensimmäinen?",
-            errorOccurredInServices: "Palveluissamme tapahtui virhe"
+            errorOccurredInServices: "Palveluissamme tapahtui virhe",
+            loading: "Ladataan...",
+            error: "Virhe",
+            "All categories": "Kaikki kategoriat",
+            "Real Estate": "Kiinteistöala",
+            Healthcare: "Terveydenhuolto",
+            "Basic Materials": "Materiaalit",
+            Energy: "Energia",
+            Industrials: "Teollisuus",
+            "Consumer Cyclical": "Sykliset kuluttajatuotteet",
+            Utilities: "Hyödykkeet",
+            "Consumer Defensive": "Defensiiviset kuluttajatuotteet",
+            "Financial Services": "Rahoituspalvelut",
+            Technology: "Technologia",
+            "Communication Services": "Viestintä"
         }
     }
 };

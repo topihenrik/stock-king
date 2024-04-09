@@ -11,19 +11,21 @@ import LeaderboardModal from "./LeaderboardModal.jsx";
 import GameHistoryModal from "./GameHistoryModal.jsx";
 import {useLanguageStore} from "../stores/language-store.jsx";
 import {useCurrencyStore} from "../stores/currency-store.jsx";
+import {useCategoryStore} from "../stores/category-store.jsx";
 
 export default function MenuPage() {
     const gameCurrency = useCurrencyStore((state) => state.gameCurrency);
     const changeGameCurrency = useCurrencyStore((state) => state.changeGameCurrency);
     const selectedLanguage = useLanguageStore((state) => state.language);
     const setSelectedLanguage = useLanguageStore((state) => state.changeLanguage);
+    const selectedCategory = useCategoryStore((state) => state.category);
+    const setSelectedCategory = useCategoryStore((state) => state.changeCategory);
     const [categoryAnchorEl, setCategoryAnchorEl] = useState(null);
     const [currencyAnchorEl, setCurrencyAnchorEl] = useState(null);
     const [languageAnchorEl, setLanguageAnchorEl] = useState(null);
     const [leaderboardOpen, setLeaderboardOpen] = useState(false);
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const languageOpen = Boolean(languageAnchorEl);
-    const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedCurrency, setSelectedCurrency] = useState(gameCurrency);
     const navigate = useNavigate();
     const { t } = useTranslation('common');
@@ -36,12 +38,27 @@ export default function MenuPage() {
         queryClient.removeQueries({ queryKey: [queryKeys.COMPANIES] });
     }, []);
 
-    const { isPending, error, data: currencies } = useQuery({
+    const { isPending: currenciesPending, currencyError, data: currencies } = useQuery({
         refetchOnWindowFocus: false,
         queryKey: [queryKeys.CURRENCIES],
         queryFn: () =>
             fetch(
                 `${baseUri}/get_all_currencies`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            ).then((res) => res.json())
+    });
+
+    const { isPending: categoriesPending, error: categoryError, data: categories } = useQuery({
+        refetchOnWindowFocus: false,
+        queryKey: [queryKeys.CATEGORIES],
+        queryFn: () =>
+            fetch(
+                `${baseUri}/get_categories`,
                 {
                     method: "GET",
                     headers: {
@@ -142,9 +159,22 @@ export default function MenuPage() {
                                     horizontal: 'center',
                                 }}
                             >
-                                <MenuItem data-testid="category1" onClick={() => handleCategorySelect('Category 1')} >Category 1</MenuItem>
-                                <MenuItem onClick={() => handleCategorySelect('Category 2')} >Category 2</MenuItem>
-                                <MenuItem onClick={() => handleCategorySelect('Category 3')} >Category 3</MenuItem>
+                                {categoriesPending ? (
+                                    <MenuItem disabled data-testid="categories-loading">{t('loading')}</MenuItem>
+                                ) : categoryError ? (
+                                    <MenuItem disabled data-testid="categories-error">{t('error')}</MenuItem>
+                                ) : (
+                                    [
+                                        <MenuItem key="all-categories" onClick={() => handleCategorySelect("All categories")}>
+                                            {t('All categories')}
+                                        </MenuItem>,
+                                        ...categories.map((category) => (
+                                            <MenuItem key={category} onClick={() => handleCategorySelect(category)}>
+                                                {t(category)}
+                                            </MenuItem>
+                                        ))
+                                    ]
+                                )}
                             </Menu>
                             <Button
                                 variant="contained"
@@ -168,10 +198,10 @@ export default function MenuPage() {
                                     horizontal: 'center',
                                 }}
                             >
-                                {isPending ? (
-                                    <MenuItem disabled>Loading...</MenuItem>
-                                ) : error ? (
-                                    <MenuItem disabled>Error fetching currencies</MenuItem>
+                                {currenciesPending ? (
+                                    <MenuItem disabled>{t('loading')}</MenuItem>
+                                ) : currencyError ? (
+                                    <MenuItem disabled>{t('error')}</MenuItem>
                                 ) : (
                                     currencies.map((currency) => (
                                         <MenuItem key={currency} onClick={() => handleCurrencySelect(currency)}>{currency}</MenuItem>
@@ -233,7 +263,7 @@ export default function MenuPage() {
                         endIcon={<ArrowDropDown />}
                         sx={{ width: '100%' }}
                     >
-                        {selectedCategory || t('chooseCategory')}
+                        {t(selectedCategory) || t('chooseCategory')}
                     </Button>
                     <Button
                         onClick={handleLeaderboardOpen}
