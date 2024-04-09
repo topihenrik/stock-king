@@ -1,3 +1,4 @@
+DROP TYPE IF EXISTS difficulty CASCADE;
 CREATE TYPE difficulty as ENUM ('easy', 'medium', 'hard');
 
 DROP TABLE IF EXISTS ExchangeRates CASCADE;
