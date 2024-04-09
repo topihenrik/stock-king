@@ -13,6 +13,13 @@ import {useLanguageStore} from "../stores/language-store.jsx";
 import {useCurrencyStore} from "../stores/currency-store.jsx";
 import {useCategoryStore} from "../stores/category-store.jsx";
 
+function stringToCamelCase(string) {
+    return string.split(" ").map((word, i) => {
+        if (i == 0) return word.toLowerCase();
+        return word[0].toUpperCase() + word.slice(1).toLowerCase();
+    }).join("");
+}
+
 export default function MenuPage() {
     const gameCurrency = useCurrencyStore((state) => state.gameCurrency);
     const changeGameCurrency = useCurrencyStore((state) => state.changeGameCurrency);
@@ -166,11 +173,11 @@ export default function MenuPage() {
                                 ) : (
                                     [
                                         <MenuItem key="all-categories" onClick={() => handleCategorySelect("All categories")}>
-                                            {t('All categories')}
+                                            {t('allCategories')}
                                         </MenuItem>,
                                         ...categories.map((category) => (
                                             <MenuItem key={category} onClick={() => handleCategorySelect(category)}>
-                                                {t(category)}
+                                                {t(stringToCamelCase(category))}
                                             </MenuItem>
                                         ))
                                     ]
@@ -263,7 +270,7 @@ export default function MenuPage() {
                         endIcon={<ArrowDropDown />}
                         sx={{ width: '100%' }}
                     >
-                        {t(selectedCategory) || t('chooseCategory')}
+                        {t(stringToCamelCase(selectedCategory)) || t('chooseCategory')}
                     </Button>
                     <Button
                         onClick={handleLeaderboardOpen}
