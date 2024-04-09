@@ -78,7 +78,7 @@ export const resources = {
             Utilities: "Hyödykkeet",
             "Consumer Defensive": "Defensiiviset kuluttajatuotteet",
             "Financial Services": "Rahoituspalvelut",
-            Technology: "Technologia",
+            Technology: "Teknologia",
             "Communication Services": "Viestintä"
         }
     }
