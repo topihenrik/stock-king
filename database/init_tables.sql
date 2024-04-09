@@ -21,9 +21,7 @@ CREATE TABLE Company(
     date DATE NOT NULL,
     sector TEXT NOT NULL,
     website TEXT,
-    full_time_employees TEXT,
-    revenue_growth FLOAT,
-    earnings_growth FLOAT
+    full_time_employees BIGINT
 );
 
 DROP TABLE IF EXISTS Scores CASCADE;

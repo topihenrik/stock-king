@@ -80,13 +80,17 @@ def process_stock_data(tickers):
                     "date": current_date,
                     "sector": ticker.info["sector"],
                     "website": ticker.info["website"],
+                    "full_time_employees": ticker.info.get("fullTimeEmployees", "Employee count unavailable")
                 }
             )
         except:
             print(f"Failed to get company data on {ticker.ticker}")
             continue
 
+
     return stock_data
+
+
 
 
 def get_categories_from_database():
@@ -146,13 +150,14 @@ def upsert_stock_data(data, difficulty):
                 # Construct SQL query
                 query = sql.SQL(
                     """
-                    INSERT INTO Company (ticker, name, difficulty, market_cap, currency, date, sector, website)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO Company (ticker, name, difficulty, market_cap, currency, date, sector, website, full_time_employees)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (ticker) DO UPDATE
                     SET market_cap = EXCLUDED.market_cap,
                         date = EXCLUDED.date,
                         currency = EXCLUDED.currency,
-                        website = EXCLUDED.website;
+                        website = EXCLUDED.website,
+                        full_time_employees = EXCLUDED.full_time_employees;
                 """
                 )
                 # Execute the query
@@ -167,6 +172,7 @@ def upsert_stock_data(data, difficulty):
                         row["date"],
                         row["sector"],
                         row["website"],
+                        row["full_time_employees"],
                     ),
                 )
 
@@ -337,8 +343,6 @@ def company_db_result_to_dict(company_data_from_db):
         dictionary["website"] = company[8]
         dictionary["img_url"] = f"https://logo.clearbit.com/{company[8]}"
         dictionary["full_time_employees"] = company[9]
-        dictionary["revenue_growth"] = company[10]
-        dictionary["earnings_growth"] = company[11]
 
         list_of_dicts.append(dictionary)
 

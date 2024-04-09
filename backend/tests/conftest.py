@@ -48,6 +48,7 @@ def mock_tickers_initial():
             "date": date(2024, 2, 15),
             "sector": "Technology",
             "website": "https://www.apple.com/",
+            "full_time_employees": 123,
         }
     ]
 
@@ -65,6 +66,7 @@ def mock_test_database_tickers():
             "date": date(2024, 2, 15),
             "sector": "Technology",
             "website": "https://www.apple.com/",
+            "full_time_employees": 123,
         },
         {
             "ticker": "GOOGL",
@@ -74,6 +76,7 @@ def mock_test_database_tickers():
             "date": date(2024, 2, 15),
             "sector": "Technology",
             "website": "https://abc.xyz/",
+            "full_time_employees": 456,
         },
         {
             "ticker": "MSFT",
@@ -83,6 +86,7 @@ def mock_test_database_tickers():
             "date": date(2024, 2, 15),
             "sector": "Technology",
             "website": "https://www.microsoft.com/",
+            "full_time_employees": 789,
         },
         {
             "ticker": "AMZN",
@@ -92,6 +96,7 @@ def mock_test_database_tickers():
             "date": date(2024, 2, 15),
             "sector": "Retail",
             "website": "https://www.amazon.com/",
+            "full_time_employees": 1011,
         },
         {
             "ticker": "TSLA",
@@ -101,6 +106,7 @@ def mock_test_database_tickers():
             "date": date(2024, 2, 15),
             "sector": "Automotive",
             "website": "https://www.tesla.com/",
+            "full_time_employees": 567,
         },
         {
             "ticker": "FB",
@@ -110,6 +116,7 @@ def mock_test_database_tickers():
             "date": date(2024, 2, 15),
             "sector": "Technology",
             "website": "https://www.meta.com/",
+            "full_time_employees": 234,
         },
         {
             "ticker": "JPM",
@@ -119,6 +126,7 @@ def mock_test_database_tickers():
             "date": date(2024, 2, 15),
             "sector": "Finance",
             "website": "https://www.jpmorganchase.com/",
+            "full_time_employees": 345,
         },
         {
             "ticker": "V",
@@ -128,6 +136,7 @@ def mock_test_database_tickers():
             "date": date(2024, 2, 15),
             "sector": "Finance",
             "website": "https://www.visa.com/",
+            "full_time_employees": 678,
         },
         {
             "ticker": "DIS",
@@ -137,6 +146,7 @@ def mock_test_database_tickers():
             "date": date(2024, 2, 15),
             "sector": "Entertainment",
             "website": "https://www.disney.com/",
+            "full_time_employees": 890,
         },
         {
             "ticker": "IBM",
@@ -146,6 +156,7 @@ def mock_test_database_tickers():
             "date": date(2024, 2, 15),
             "sector": "Technology",
             "website": "https://www.ibm.com/",
+            "full_time_employees": 1234,
         },
     ]
 
@@ -205,6 +216,7 @@ def mock_tickers_updated():
             "date": date(2024, 2, 16),
             "sector": "Technology",
             "website": "https://www.appleapple.com/",
+            "full_time_employees": 321,
         }
     ]
 
