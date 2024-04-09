@@ -1,9 +1,10 @@
 # Frontend
 
 ## Environment requirements
-```
-Node.js 18
-```
+
+- Node.js 18
+- yarn installed globally
+
 ## Install packages
 ```
 yarn install
