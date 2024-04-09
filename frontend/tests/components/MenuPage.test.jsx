@@ -10,7 +10,7 @@ describe('MenuPage', () => {
 
         const dropdownButton = getByTestId('category-btn');
 
-        expect(dropdownButton).toHaveTextContent('All categories');
+        expect(dropdownButton).toHaveTextContent('allCategories');
 
     });
 
@@ -21,11 +21,11 @@ describe('MenuPage', () => {
 
         await user.click(dropdownButton);
       
-        const communicationServices = await findByText('Communication Services');
+        const communicationServices = await findByText('communicationServices');
 
         await user.click(communicationServices);
       
-        expect(dropdownButton).toHaveTextContent('Communication Services');
+        expect(dropdownButton).toHaveTextContent('communicationServices');
         expect(useCategoryStore.getState().category).toBe('Communication Services');
     });
     
