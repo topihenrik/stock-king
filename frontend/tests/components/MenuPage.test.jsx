@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {setupWithProviders} from "../test-utils.jsx";
 import MenuPage from "../../src/components/MenuPage.jsx";
 import { useCurrencyStore } from "../../src/stores/currency-store.jsx";
+import { useCategoryStore } from "../../src/stores/category-store.jsx";
 
 describe('MenuPage', () => {
     it('Should show correct text on dropdown menu', async () => {
@@ -9,23 +10,25 @@ describe('MenuPage', () => {
 
         const dropdownButton = getByTestId('category-btn');
 
-        expect(dropdownButton).toHaveTextContent('chooseCategory');
+        expect(dropdownButton).toHaveTextContent('allCategories');
 
     });
 
-    it('Should update text after selecting category from dropdown menu', async () => {
-        const { findByTestId, user } = setupWithProviders(<MenuPage/>);
-
+    it('Should update category after selecting it from dropdown menu', async () => {
+        const { findByTestId, findByText, user } = setupWithProviders(<MenuPage />);
+        
         const dropdownButton = await findByTestId('category-btn');
 
         await user.click(dropdownButton);
+      
+        const communicationServices = await findByText('communicationServices');
 
-        const category1 = await findByTestId('category1');
-
-        await user.click(category1);
-
-        expect(dropdownButton).toHaveTextContent('Category 1');
+        await user.click(communicationServices);
+      
+        expect(dropdownButton).toHaveTextContent('communicationServices');
+        expect(useCategoryStore.getState().category).toBe('Communication Services');
     });
+    
 
     it('Should update language menu text after selecting another language', async () => {
         const { findByTestId, user } = setupWithProviders(<MenuPage/>);
@@ -53,19 +56,18 @@ describe('MenuPage', () => {
         expect(window.location.pathname).toBe('/game');
     });
 
-    it("Should update game currency after selecting currency from dropdown menu", async () => {
+    it('Should update game currency after selecting currency from dropdown menu', async () => {
         const { findByTestId, findByText, user } = setupWithProviders(<MenuPage />);
       
-        const dropdownButton = await findByTestId("currency-btn");
+        const dropdownButton = await findByTestId('currency-btn');
 
         await user.click(dropdownButton);
       
-        const currencySEK = await findByText("SEK");
-
+        const currencySEK = await findByText('SEK');
 
         await user.click(currencySEK);
       
-        expect(useCurrencyStore.getState().gameCurrency).toBe("SEK");
+        expect(useCurrencyStore.getState().gameCurrency).toBe('SEK');
     });
 
 })

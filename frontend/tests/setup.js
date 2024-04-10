@@ -7,6 +7,7 @@ import {exchangeRates} from './mock-data/exchangeRates.js';
 import {setupServer} from "msw/node";
 import {players} from "./mock-data/players.js";
 import {difficulty} from "../src/constants.js";
+import {categories} from "./mock-data/categories.js";
 
 vi.mock("zustand");
 vi.mock('i18next');
@@ -20,23 +21,30 @@ export const restHandlers = [
         const { excluded_tickers, wanted_categories, currency, count, difficulties } = await request.json();
 
         let response = [];
-        switch (difficulties[0]) {
-            case difficulty.EASY:
-                response = companies.easy.filter(company => !excluded_tickers.includes(company.ticker));
-                break;
-            case difficulty.MEDIUM:
-                response = companies.medium.filter(company => !excluded_tickers.includes(company.ticker));
-                break;
-            case difficulty.HARD:
-                response = companies.hard.filter(company => !excluded_tickers.includes(company.ticker));
-                break;
+
+        if (difficulties.length === 0) {
+            response = companies.easy.filter(company => !excluded_tickers.includes(company.ticker)),
+                companies.medium.filter(company => !excluded_tickers.includes(company.ticker)),
+                companies.hard.filter(company => !excluded_tickers.includes(company.ticker));
+        } else {
+            switch (difficulties[0]) {
+                case difficulty.EASY:
+                    response = companies.easy.filter(company => !excluded_tickers.includes(company.ticker));
+                    break;
+                case difficulty.MEDIUM:
+                    response = companies.medium.filter(company => !excluded_tickers.includes(company.ticker));
+                    break;
+                case difficulty.HARD:
+                    response = companies.hard.filter(company => !excluded_tickers.includes(company.ticker));
+                    break;
+            }
         }
 
         // Construct the response based on the request parameters
         // let response = companies.filter(company => !excluded_tickers.includes(company.ticker));
         
         if (!(wanted_categories.length === 0)) {
-            response = response.filter(response => wanted_categories.includes(response.sector))
+            response = response.filter(company => wanted_categories.includes(company.sector));
         }
 
         if (!(currency.length === 0)) {
@@ -69,6 +77,10 @@ export const restHandlers = [
 
     http.post('http://localhost:5000/api/get_scores', () => {
         return HttpResponse.json(players);
+    }),
+
+    http.get('http://localhost:5000/api/get_categories', () => {
+        return HttpResponse.json(categories);
     })
 ];
 

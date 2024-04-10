@@ -1,7 +1,8 @@
 export const queryKeys = {
     COMPANIES: "COMPANIES",
     CURRENCIES: "CURRENCIES",
-    PLAYERS: "PLAYERS"
+    PLAYERS: "PLAYERS",
+    CATEGORIES: "CATEGORIES"
 };
 
 export const difficulty = {
