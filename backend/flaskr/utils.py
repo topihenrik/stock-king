@@ -438,5 +438,5 @@ def get_exchange_rate(exchange_rates, from_currency, to_currency):
              return exchange_rate["ratio"]
         elif exchange_rate["to_currency"] == from_currency and exchange_rate["from_currency"] == to_currency:
             return 1/exchange_rate["ratio"]
-    return None
+    return 1
 
