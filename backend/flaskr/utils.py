@@ -406,7 +406,7 @@ def get_currencies_from_database():
             )
             cursor.execute(query)
             currencies = cursor.fetchall()
-            currencies = [currency[0] for currency in currencies]
+            currencies = [currency[1] for currency in currencies]
             currencies.append("USD")
             return jsonify(currencies)
 
