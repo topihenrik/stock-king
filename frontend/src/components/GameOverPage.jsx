@@ -71,7 +71,7 @@ export default function GameOverPage() {
     });
 
     if (players && score !== 0) {
-        if (category === "all") {
+        if (category === "All categories") {
             if (players.length < 10) {
                 showSubmit = true;
             } else {
