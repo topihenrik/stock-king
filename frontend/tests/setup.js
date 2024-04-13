@@ -17,15 +17,15 @@ expect.extend(matchers);
 
 
 export const restHandlers = [
-    http.post('http://localhost:5000/api/get_companies', async ({ request }) => {
+    http.post('/api/get_companies', async ({ request }) => {
         const { excluded_tickers, wanted_categories, currency, count, difficulties } = await request.json();
 
         let response = [];
 
         if (difficulties.length === 0) {
-            response = companies.easy.filter(company => !excluded_tickers.includes(company.ticker)),
-                companies.medium.filter(company => !excluded_tickers.includes(company.ticker)),
-                companies.hard.filter(company => !excluded_tickers.includes(company.ticker));
+            response = [...companies.easy.filter(company => !excluded_tickers.includes(company.ticker)),
+                ...companies.medium.filter(company => !excluded_tickers.includes(company.ticker)),
+                ...companies.hard.filter(company => !excluded_tickers.includes(company.ticker))];
         } else {
             switch (difficulties[0]) {
                 case difficulty.EASY:
@@ -69,17 +69,17 @@ export const restHandlers = [
         return HttpResponse.json(response)
     }),
 
-    http.get('http://localhost:5000/api/get_all_currencies', () => {
+    http.get('/api/get_all_currencies', () => {
         const currenciesList = [...new Set(exchangeRates.map(rate => rate.from_currency))];
 
         return HttpResponse.json(currenciesList)
     }),
 
-    http.post('http://localhost:5000/api/get_scores', () => {
+    http.post('/api/get_scores', () => {
         return HttpResponse.json(players);
     }),
 
-    http.get('http://localhost:5000/api/get_categories', () => {
+    http.get('/api/get_categories', () => {
         return HttpResponse.json(categories);
     })
 ];
