@@ -17,9 +17,8 @@ describe('GameOverPage', () => {
         expect(element).toHaveTextContent('yourScore: 0');
     });
 
-
     it('Should show leaderboard if score is higher than 0 and category is all', async () => {
-        useCategoryStore.setState({category: "all"});
+        useCategoryStore.setState({category: "All categories"});
         useScoreStore.setState({ score: 18 });
         const {findByTestId} = setupWithProviders(<GameOverPage/>);
         const element = await findByTestId('submit-btn');
