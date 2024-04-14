@@ -12,13 +12,7 @@ import GameHistoryModal from "./GameHistoryModal.jsx";
 import {useLanguageStore} from "../stores/language-store.jsx";
 import {useCurrencyStore} from "../stores/currency-store.jsx";
 import {useCategoryStore} from "../stores/category-store.jsx";
-
-function stringToCamelCase(string) {
-    return string.split(" ").map((word, i) => {
-        if (i == 0) return word.toLowerCase();
-        return word[0].toUpperCase() + word.slice(1).toLowerCase();
-    }).join("");
-}
+import {stringToCamelCase} from "../utils.js"
 
 export default function MenuPage() {
     const gameCurrency = useCurrencyStore((state) => state.gameCurrency);
