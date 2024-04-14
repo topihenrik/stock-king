@@ -4,26 +4,32 @@ import { baseUri } from "../config.js";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import numeral from 'numeral';
-import getSymbolFromCurrency from 'currency-symbol-map'
 import {difficulty, NUMBER_OF_COMPANIES_FETCHED, queryKeys} from "../constants.js";
 import PlaceholderLogo from '../../public/placeholder_company_logo.png';
 import {useTranslation} from "react-i18next";
 import {useScoreStore} from "../stores/score-store.jsx";
 import {useCurrencyStore} from "../stores/currency-store.jsx";
 import {useCategoryStore} from "../stores/category-store.jsx";
+import {useLanguageStore} from "../stores/language-store.jsx";
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-const customNumberFormat = (value, currencyCode) => {
-    const symbol = getSymbolFromCurrency(currencyCode) || currencyCode;
-    let formattedValue;
-    if ((value > 10000000000) || ((value < 1000000000) && (value > 10000000))) {
-        formattedValue = numeral(value).format('(0a)').toUpperCase();
-    } else {
-        formattedValue = numeral(value).format('(0.0a)').toUpperCase();
+const getLocaleFromLanguage = (language) => {
+    switch (language) {
+        case 'en':
+            return 'en-US';
+        case 'fi':
+            return 'fi-FI';
     }
-    return `${formattedValue} ${symbol}`;
+}
+
+const customNumberFormat = (value, currencyCode, language) => {
+    const locale = getLocaleFromLanguage(language);
+    return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency: currencyCode,
+        notation: 'compact'
+    }).format(value);
 };
 
 const Panel = ({
@@ -209,6 +215,7 @@ export default function GamePage() {
     const updateHighScore = useScoreStore((state) => state.updateHighScore);
     const gameCurrency = useCurrencyStore((state) => state.gameCurrency);
     const category = useCategoryStore((state) => state.category);
+    const language = useLanguageStore((state) => state.language);
     const { t } = useTranslation('common');
     const [companyIndex, setCompanyIndex] = useState(0);
     const [usedTickersList, setUsedTickersList] = useState([]);
@@ -283,7 +290,7 @@ export default function GamePage() {
         // If the formatted market caps show the same value, the selection counts as being correct
         const correct = (
             selectedCompany.market_cap >= otherCompany.market_cap 
-            || customNumberFormat(selectedCompany.market_cap, gameCurrency) == customNumberFormat(otherCompany.market_cap, gameCurrency)
+            || customNumberFormat(selectedCompany.market_cap, gameCurrency, language) === customNumberFormat(otherCompany.market_cap, gameCurrency, language)
         );
 
         setHideBottomMarketCap(false);
@@ -469,7 +476,7 @@ export default function GamePage() {
                             handleClick={handleClick}
                             id={companies[topIndex].ticker}
                             companyName={companies[topIndex].name}
-                            marketCap={customNumberFormat(companies[topIndex].market_cap, gameCurrency)}
+                            marketCap={customNumberFormat(companies[topIndex].market_cap, gameCurrency, language)}
                             imageSrc={companies[topIndex].img_url}
                             index={topIndex}
                             hideAll={hidePanelContent}
@@ -482,7 +489,7 @@ export default function GamePage() {
                             handleClick={handleClick}
                             id={companies[bottomIndex].ticker}
                             companyName={companies[bottomIndex].name}
-                            marketCap={customNumberFormat(companies[bottomIndex].market_cap, gameCurrency)}
+                            marketCap={customNumberFormat(companies[bottomIndex].market_cap, gameCurrency, language)}
                             imageSrc={companies[bottomIndex].img_url}
                             index={bottomIndex}
                             hideAll={hidePanelContent}
