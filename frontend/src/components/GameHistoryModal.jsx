@@ -14,6 +14,7 @@ import {
     Modal
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import {stringToCamelCase} from "../utils.js"
 
 const GameHistoryModal = ({open, setOpen}) => {
     const gameHistory = JSON.parse(localStorage.getItem("gameHistory")) || [];
@@ -80,7 +81,7 @@ const GameHistoryModal = ({open, setOpen}) => {
                             {gameHistory.map((game, index) => (
                                 <TableRow key={index}>
                                     <TableCell data-testid="date-cell">{formatDate(game.date)}</TableCell>
-                                    <TableCell data-testid="category-cell">{t(game.category)}</TableCell>
+                                    <TableCell data-testid="category-cell">{t(stringToCamelCase(game.category))}</TableCell>
                                     <TableCell data-testid="score-cell">{game.score}</TableCell>
                                 </TableRow>
                             ))}
