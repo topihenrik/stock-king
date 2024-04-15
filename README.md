@@ -6,7 +6,7 @@ A fun, engaging quiz-like application that prompts users to guess the higher or 
 ![stock-king](https://github.com/topihenrik/stock-king/assets/79649210/8479122a-7429-4744-b772-1de7532a1cef)
 
 ## Technologies and Methods
-## General
+### General
 * GitHub Actions - CI/CD pipeline
 * Docker - Platform for shipping the application
 * Fly.io - iPaaS for deploying the production version
@@ -23,10 +23,12 @@ A fun, engaging quiz-like application that prompts users to guess the higher or 
 * Mock Service Worker - API mocking library for tests
 * Vite - Frontend development tool
 
-## Backend
+### Backend
 * Flask - Python backend framework
 * PostgreSQL - SQL database system
 * Psycopg2 - Database adapter for PSQL
 * Pytest - Python testing framework
 * APScheduler - Scheduler for executing data updates
 
+## Development Setup
+Open all sub-folders (database, frontend & backend). Follow the setup guides written in the README.md files. Database should be initialized first as the backend needs it for operating.
