@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
-- Installation of Postgres
+- Installation of Postgres 15
 - Allow all local connections to postgres even without a password ([Here's](https://stackoverflow.com/a/55039419) a guide to refer to. Only editing the `pg_hba.conf` and restarting the Postgresql service should be necessary. For Unix systems the file should be located in `/etc/postgresql/${version}/main/`)
 
 To setup the database: 

@@ -3,7 +3,7 @@
 ## Environment requirements
 
 - Node.js 18
-- yarn installed globally
+- yarn installed globally (npm install -g yarn)
 
 ## Install packages
 ```
