@@ -16,7 +16,7 @@ TICKERS_HARD = tickers_sorted.TICKERS_HARD
 def initial_data_update():
     load_dotenv(find_dotenv())
     env = os.getenv("ENV")
-    if env == "dev":
+    if env == "dev":  # if dev environment, load only small amount of data to the database
         random_easy_tickers = sample(TICKERS_EASY, 50)
         string_easy_tickers = " ".join(random_easy_tickers)
         upsert_stock_data(get_stock_data(string_easy_tickers), "easy")
@@ -99,6 +99,7 @@ def get_categories_from_database():
     """
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
+            # Select only unique sectors from company table
             query = sql.SQL("SELECT DISTINCT sector FROM company")
             cursor.execute(query)
             categories = cursor.fetchall()
@@ -111,7 +112,6 @@ def get_scores_from_database(count=50, countries=[], gamemode="normal"):
     Returns an array of objects representing highscores in the database
     """
     # Construct SQL query
-
     query = sql.SQL("SELECT * FROM scores WHERE sid IS NOT NULL AND ({country} IS NULL OR country = ANY ({country})) AND ({gamemode} IS NULL OR gamemode = {gamemode}) ORDER BY score DESC, timestamp ASC LIMIT {limit}").format(
         country=sql.Placeholder(),
         gamemode=sql.Placeholder(),
@@ -134,6 +134,7 @@ def get_stock_data(stocks):
     and returns a list of objects containing the stock data needed in the DB
     used in database upserts
     """
+    # API call to yfinance
     tickers = yahoo.Tickers(stocks)
     stock_data = process_stock_data(tickers)
 
@@ -207,6 +208,7 @@ def get_database_currencies():
     """
     with connect_to_db() as conn:
         with conn.cursor() as cursor:
+            # Get all currencies that companies report their data in
             cursor.execute("SELECT DISTINCT currency FROM Company;")
             currencies = cursor.fetchall()
             currencies = [currency[0].upper() for currency in currencies]
@@ -238,6 +240,7 @@ def get_exchange_rates_from_api():
     existing_currencies = [currency+"USD=X" for currency in add_all_currencies() if currency != "USD"]
     rates = []
     for currency in existing_currencies:
+        # API call to yfinance for currency data
         rates.append(yahoo.Ticker(currency))
     processed_currencies = process_currency_data(rates)
 
@@ -245,10 +248,14 @@ def get_exchange_rates_from_api():
 
 
 def add_all_currencies():
+    # Getting existing currencies from the database
     existing_currencies = get_database_currencies()
     all_currencies = existing_currencies
+    # Pool of default currencies (+ USD)
+    # Otherwise we would have only USD as selectable for the most of the time
     new_currencies = ["RUB", "GBP", "EUR", "AUD", "SGD"]
     for currency in new_currencies:
+        # Do not append if default currency is in existing currencies
         if currency not in all_currencies:
             all_currencies.append(currency)        
     return all_currencies
@@ -274,6 +281,8 @@ def upsert_exchange_rates(data, enable = True):
                     """
                     )
                     # Execute the query
+                    # Base currency is always USD, so it is hard-coded here
+                    # USD is a base currency to optimize the database (not to have too many exchange rates)
                     cursor.execute(query, (currency, "USD", rate, current_date)) 
                 conn.commit()
 
@@ -300,14 +309,15 @@ def get_companies_from_database(
     Returns:
             Array of dictionaries of company data
     """
-    #Construct SQL Query
-    
+    # Construct SQL Query
     query = sql.SQL("SELECT * FROM company WHERE cid IS NOT NULL AND ({difficulty} IS NULL OR difficulty::text = ANY ({difficulty})) AND ({wanted_categories} IS NULL OR sector = ANY ({wanted_categories})) AND ({exclude_tickers} IS NULL OR ticker <> ALL ({exclude_tickers})) ORDER BY RANDOM()  LIMIT {limit}").format(
         difficulty=sql.Placeholder(),
         wanted_categories=sql.Placeholder(),
         exclude_tickers=sql.Placeholder(),
         limit=sql.Placeholder()
     )
+    
+    # Check optional parameters 
     if(len(difficulties) == 0):
         difficulties = None
     if(len(wanted_categories) == 0):
@@ -321,6 +331,7 @@ def get_companies_from_database(
             print(cursor.query)
             db_result = cursor.fetchall()
 
+    # Form a dictionary for the proper HTTP response
     list_of_company_dicts = company_db_result_to_dict(db_result)
 
     return list_of_company_dicts
@@ -395,6 +406,7 @@ def exchange_rate_db_result_to_dict(list_of_exchange_rates):
 
     return list_of_dicts
 
+
 def get_currencies_from_database():
     """
     Returns a JSON array of all existing currencies in the database
@@ -409,6 +421,7 @@ def get_currencies_from_database():
             currencies = [currency[1] for currency in currencies]
             currencies.append("USD")
             return jsonify(currencies)
+
 
 def convert_marketcaps_currencies(companies, game_currency):
     """
@@ -431,8 +444,9 @@ def convert_marketcaps_currencies(companies, game_currency):
             company.update({"market_cap": converted_market_cap})
             company.update({"currency":game_currency})
     return companies
+
+
 def get_exchange_rate(exchange_rates, from_currency, to_currency):
-    
     for exchange_rate in exchange_rates:
         if exchange_rate["from_currency"] == from_currency and exchange_rate["to_currency"] == to_currency:
              return exchange_rate["ratio"]

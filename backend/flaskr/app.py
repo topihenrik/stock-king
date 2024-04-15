@@ -92,8 +92,6 @@ def get_companies():
                             Default: 10
                             Example: 1
 
-
-
     Returns:
         Array of dictionaries of company data.
         Example:
@@ -148,12 +146,15 @@ def get_companies():
 def new_high_score():
     """
     Endpoint for adding a new leaderboard highscore.
+
     Required parameters:
-    "name": string,
-    "score": integer,
+        name:       string,
+        score:      integer
+
     Optional parameters:
-    "country": string (ISO 3166-1 Alpha-3 format),
-    "gamemode": predefined strings "normal" OR "timed" defaults to "normal"
+        country:    string (ISO 3166-1 Alpha-3 format),
+        gamemode:   predefined strings "normal" OR "timed" defaults to "normal"
+
     Returns: Empty response with status code indicating success or failure
     """
 
@@ -259,9 +260,10 @@ def get_all_currencies():
 @scheduler.task("cron", id="update_database", hour=4, minute=0)
 def update_database():
     """
-    This function is run every day at 4:00. (currently 17:55 for checking in meeting)
+    This function is run every day at 4:00.
     Gets data from Yahoo Finance for all companies defined in TICKERS constant, 
     then makes an update to database. Processes about 5 companies per second, so cannot be used in real-time.
+    (prints might look like a mess, but make logs more noticable in the server console)
    """
     print("###########################")
     print("Update of database started.")
