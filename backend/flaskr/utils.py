@@ -29,6 +29,16 @@ def initial_data_update():
         string_hard_tickers = " ".join(random_hard_tickers)
         upsert_stock_data(get_stock_data(string_hard_tickers), "hard")
 
+        try:
+            print("###########################")
+            print("Updating EXCHANGE RATE data.")
+            exchange_rate_data = get_exchange_rates_from_api()
+            upsert_exchange_rates(exchange_rate_data)
+            print("Updated EXCHANGE RATE data successfully!")
+            print("###########################\n")
+        except Exception as err:
+            print(f"Failed to update EXCHANGE RATE data. {type(err)}: {err}")
+
 
 
 def connect_to_db():
