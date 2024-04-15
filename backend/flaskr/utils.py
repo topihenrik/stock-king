@@ -90,7 +90,7 @@ def process_stock_data(tickers):
                     "date": current_date,
                     "sector": ticker.info["sector"],
                     "website": ticker.info["website"],
-                    "full_time_employees": ticker.info.get("fullTimeEmployees", "Employee count unavailable")
+                    "full_time_employees": ticker.info.get("fullTimeEmployees")
                 }
             )
         except:
